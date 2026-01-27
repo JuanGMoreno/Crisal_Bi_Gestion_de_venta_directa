@@ -16,8 +16,8 @@ import './models/User.js';
 
 //main function
 async function main() {
-    app.listen(3000);
-    console.log("Server is running on port 3000");
+    app.listen(4000);
+    console.log("Server is running on port 4000");
     try {
         await sequelize.sync();
         console.log('Connection has been established successfully.');
