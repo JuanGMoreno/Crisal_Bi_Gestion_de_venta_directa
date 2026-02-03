@@ -38,14 +38,14 @@ export default function LoginPage() {
         <h2 className="text-3xl font-bold mb-6 text-center text-foreground">Iniciar Sesión</h2>
         <form onSubmit={handleSubmit} className="space-y-5">
           <FieldSet className="w-full">
-            <FieldGroup>
+            <FieldGroup className="gap-3">
               <Field>
-                <FieldLabel htmlFor="username">Nombre de Usuario</FieldLabel>
-                <Input id="username" type="text" placeholder="Nombre de usuario" className="w-full h-11"/>
+                <FieldLabel htmlFor="email">Correo Electrónico</FieldLabel>
+                <Input id="email" type="text" placeholder="Correo Electrónico" className="w-full h-9"/>
               </Field>
               <Field>
                 <FieldLabel htmlFor="password">Contraseña</FieldLabel>
-                <Input id="password" type="password" placeholder="••••••••" className="w-full h-11"/>
+                <Input id="password" type="password" placeholder="Ingrese su contraseña" className="w-full h-9"/>
                 <p className="text-sm text-primary hover:underline cursor-pointer w-full text-right">¿Olvidaste la contraseña?</p>
               </Field>
             </FieldGroup>

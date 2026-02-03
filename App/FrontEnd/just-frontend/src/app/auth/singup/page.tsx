@@ -32,6 +32,7 @@ export default function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState("Consultora");
   const [showPassword, setShowPassword] = useState(false);
 
@@ -47,31 +48,27 @@ export default function RegisterPage() {
         <h2 className="text-3xl font-bold mb-6 text-center text-foreground">Registro</h2>
         <form onSubmit={handleSubmit} className="space-y-5">
           <FieldSet className="w-full">
-            <FieldGroup>
+            <FieldGroup className="gap-3">
               <Field>
                 <FieldLabel htmlFor="name">Nombre completo</FieldLabel>
-                <Input id="name" type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Tu nombre completo" className="w-full h-11" required />
+                <Input id="name" type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Tu nombre completo" className="w-full h-9" required />
               </Field>
               <Field>
                 <FieldLabel htmlFor="email">Correo Electrónico</FieldLabel>
-                <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tu@email.com" className="w-full h-11" required />
+                <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tu@email.com" className="w-full h-9" required />
               </Field>
-              <Field className="relative">
+              <Field >
                 <FieldLabel htmlFor="password">Contraseña</FieldLabel>
-                <Input id="password" type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" className="w-full h-11" required />
-                {/* <button
-                  type="button"
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                  onClick={() => setShowPassword(!showPassword)}
-                  tabIndex={-1}
-                >
-                  {showPassword ? <EyeClosed size={16} /> : <Eye size={16} />}
-                </button> */}
+                <Input id="password" type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Ingrese su contraseña" className="w-full h-9" required />
+              </Field>
+              <Field >
+                <FieldLabel htmlFor="confirm-password">Confirmar Contraseña</FieldLabel>
+                <Input id="confirm-password" type={showPassword ? "text" : "password"} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirme su contraseña" className="w-full h-9" required />
               </Field>
               <Field>
                 <FieldLabel htmlFor="role">Rol</FieldLabel>
-                <Select>
-                  <SelectTrigger>
+                <Select   onValueChange={(value) => setRole(value)} >
+                  <SelectTrigger >
                     <SelectValue placeholder="Seleccione su rol" />
                   </SelectTrigger>
                   <SelectContent>
@@ -85,7 +82,7 @@ export default function RegisterPage() {
               </Field>
             </FieldGroup>
           </FieldSet>
-          <Button type="submit" className="w-full h-11 font-semibold rounded-lg shadow-md transition hover:scale-105 hover:cursor-pointer active:scale-95 duration-300">
+          <Button type="submit" className="w-full h-9 font-semibold rounded-lg shadow-md transition hover:scale-105 hover:cursor-pointer active:scale-95 duration-300">
             Registrarse
           </Button>
         </form>
@@ -95,7 +92,7 @@ export default function RegisterPage() {
             <Link href="/auth/singin" className="font-semibold text-primary hover:underline">Inicia sesión</Link>
           </p>
         </div>
-        
+
       </div>
       {/* Logo a la izquierda en desktop */}
       <div className="hidden md:flex flex-1 items-center justify-center">
