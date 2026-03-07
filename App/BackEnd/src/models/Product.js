@@ -1,6 +1,5 @@
 import { sequelize } from '../config/database.js';
 import { DataTypes } from 'sequelize';
-import ProductBatch from './ProductBatch.js';
 
 const Product = sequelize.define('Product', {
     id_producto: {

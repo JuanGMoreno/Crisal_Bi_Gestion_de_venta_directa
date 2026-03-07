@@ -27,8 +27,8 @@ const Sale = sequelize.define('Sale', {
     validate: { min: 0 }
   },
   estado: {
-    type: DataTypes.ENUM('ABIERTA', 'CERRADA', 'ANULADA'),
-    defaultValue: 'ABIERTA'
+    type: DataTypes.ENUM('Abierta', 'Cerrada', 'Anulada'),
+    defaultValue: 'Abierta'
   }
 }, {
   timestamps: true,
