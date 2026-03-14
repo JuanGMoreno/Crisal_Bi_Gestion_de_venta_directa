@@ -1,29 +1,21 @@
 import app from "./app.js";
-import express from 'express';
 import { sequelize } from "./config/database.js";
-import ProductRoutes from './routes/product.routes.js';
-import cors from 'cors';
-import './models/associations.js'; 
+import './models/index.js';
 
-//middlewares
-app.use(cors());
-app.use(express.json());
+const PORT = process.env.PORT || 4000;
 
-//routes
-app.use('/api', ProductRoutes); 
-
-//tables definition
-import './models/User.js';
-
-//main function
 async function main() {
-    app.listen(4000);
-    console.log("Server is running on port 4000");
     try {
-        await sequelize.sync({ force: true });
-        console.log('Connection has been established successfully.');
+        await sequelize.sync({ alter: true });
+        console.log('✓ Database connected and models synchronized');
+        
+        // Iniciar servidor
+        app.listen(PORT, () => {
+            console.log(`✓ Server running on http://localhost:${PORT}`);
+        });
     } catch (error) {
-        console.error('Unable to connect to the database:', error);
+        console.error('✗ Unable to start server:', error);
+        process.exit(1);
     }
 }
 
