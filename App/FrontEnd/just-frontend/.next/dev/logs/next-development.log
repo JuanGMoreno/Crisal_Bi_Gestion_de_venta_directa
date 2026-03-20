@@ -1,4 +1,0 @@
-[00:00:02.653] Server  LOG     ✓ Ready in 2.2s
-[00:00:20.854] Browser WARN    Image with src "http://localhost:3000/Logo_Just.svg" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[00:17:50.105] Browser WARN    Image with src "http://localhost:3000/Logo_Just.svg" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[00:41:19.853] Browser WARN    Image with src "http://localhost:3000/Logo_Just.svg" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
