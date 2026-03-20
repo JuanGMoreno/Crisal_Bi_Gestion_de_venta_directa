@@ -20,7 +20,11 @@ const User = sequelize.define('User', {
     contrasena: {
         type: DataTypes.STRING,
         allowNull: false
-    } 
+    },
+    estado: {
+        type: DataTypes.ENUM('Activo', 'Inactivo'),
+        defaultValue: 'Activo'
+    },
 }, {
     timestamps: true, 
     tableName: 'usuarios',

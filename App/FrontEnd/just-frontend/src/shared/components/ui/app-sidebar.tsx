@@ -21,18 +21,22 @@ export function AppSidebar() {
     <Sidebar variant="inset">
       <SidebarHeader>
         <SidebarMenu>
-          <SidebarMenuItem className="flex items-center gap-2">
-            <Image
-              src="/Logo_Just.svg"
-              alt="Just Logo"
-              width={62}
-              height={62}
-              className="rounded-full"
-            />
-            <div className="flex flex-col">
-              <span className="text-md font-bold ">Distribuidores Just</span>
-              <span className="text-sm font-light ">Panel de control</span>
-            </div>
+          <SidebarMenuItem className="flex items-center gap-2" >
+            <SidebarMenuButton asChild size={"lg"}>
+              <Link href={AllUrls['index']}>
+                <Image
+                  src="/Logo_Just.svg"
+                  alt="Just Logo"
+                  width={62}
+                  height={62}
+                  className="rounded-full"
+                />
+                <div className="flex flex-col">
+                  <span className="text-md font-bold ">Distribuidores Just</span>
+                  <span className="text-sm font-light ">Panel de control</span>
+                </div>
+              </Link>
+            </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
