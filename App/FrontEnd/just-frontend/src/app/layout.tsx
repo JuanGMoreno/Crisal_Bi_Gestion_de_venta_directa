@@ -4,8 +4,8 @@ import { ThemeProvider } from "@/shared/components/ui/Themes-provider";
 import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/shared/components/ui/sidebar"
 import { AppSidebar } from "@/shared/components/ui/app-sidebar"
 export const metadata: Metadata = {
-  title: "Dashboard",
-  description: "App con Sidebar",
+  title: "JustMannager",
+  description: "Sistema de Gestion Just",
 };
 
 export default function RootLayout({
@@ -15,7 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" suppressHydrationWarning>
-      <body className="antialiased">
+      <body className="antialiased overflow-hidden">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <SidebarProvider>
             <AppSidebar />
