@@ -12,9 +12,11 @@ export const UserRepository = {
     /**
     * Buscar usuario por email
     */
-    findByEmail: async (email) => {
+    findByEmail: async (email, options = {}) => {
+        const { transaction } = options;
         return await User.findOne({
-            where: { correo: email }
+            where: { correo: email },
+            transaction
         });
     },
     /**
@@ -26,8 +28,9 @@ export const UserRepository = {
     /**
      * Crear nuevo usuario
      */
-    create: async (data) => {
-        return await User.create(data);
+    create: async (data, options = {}) => {
+        const { transaction } = options;
+        return await User.create(data, { transaction });
     },
 
     /**

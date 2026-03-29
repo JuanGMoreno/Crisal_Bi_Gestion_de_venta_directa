@@ -4,9 +4,9 @@ import { loginController, meController, registerController } from "../controller
 
 const router = Router();
 
-router.post("/register", registerController);
+router.post("/signup", registerController);
 
-router.post("/login", loginController);
+router.post("/signin", loginController);
 
 router.get("/me", authMiddleware, meController);
 

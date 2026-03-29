@@ -1,6 +1,6 @@
 import { sequelize } from '../config/database.js';
 import { DataTypes } from 'sequelize';
-import Distributor from './Distributor.js';
+
 
 const Inventory = sequelize.define('Inventory', {
   id_inventario: {

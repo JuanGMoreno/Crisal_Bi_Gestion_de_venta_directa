@@ -1,4 +1,4 @@
-// src/shared/api/authTokens.js
+
 const TOKEN_KEY = "just_token";
 
 export function setToken(token : string ) {

@@ -1,10 +1,10 @@
 import AuthUrls from "./app/auth/urls";
-import DashboardUrls from "./app/dashboard/urls";
+import SystemUrls from "./app/system/urls";
 
 const AllUrls = {
    'index': '/',
    ...AuthUrls,
-   ...DashboardUrls,
+   ...SystemUrls,
 }
 
 export default AllUrls;

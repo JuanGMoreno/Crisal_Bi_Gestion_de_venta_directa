@@ -23,7 +23,7 @@ export function AppSidebar() {
         <SidebarMenu>
           <SidebarMenuItem className="flex items-center gap-2" >
             <SidebarMenuButton asChild size={"lg"}>
-              <Link href={AllUrls['index']}>
+              <Link href={AllUrls['system:index']}>
                 <Image
                   src="/Logo_Just.svg"
                   alt="Just Logo"
@@ -45,40 +45,40 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild size="lg" isActive={pathname === AllUrls['dashboard:dashboard']}>
-                <Link href={AllUrls['dashboard:dashboard']}>
+              <SidebarMenuButton asChild size="lg" isActive={pathname === AllUrls['system:dashboard']}>
+                <Link href={AllUrls['system:dashboard']}>
                   <ChartSpline size={244} />
                   <span className="font-bold pl-1">Panel de Control</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild size="lg" isActive={pathname === AllUrls['dashboard:products']}>
-                <Link href={AllUrls['dashboard:products']}>
+              <SidebarMenuButton asChild size="lg" isActive={pathname === AllUrls['system:products']}>
+                <Link href={AllUrls['system:products']}>
                   <Archive size={244} />
                   <span className="font-bold pl-1">Productos</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild size="lg" isActive={pathname === AllUrls['dashboard:inventory']}>
-                <Link href={AllUrls['dashboard:inventory']}>
+              <SidebarMenuButton asChild size="lg" isActive={pathname === AllUrls['system:inventory']}>
+                <Link href={AllUrls['system:inventory']}>
                   <PackageSearch size={244} />
                   <span className="font-bold pl-1">Inventario</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild size="lg" isActive={pathname === AllUrls['dashboard:customers']}>
-                <Link href={AllUrls['dashboard:customers']}>
+              <SidebarMenuButton asChild size="lg" isActive={pathname === AllUrls['system:customers']}>
+                <Link href={AllUrls['system:customers']}>
                   <Users size={244} />
                   <span className="font-bold pl-1">Clientes</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild size="lg" isActive={pathname === AllUrls['dashboard:sales']}>
-                <Link href={AllUrls['dashboard:sales']}>
+              <SidebarMenuButton asChild size="lg" isActive={pathname === AllUrls['system:sales']}>
+                <Link href={AllUrls['system:sales']}>
                   <BadgeDollarSign size={244} />
                   <span className="font-bold pl-1">Ventas</span>
                 </Link>
@@ -90,8 +90,8 @@ export function AppSidebar() {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem >
-            <SidebarMenuButton asChild size="lg" isActive={pathname === AllUrls['dashboard:profile']}>
-              <Link href={AllUrls['dashboard:profile']}>
+            <SidebarMenuButton asChild size="lg" isActive={pathname === AllUrls['system:profile']}>
+              <Link href={AllUrls['system:profile']}>
                 <AvatarSidebar
                   src="https://avatars.githubusercontent.com/u/118492050?s=400&u=ed3469fc5e2e6147c1367153eb9274cc7e3cb1fd&v=4"
                   alt="Avatar de John Doe"
