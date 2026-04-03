@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/shared/components/ui/Themes-provider";
-import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/shared/components/ui/sidebar";
-import { AppSidebar } from "@/shared/components/ui/app-sidebar";
+import { Toaster } from "@/shared/components/ui/sonner";
 
 export const metadata: Metadata = {
-  title: "Dashboard",
-  description: "App con Sidebar",
+  title: "JustMannager",
+  description: "Sistema de Gestion Just",
 };
 
 export default function RootLayout({
@@ -18,7 +17,8 @@ export default function RootLayout({
     <html lang="es" suppressHydrationWarning>
       <body className="antialiased">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-         {children}
+          {children}
+          <Toaster richColors />
         </ThemeProvider>
       </body>
     </html>

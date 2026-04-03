@@ -1,6 +1,6 @@
 import { sequelize } from '../config/database.js';
 import { DataTypes } from 'sequelize';
-import User from './User.js';
+
 
 const Distributor = sequelize.define('Distributor', {
   id_distribuidor: {
@@ -15,7 +15,7 @@ const Distributor = sequelize.define('Distributor', {
   },
   id_distribuidor_padre: {
     type: DataTypes.UUID,
-    allowNull: true
+    allowNull: true,
   },
   nombre: {
     type: DataTypes.STRING,
@@ -28,6 +28,15 @@ const Distributor = sequelize.define('Distributor', {
   },
   foto_avatar: {
     type: DataTypes.STRING,
+    allowNull: true
+  },
+  codigo_referido: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    unique: true
+  },
+  fecha_vencimiento_codigo: {
+    type: DataTypes.DATE,
     allowNull: true
   },
   estado: {
