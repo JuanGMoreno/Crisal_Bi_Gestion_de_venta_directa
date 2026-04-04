@@ -7,6 +7,10 @@ const Product = sequelize.define('Product', {
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true
     },
+    id_distribuidor: {
+        type: DataTypes.UUID,
+        allowNull: true
+    },
     nombre: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -48,6 +52,7 @@ const Product = sequelize.define('Product', {
     tableName: 'productos',
     freezeTableName: true,
     indexes: [
+        { fields: ['id_distribuidor'] },
     { fields: ['codigo'] },
     { fields: ['nombre'] },
     { fields: ['estado'] }

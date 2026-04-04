@@ -19,6 +19,15 @@ export const DistributorRepository = {
   },
 
   /**
+   * Buscar distribuidor por ID de usuario
+   */
+  findByUserId: async (userId) => {
+    return await Distributor.findOne({
+      where: { id_usuario: userId }
+    });
+  },
+
+  /**
    * Buscar distribuidor por código
    */
   findByCode: async (codigoReferido, options = {}) => {

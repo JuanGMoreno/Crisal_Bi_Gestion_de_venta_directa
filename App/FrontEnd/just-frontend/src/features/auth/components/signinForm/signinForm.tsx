@@ -15,9 +15,9 @@ import {
 } from "@/shared/components/ui/field"
 import { authSigninSchema } from "@/features/auth/validations/authSigninSchema";
 import { AuthSignin } from "@/features/auth/validations/authSigninSchema";
-import authServices from "@/features/auth/services/authServices";
+import useAuthServices from "@/features/auth/services/authServices";
 export default function SigninForm() {
-    const authSrv = authServices();
+    const authSrv = useAuthServices();
     const router = useRouter();
 
     const form = useForm({

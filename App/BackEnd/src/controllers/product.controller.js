@@ -5,7 +5,7 @@ import { ProductService } from '../services/product.service.js';
  */
 export const getProducts = async (req, res) => {
   try {
-    const products = await ProductService.getActiveProducts();
+    const products = await ProductService.getActiveProducts(req.user.id);
     if (products.length === 0) {
       res.status(404).json({ message: 'No se encontraron productos activos' });
     } else {
@@ -25,7 +25,7 @@ export const getProducts = async (req, res) => {
 export const getProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const product = await ProductService.getProductById(id);
+    const product = await ProductService.getProductById(id, req.user.id);
     res.status(200).json(product);
   } catch (error) {
     const statusCode = error.message === 'Producto no encontrado' ? 404 : 500;
@@ -40,7 +40,7 @@ export const getProduct = async (req, res) => {
  */
 export const createProduct = async (req, res) => {
   try {
-    const product = await ProductService.createProduct(req.body);
+    const product = await ProductService.createProduct(req.body, req.user.id);
     res.status(201).json(product);
   } catch (error) {
     res.status(400).json({ 
@@ -55,7 +55,7 @@ export const createProduct = async (req, res) => {
 export const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const product = await ProductService.updateProduct(id, req.body);
+    const product = await ProductService.updateProduct(id, req.body, req.user.id);
     res.status(200).json(product);
   } catch (error) {
     const statusCode = error.message === 'Producto no encontrado' ? 404 : 400;
@@ -71,7 +71,7 @@ export const updateProduct = async (req, res) => {
 export const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await ProductService.deleteProduct(id);
+    const result = await ProductService.deleteProduct(id, req.user.id);
     res.json(result);
   } catch (error) {
     const statusCode = error.message === 'Producto no encontrado' ? 404 : 500;

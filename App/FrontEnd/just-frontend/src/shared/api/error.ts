@@ -23,3 +23,11 @@ export function getApiErrorMessage(error: unknown, fallback = "Ocurrio un error 
 
   return fallback;
 }
+
+export function getApiErrorStatus(error: unknown): number | undefined {
+  if (axios.isAxiosError(error)) {
+    return error.response?.status;
+  }
+
+  return undefined;
+}

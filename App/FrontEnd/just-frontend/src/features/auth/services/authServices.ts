@@ -4,7 +4,7 @@ import { http } from "@/shared/api/http";
 import { setToken } from "@/shared/api/authTokens";
 import { getApiErrorMessage } from "@/shared/api/error";
 
-export default function AuthServices() {
+export default function useAuthServices() {
 
 
   const Signin = useCallback( async ({ correo, contraseña }: signinParams) => {
