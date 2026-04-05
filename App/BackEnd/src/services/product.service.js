@@ -1,11 +1,26 @@
 import { ProductRepository } from '../repositories/product.repository.js';
+import { DistributorRepository } from '../repositories/distributor.repository.js';
+
+async function resolveDistributorIdByUserId(userId) {
+  const distributor = await DistributorRepository.findByUserId(userId);
+
+  if (!distributor) {
+    throw new Error('Distribuidor no encontrado para el usuario autenticado');
+  }
+
+  return distributor.id_distribuidor;
+}
 
 export const ProductService = {
   /**
    * Obtener todos los productos activos
    */
-  getActiveProducts: async () => {
-    const products = await ProductRepository.findAll({ estado: 'Activo' });
+  getActiveProducts: async (userId) => {
+    const distributorId = await resolveDistributorIdByUserId(userId);
+    const products = await ProductRepository.findAll({
+      estado: 'Activo',
+      id_distribuidor: distributorId
+    });
     return products;
   },
 
@@ -19,8 +34,9 @@ export const ProductService = {
   /**
    * Obtener producto por ID con validaciones
    */
-  getProductById: async (id) => {
-    const product = await ProductRepository.findById(id);
+  getProductById: async (id, userId) => {
+    const distributorId = await resolveDistributorIdByUserId(userId);
+    const product = await ProductRepository.findByIdAndDistributor(id, distributorId);
     
     if (!product) {
       throw new Error('Producto no encontrado');
@@ -32,7 +48,9 @@ export const ProductService = {
   /**
    * Crear producto con validaciones de negocio
    */
-  createProduct: async (data) => {
+  createProduct: async (data, userId) => {
+    const distributorId = await resolveDistributorIdByUserId(userId);
+
     // Validación de negocio: precio de venta debe ser mayor al de compra
     if (data.precio_venta && data.precio_compra) {
       if (parseFloat(data.precio_venta) < parseFloat(data.precio_compra)) {
@@ -42,19 +60,24 @@ export const ProductService = {
 
     // Validar que el código no exista
     if (data.codigo) {
-      const existingProduct = await ProductRepository.findByCode(data.codigo);
+      const existingProduct = await ProductRepository.findByCodeAndDistributor(data.codigo, distributorId);
       if (existingProduct) {
         throw new Error('Ya existe un producto con ese código');
       }
     }
 
-    return await ProductRepository.create(data);
+    return await ProductRepository.create({
+      ...data,
+      id_distribuidor: distributorId
+    });
   },
 
   /**
    * Actualizar producto con validaciones
    */
-  updateProduct: async (id, data) => {
+  updateProduct: async (id, data, userId) => {
+    const distributorId = await resolveDistributorIdByUserId(userId);
+
     // Validación de negocio: precio de venta debe ser mayor al de compra
     if (data.precio_venta && data.precio_compra) {
       if (parseFloat(data.precio_venta) < parseFloat(data.precio_compra)) {
@@ -64,13 +87,16 @@ export const ProductService = {
 
     // Si se está actualizando el código, validar que no exista
     if (data.codigo) {
-      const existingProduct = await ProductRepository.findByCode(data.codigo);
+      const existingProduct = await ProductRepository.findByCodeAndDistributor(data.codigo, distributorId);
       if (existingProduct && existingProduct.id_producto !== id) {
         throw new Error('Ya existe un producto con ese código');
       }
     }
 
-    const product = await ProductRepository.update(id, data);
+    const product = await ProductRepository.updateByDistributor(id, distributorId, {
+      ...data,
+      id_distribuidor: distributorId
+    });
     
     if (!product) {
       throw new Error('Producto no encontrado');
@@ -82,8 +108,9 @@ export const ProductService = {
   /**
    * Eliminar producto (soft delete)
    */
-  deleteProduct: async (id) => {
-    const product = await ProductRepository.softDelete(id);
+  deleteProduct: async (id, userId) => {
+    const distributorId = await resolveDistributorIdByUserId(userId);
+    const product = await ProductRepository.softDeleteByDistributor(id, distributorId);
     
     if (!product) {
       throw new Error('Producto no encontrado');

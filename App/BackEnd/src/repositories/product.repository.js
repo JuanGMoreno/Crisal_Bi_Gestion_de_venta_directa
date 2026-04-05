@@ -19,11 +19,35 @@ export const ProductRepository = {
   },
 
   /**
+   * Buscar producto por ID y distribuidor
+   */
+  findByIdAndDistributor: async (id, distributorId) => {
+    return await Product.findOne({
+      where: {
+        id_producto: id,
+        id_distribuidor: distributorId
+      }
+    });
+  },
+
+  /**
    * Buscar producto por código
    */
   findByCode: async (codigo) => {
     return await Product.findOne({ 
       where: { codigo } 
+    });
+  },
+
+  /**
+   * Buscar producto por código y distribuidor
+   */
+  findByCodeAndDistributor: async (codigo, distributorId) => {
+    return await Product.findOne({
+      where: {
+        codigo,
+        id_distribuidor: distributorId
+      }
     });
   },
 
@@ -44,10 +68,28 @@ export const ProductRepository = {
   },
 
   /**
+   * Actualizar producto por ID y distribuidor
+   */
+  updateByDistributor: async (id, distributorId, data) => {
+    const product = await ProductRepository.findByIdAndDistributor(id, distributorId);
+    if (!product) return null;
+    return await product.update(data);
+  },
+
+  /**
    * Eliminación lógica (soft delete)
    */
   softDelete: async (id) => {
     const product = await Product.findByPk(id);
+    if (!product) return null;
+    return await product.update({ estado: 'Inactivo' });
+  },
+
+  /**
+   * Eliminación lógica (soft delete) por distribuidor
+   */
+  softDeleteByDistributor: async (id, distributorId) => {
+    const product = await ProductRepository.findByIdAndDistributor(id, distributorId);
     if (!product) return null;
     return await product.update({ estado: 'Inactivo' });
   },

@@ -48,6 +48,26 @@ Distributor.hasOne(Inventory, {
 });
 
 // --------------------
+// Distributor <-> Product (1:N)
+// Distributor <-> Client (1:N)
+// --------------------
+Product.belongsTo(Distributor, {
+  foreignKey: 'id_distribuidor',
+  onDelete: 'CASCADE'
+});
+Distributor.hasMany(Product, {
+  foreignKey: 'id_distribuidor'
+});
+
+Client.belongsTo(Distributor, {
+  foreignKey: 'id_distribuidor',
+  onDelete: 'CASCADE'
+});
+Distributor.hasMany(Client, {
+  foreignKey: 'id_distribuidor'
+});
+
+// --------------------
 // Inventory <-> Batch (1:N)
 // --------------------
 Batch.belongsTo(Inventory, {
