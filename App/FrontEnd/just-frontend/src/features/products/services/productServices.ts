@@ -30,7 +30,7 @@ export default function useProductServices() {
     }
   }, []);
 
-  const createProduct = useCallback(async (data: Omit<Product, "id_producto">): Promise<Product> => {
+  const createProduct = useCallback(async (data: FormData): Promise<Product> => {
     try {
       const response = await http.post("/products", data);
       return response.data;
@@ -40,7 +40,7 @@ export default function useProductServices() {
     }
   }, []);
 
-  const updateProduct = useCallback(async (id: string, data: Partial<Omit<Product, "id_producto">>): Promise<Product> => {
+  const updateProduct = useCallback(async (id: string, data: FormData): Promise<Product> => {
     try {
       const response = await http.put(`/products/${id}`, data);
       return response.data;

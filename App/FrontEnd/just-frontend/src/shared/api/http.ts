@@ -18,9 +18,6 @@ function shouldHandleUnauthorizedGlobally(requestUrl?: string) {
 export const http = axios.create({
   baseURL:  "http://localhost:4001/api",
   timeout: 15000,
-  headers: {
-    "Content-Type": "application/json",
-  },
 });
 
 // 1) Interceptor de REQUEST: agrega token si existe
@@ -32,6 +29,14 @@ http.interceptors.request.use((config) => {
       config.headers.Authorization = `Bearer ${token}`;
     }
   }
+
+  // Para FormData, dejar que el navegador construya multipart/form-data con boundary.
+  if (config.data instanceof FormData) {
+    delete config.headers["Content-Type"];
+  } else {
+    config.headers["Content-Type"] = "application/json";
+  }
+
   return config;
 });
 

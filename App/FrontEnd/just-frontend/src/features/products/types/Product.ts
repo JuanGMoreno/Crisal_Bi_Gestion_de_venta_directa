@@ -9,12 +9,4 @@ interface Product {
     estado: string
 }
 
-export interface  ItemProductTable {
-    nombre: string,
-    codigo : string,
-    precio_compra: number,
-    precio_venta: number,
-    estado: string
-}
-
 export default Product;

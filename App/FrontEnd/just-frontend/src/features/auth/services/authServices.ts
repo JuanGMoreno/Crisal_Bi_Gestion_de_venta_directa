@@ -11,6 +11,7 @@ export default function useAuthServices() {
     try {
         const response = await http.post("/auth/signin", { correo : correo, contraseña: contraseña });
       setToken(response.data.accessToken); // Almacena el token
+      console.log("user data signin:", response.data);
         return response.data; // Devuelve el token
     }catch (error : unknown) {
         console.error("Error en signin:", error);
