@@ -39,6 +39,18 @@ export const getProduct = async (req, res) => {
  * Crear un nuevo producto
  */
 export const createProduct = async (req, res) => {
+  // Manejo de la imagen cargada y asignación de la URL al campo foto_avatar
+  let urlImage = req.file ? (req.file.path || req.file.secure_url || req.file.url || null) : null;
+  console.log('Archivo recibido en createProduct:', req.file);
+  console.log('URL de la imagen cargada:', urlImage);
+  if (Array.isArray(req.body?.foto_avatar)) {
+    req.body.foto_avatar = req.body.foto_avatar[0] ?? null;
+  } else if (req.body?.foto_avatar && typeof req.body.foto_avatar === 'object') {
+    req.body.foto_avatar = req.body.foto_avatar.path || req.body.foto_avatar.secure_url || req.body.foto_avatar.url || null;
+  }
+  if (urlImage) {
+    req.body.foto_avatar = urlImage;
+  }
   try {
     const product = await ProductService.createProduct(req.body, req.user.id);
     res.status(201).json(product);
@@ -53,6 +65,17 @@ export const createProduct = async (req, res) => {
  * Actualizar un producto existente
  */
 export const updateProduct = async (req, res) => {
+  let urlImage = req.file ? (req.file.path || req.file.secure_url || req.file.url || null) : null;
+  console.log('Archivo recibido en updateProduct:', req.file);
+  console.log('URL de la imagen cargada:', urlImage);
+  if (Array.isArray(req.body?.foto_avatar)) {
+    req.body.foto_avatar = req.body.foto_avatar[0] ?? null;
+  } else if (req.body?.foto_avatar && typeof req.body.foto_avatar === 'object') {
+    req.body.foto_avatar = req.body.foto_avatar.path || req.body.foto_avatar.secure_url || req.body.foto_avatar.url || null;
+  }
+  if (urlImage) {
+    req.body.foto_avatar = urlImage;
+  }
   try {
     const { id } = req.params;
     const product = await ProductService.updateProduct(id, req.body, req.user.id);

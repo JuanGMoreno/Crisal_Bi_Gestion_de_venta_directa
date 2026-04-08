@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/shared/components/ui/Themes-provider";
 import { Toaster } from "@/shared/components/ui/sonner";
+import QueryProvider from "@/providers/QueryProviders";
 
 export const metadata: Metadata = {
   title: "JustMannager",
@@ -17,8 +18,10 @@ export default function RootLayout({
     <html lang="es" suppressHydrationWarning>
       <body className="antialiased">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          {children}
-          <Toaster richColors />
+          <QueryProvider>
+            {children}
+            <Toaster richColors />
+          </QueryProvider>
         </ThemeProvider>
       </body>
     </html>
