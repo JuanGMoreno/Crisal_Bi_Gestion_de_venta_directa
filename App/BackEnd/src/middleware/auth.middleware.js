@@ -3,18 +3,20 @@ import { verifyAccessToken } from "../utils/jwt.js";
 export function authMiddleware(req, res, next) {
   try {
     const authHeader = req.headers.authorization;
+    const cookieToken = req.cookies?.access_token;
 
-    if (!authHeader) {
-      return res.status(401).json({
-        message: "Falta el header Authorization",
-      });
+    let token = cookieToken;
+
+    if (authHeader) {
+      const [scheme, bearerToken] = authHeader.split(" ");
+      if (scheme === "Bearer" && bearerToken) {
+        token = bearerToken;
+      }
     }
 
-    const [scheme, token] = authHeader.split(" ");
-
-    if (scheme !== "Bearer" || !token) {
+    if (!token) {
       return res.status(401).json({
-        message: "Formato inválido. Usa: Bearer <token>",
+        message: "No autenticado",
       });
     }
 

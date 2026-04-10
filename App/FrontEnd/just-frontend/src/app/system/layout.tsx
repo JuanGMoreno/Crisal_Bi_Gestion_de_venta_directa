@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/shared/components/ui/sidebar";
 import { AppSidebar } from "@/shared/components/ui/app-sidebar";
-import { getToken } from "@/shared/api/authTokens";
+import { useAuthSession } from "@/features/auth/hooks/useAuthSession";
 
 export default function DashboardLayout({
   children,
@@ -12,20 +12,15 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const [canRender, setCanRender] = useState(false);
+  const { user, isLoading, isError } = useAuthSession();
 
   useEffect(() => {
-    const token = getToken();
-
-    if (!token) {
+    if (!isLoading && (isError || !user)) {
       router.replace("/auth/signin");
-      return;
     }
+  }, [isError, isLoading, router, user]);
 
-    setCanRender(true);
-  }, [router]);
-
-  if (!canRender) {
+  if (isLoading || isError || !user) {
     return null;
   }
 
