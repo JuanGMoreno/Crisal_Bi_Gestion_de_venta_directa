@@ -55,6 +55,7 @@ export const createProduct = async (req, res) => {
     const product = await ProductService.createProduct(req.body, req.user.id);
     res.status(201).json(product);
   } catch (error) {
+    console.error('Error en createProduct:', error);
     res.status(400).json({ 
       message: error.message 
     });

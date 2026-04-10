@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/shared/components/ui/button";
 import { useEffect } from "react";
 import HeaderManagerProduct from "@/features/products/components/HeaderManagerProduct/HeaderManagerProduct";
 import { columns } from "@/features/products/components/columns/columns";

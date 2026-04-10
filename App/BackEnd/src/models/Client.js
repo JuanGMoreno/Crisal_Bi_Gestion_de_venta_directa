@@ -9,7 +9,7 @@ const Client = sequelize.define('Client', {
   },
   id_distribuidor: {
     type: DataTypes.UUID,
-    allowNull: true
+    allowNull: false
   },
   nombre: {
     type: DataTypes.STRING(120),
@@ -23,7 +23,6 @@ const Client = sequelize.define('Client', {
   cedula: {
     type: DataTypes.STRING(30),
     allowNull: false,          
-    unique: true,
     validate: { notEmpty: true, len: [4, 30] }
   },
   edad: {
@@ -49,7 +48,7 @@ const Client = sequelize.define('Client', {
   freezeTableName: true,
   indexes: [
     { fields: ['id_distribuidor'] },
-    { fields: ['cedula'] },
+    { unique: true, fields: ['id_distribuidor', 'cedula'] },
     { fields: ['nombre'] },
     { fields: ['estado'] }
   ]

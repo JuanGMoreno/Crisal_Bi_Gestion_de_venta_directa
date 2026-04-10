@@ -80,16 +80,16 @@ export function DialogDetailsProduct() {
                                     <span className="font-medium text-muted-foreground">Estado: </span>
                                     <span>{productData?.estado || "Sin estado"}</span>
                                 </p>
+                                <p>
+                                    <span className="font-medium text-muted-foreground">Categoría: </span>
+                                    <span>{productData?.categoria || "Sin categoría"}</span>
+                                </p>
                             </div>
 
-                            <div className="grid gap-3 pt-1 sm:grid-cols-2">
+                            <div className="grid gap-3 pt-1 sm:grid-cols-1">
                                 <div className="rounded-lg border bg-muted/30 p-3">
-                                    <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Precio de Compra</p>
-                                    <p className="text-lg font-semibold text-primary">{formatCurrency(productData?.precio_compra)}</p>
-                                </div>
-                                <div className="rounded-lg border bg-muted/30 p-3">
-                                    <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Precio de Venta</p>
-                                    <p className="text-lg font-semibold text-primary">{formatCurrency(productData?.precio_venta)}</p>
+                                    <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Precio Base de Venta</p>
+                                    <p className="text-lg font-semibold text-primary">{formatCurrency(productData?.precio_base_venta)}</p>
                                 </div>
                             </div>
                         </div>

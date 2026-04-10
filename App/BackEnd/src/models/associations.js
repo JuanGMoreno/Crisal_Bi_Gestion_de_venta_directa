@@ -3,21 +3,28 @@
 import User from './User.js';
 import Distributor from './Distributor.js';
 import Inventory from './Inventory.js';
-import Batch from './Batch.js';
+import InventoryIncome from './inventory_income.js';
 import Product from './Product.js';
-import ProductBatch from './ProductBatch.js';
+import EntryDetail from './entry_details.js';
 import Client from './Client.js';
 import Sale from './Sale.js';
 import SaleDetail from './SaleDetail.js';
+import SalesDetailsIncome from './SalesDetailsIncome.js';
 
 // --------------------
 // User <-> Distributor (1:1)
 // --------------------
 Distributor.belongsTo(User, {
-  foreignKey: 'id_usuario',
+  as: 'usuario',
+  foreignKey: {
+    name: 'id_usuario',
+    allowNull: false
+  },
+  onUpdate: 'CASCADE',
   onDelete: 'CASCADE'
 });
 User.hasOne(Distributor, {
+  as: 'distribuidor',
   foreignKey: 'id_usuario'
 });
 
@@ -26,7 +33,11 @@ User.hasOne(Distributor, {
 // --------------------
 Distributor.belongsTo(Distributor, {
   as: 'padre',
-  foreignKey: 'id_distribuidor_padre',
+  foreignKey: {
+    name: 'id_distribuidor_padre',
+    allowNull: true
+  },
+  onUpdate: 'CASCADE',
   onDelete: 'SET NULL',
   constraints: true
 });
@@ -37,13 +48,19 @@ Distributor.hasMany(Distributor, {
 });
 
 // --------------------
-// Distributor <-> Inventory (1:1)
+// Distributor <-> Inventory (1:N)
 // --------------------
 Inventory.belongsTo(Distributor, {
-  foreignKey: 'id_distribuidor',
+  as: 'distribuidor',
+  foreignKey: {
+    name: 'id_distribuidor',
+    allowNull: false
+  },
+  onUpdate: 'CASCADE',
   onDelete: 'CASCADE'
 });
-Distributor.hasOne(Inventory, {
+Distributor.hasMany(Inventory, {
+  as: 'inventarios',
   foreignKey: 'id_distribuidor'
 });
 
@@ -52,104 +69,202 @@ Distributor.hasOne(Inventory, {
 // Distributor <-> Client (1:N)
 // --------------------
 Product.belongsTo(Distributor, {
-  foreignKey: 'id_distribuidor',
+  as: 'distribuidor',
+  foreignKey: {
+    name: 'id_distribuidor',
+    allowNull: false
+  },
+  onUpdate: 'CASCADE',
   onDelete: 'CASCADE'
 });
 Distributor.hasMany(Product, {
+  as: 'productos',
   foreignKey: 'id_distribuidor'
 });
 
 Client.belongsTo(Distributor, {
-  foreignKey: 'id_distribuidor',
+  as: 'distribuidor',
+  foreignKey: {
+    name: 'id_distribuidor',
+    allowNull: false
+  },
+  onUpdate: 'CASCADE',
   onDelete: 'CASCADE'
 });
 Distributor.hasMany(Client, {
+  as: 'clientes',
   foreignKey: 'id_distribuidor'
 });
 
 // --------------------
-// Inventory <-> Batch (1:N)
+// Inventory <-> InventoryIncome (1:N)
 // --------------------
-Batch.belongsTo(Inventory, {
-  foreignKey: 'id_inventario',
+InventoryIncome.belongsTo(Inventory, {
+  as: 'inventario',
+  foreignKey: {
+    name: 'id_inventario',
+    allowNull: false
+  },
+  onUpdate: 'CASCADE',
   onDelete: 'CASCADE'
 });
-Inventory.hasMany(Batch, {
+Inventory.hasMany(InventoryIncome, {
+  as: 'ingresos',
   foreignKey: 'id_inventario'
 });
 
 // --------------------
-// Batch <-> ProductBatch (1:N)
-// Product <-> ProductBatch (1:N)
+// InventoryIncome <-> EntryDetail (1:N)
+// Product <-> EntryDetail (1:N)
 // --------------------
-ProductBatch.belongsTo(Batch, {
-  foreignKey: 'id_lote',
+EntryDetail.belongsTo(InventoryIncome, {
+  as: 'ingreso',
+  foreignKey: {
+    name: 'id_ingreso',
+    allowNull: false
+  },
+  onUpdate: 'CASCADE',
   onDelete: 'CASCADE'
 });
-Batch.hasMany(ProductBatch, {
-  foreignKey: 'id_lote'
+InventoryIncome.hasMany(EntryDetail, {
+  as: 'detalles',
+  foreignKey: 'id_ingreso'
 });
 
-ProductBatch.belongsTo(Product, {
-  foreignKey: 'id_producto',
+EntryDetail.belongsTo(Product, {
+  as: 'producto',
+  foreignKey: {
+    name: 'id_producto',
+    allowNull: false
+  },
+  onUpdate: 'CASCADE',
   onDelete: 'CASCADE'
 });
-Product.hasMany(ProductBatch, {
+Product.hasMany(EntryDetail, {
+  as: 'detalles_ingreso',
   foreignKey: 'id_producto'
 });
-
-// (Opcional) Si más adelante quieres consultar directo:
-// Product.belongsToMany(Batch, { through: ProductBatch, foreignKey: 'id_producto', otherKey: 'id_lote' });
-// Batch.belongsToMany(Product, { through: ProductBatch, foreignKey: 'id_lote', otherKey: 'id_producto' });
 
 // --------------------
 // Client <-> Sale (1:N)
 // Distributor <-> Sale (1:N)
 // --------------------
 Sale.belongsTo(Client, {
-  foreignKey: 'id_cliente',
-  onDelete: 'CASCADE'
+  as: 'cliente',
+  foreignKey: {
+    name: 'id_cliente',
+    allowNull: true
+  },
+  onUpdate: 'CASCADE',
+  onDelete: 'SET NULL'
 });
 Client.hasMany(Sale, {
+  as: 'ventas',
   foreignKey: 'id_cliente'
 });
 
 Sale.belongsTo(Distributor, {
-  foreignKey: 'id_distribuidor',
+  as: 'distribuidor',
+  foreignKey: {
+    name: 'id_distribuidor',
+    allowNull: false
+  },
+  onUpdate: 'CASCADE',
   onDelete: 'CASCADE'
 });
 Distributor.hasMany(Sale, {
+  as: 'ventas',
   foreignKey: 'id_distribuidor'
+});
+
+Sale.belongsTo(User, {
+  as: 'usuario',
+  foreignKey: {
+    name: 'id_usuario',
+    allowNull: true
+  },
+  onUpdate: 'CASCADE',
+  onDelete: 'SET NULL'
+});
+User.hasMany(Sale, {
+  as: 'ventas',
+  foreignKey: 'id_usuario'
 });
 
 // --------------------
 // Sale <-> SaleDetail (1:N)
 // Product <-> SaleDetail (1:N)
-// ProductBatch <-> SaleDetail (1:N)  (por lote_producto)
+// EntryDetail <-> SalesDetailsIncome (1:N)
+// SaleDetail <-> SalesDetailsIncome (1:N)
 // --------------------
 SaleDetail.belongsTo(Sale, {
-  foreignKey: 'id_venta',
+  as: 'venta',
+  foreignKey: {
+    name: 'id_venta',
+    allowNull: false
+  },
+  onUpdate: 'CASCADE',
   onDelete: 'CASCADE'
 });
 Sale.hasMany(SaleDetail, {
+  as: 'detalles',
   foreignKey: 'id_venta'
 });
 
 SaleDetail.belongsTo(Product, {
-  foreignKey: 'id_producto',
+  as: 'producto',
+  foreignKey: {
+    name: 'id_producto',
+    allowNull: false
+  },
+  onUpdate: 'CASCADE',
   onDelete: 'RESTRICT' // recomendado para historial: evita borrar producto si ya se vendió
 });
 Product.hasMany(SaleDetail, {
+  as: 'detalles_venta',
   foreignKey: 'id_producto'
 });
 
-// IMPORTANTE: en SaleDetail debes tener el campo id_lote_producto (UUID, NOT NULL)
-SaleDetail.belongsTo(ProductBatch, {
-  foreignKey: 'id_lote_producto',
-  onDelete: 'RESTRICT' // evita borrar lote_producto si ya se vendió
+SalesDetailsIncome.belongsTo(SaleDetail, {
+  as: 'detalle_venta',
+  foreignKey: {
+    name: 'id_detalle_venta',
+    allowNull: false
+  },
+  onUpdate: 'CASCADE',
+  onDelete: 'CASCADE'
 });
-ProductBatch.hasMany(SaleDetail, {
-  foreignKey: 'id_lote_producto'
+SaleDetail.hasMany(SalesDetailsIncome, {
+  as: 'consumos_ingreso',
+  foreignKey: 'id_detalle_venta'
+});
+
+SalesDetailsIncome.belongsTo(EntryDetail, {
+  as: 'detalle_ingreso',
+  foreignKey: {
+    name: 'id_detalle_ingreso',
+    allowNull: false
+  },
+  onUpdate: 'CASCADE',
+  onDelete: 'RESTRICT'
+});
+EntryDetail.hasMany(SalesDetailsIncome, {
+  as: 'salidas_venta',
+  foreignKey: 'id_detalle_ingreso'
+});
+
+SaleDetail.belongsToMany(EntryDetail, {
+  as: 'detalles_ingreso',
+  through: SalesDetailsIncome,
+  foreignKey: 'id_detalle_venta',
+  otherKey: 'id_detalle_ingreso'
+});
+
+EntryDetail.belongsToMany(SaleDetail, {
+  as: 'detalles_venta',
+  through: SalesDetailsIncome,
+  foreignKey: 'id_detalle_ingreso',
+  otherKey: 'id_detalle_venta'
 });
 
 // No exporta nada: basta con importar este archivo para registrar asociaciones.

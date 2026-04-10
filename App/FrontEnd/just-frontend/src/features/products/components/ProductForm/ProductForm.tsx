@@ -15,6 +15,13 @@ import {
     FieldLabel,
     FieldSet,
 } from "@/shared/components/ui/field"
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/shared/components/ui/select"
 import { ProductSchema } from "../../validations/ProductSchema";
 import { ProductFormData } from "../../validations/ProductSchema";
 import { useDialogStore } from "@/store/use-dialog-store";
@@ -28,6 +35,7 @@ type ProductFormProps = {
 };
 
 const DEFAULT_PREVIEW_IMAGE = "/Logo_Just.svg";
+const DESCRIPTION_MAX_LENGTH = 1000;
 
 export default function ProductForm({
     initialData,
@@ -49,10 +57,10 @@ export default function ProductForm({
             nombre: initialData?.nombre || "",
             descripcion: initialData?.descripcion || "",
             codigo: initialData?.codigo || "",
-            precio_compra: initialData?.precio_compra || 0,
-            precio_venta: initialData?.precio_venta || 0,
+            precio_base_venta: initialData?.precio_base_venta || 0,
             foto_avatar: "",
             estado: initialData?.estado || "Activo",
+            categoria: initialData?.categoria || "Aromaterapia",
         },
     });
 
@@ -61,10 +69,10 @@ export default function ProductForm({
             nombre: initialData?.nombre || "",
             descripcion: initialData?.descripcion || "",
             codigo: initialData?.codigo || "",
-            precio_compra: initialData?.precio_compra || 0,
-            precio_venta: initialData?.precio_venta || 0,
+            precio_base_venta: initialData?.precio_base_venta || 0,
             foto_avatar: initialData?.foto_avatar || "",
             estado: initialData?.estado || "Activo",
+            categoria: initialData?.categoria || "Aromaterapia",
         });
     }, [initialData, form]);
 
@@ -81,9 +89,9 @@ export default function ProductForm({
         formData.append("nombre", data.nombre);
         formData.append("descripcion", data.descripcion);
         formData.append("codigo", data.codigo);
-        formData.append("precio_compra", String(data.precio_compra));
-        formData.append("precio_venta", String(data.precio_venta));
+        formData.append("precio_base_venta", String(data.precio_base_venta));
         formData.append("estado", data.estado);
+        formData.append("categoria", data.categoria);
 
         if (selectedPhotoFile) {
             formData.append("foto_avatar", selectedPhotoFile);
@@ -131,6 +139,7 @@ export default function ProductForm({
     };
 
     const fotoValue = useWatch({ control: form.control, name: "foto_avatar" });
+    const descripcionValue = useWatch({ control: form.control, name: "descripcion" });
     const previewSrc = localPreviewUrl || (fotoValue?.trim() ? fotoValue : DEFAULT_PREVIEW_IMAGE);
 
     return (
@@ -165,13 +174,13 @@ export default function ProductForm({
                             )}
                         />
                         <Controller
-                            name="precio_compra"
+                            name="precio_base_venta"
                             control={form.control}
                             render={({ field, fieldState }) => (
                                 <Field data-invalid={fieldState.invalid}>
-                                    <FieldLabel htmlFor="purchasePrice">Precio de Compra</FieldLabel>
+                                    <FieldLabel htmlFor="baseSalePrice">Precio Base de Venta</FieldLabel>
                                     <Input
-                                        id="purchasePrice"
+                                        id="baseSalePrice"
                                         type="number"
                                         step="any"
                                         name={field.name}
@@ -180,7 +189,7 @@ export default function ProductForm({
                                         onChange={(e) => field.onChange(e.target.value)}
                                         onBlur={field.onBlur}
                                         aria-invalid={fieldState.invalid}
-                                        placeholder="Precio de Compra"
+                                        placeholder="Precio Base de Venta"
                                         className="w-full h-9"
                                     />
                                     {fieldState.invalid && (
@@ -190,24 +199,25 @@ export default function ProductForm({
                             )}
                         />
                         <Controller
-                            name="precio_venta"
+                            name="categoria"
                             control={form.control}
                             render={({ field, fieldState }) => (
                                 <Field data-invalid={fieldState.invalid}>
-                                    <FieldLabel htmlFor="salePrice">Precio de Venta</FieldLabel>
-                                    <Input
-                                        id="salePrice"
-                                        type="number"
-                                        step="any"
-                                        name={field.name}
-                                        ref={field.ref}
-                                        value={typeof field.value === "number" ? field.value : field.value ? String(field.value) : ""}
-                                        onChange={(e) => field.onChange(e.target.value)}
-                                        onBlur={field.onBlur}
-                                        aria-invalid={fieldState.invalid}
-                                        placeholder="Precio de Venta"
-                                        className="w-full h-9"
-                                    />
+                                    <FieldLabel htmlFor="category">Categoría</FieldLabel>
+                                    <Select
+                                        value={field.value}
+                                        onValueChange={field.onChange}
+                                    >
+                                        <SelectTrigger id="category" className="w-full h-9" aria-invalid={fieldState.invalid}>
+                                            <SelectValue placeholder="Selecciona una categoría" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="Aromaterapia">Aromaterapia</SelectItem>
+                                            <SelectItem value="Bienestar emocional y mental">Bienestar emocional y mental</SelectItem>
+                                            <SelectItem value="Bienestar físico">Bienestar físico</SelectItem>
+                                            <SelectItem value="Bienestar dermo-comético">Bienestar dermo-comético</SelectItem>
+                                        </SelectContent>
+                                    </Select>
                                     {fieldState.invalid && (
                                         <FieldError errors={[fieldState.error]} />
                                     )}
@@ -221,7 +231,17 @@ export default function ProductForm({
                         render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
                                 <FieldLabel htmlFor="description">Descripción</FieldLabel>
-                                <Textarea {...field} id="description" aria-invalid={fieldState.invalid} placeholder="Descripción" className="w-full h-20" />
+                                <Textarea
+                                    {...field}
+                                    id="description"
+                                    aria-invalid={fieldState.invalid}
+                                    placeholder="Descripción"
+                                    className="w-full h-20"
+                                    maxLength={DESCRIPTION_MAX_LENGTH}
+                                />
+                                <p className="mt-1 text-xs text-muted-foreground">
+                                    {(descripcionValue?.length ?? 0)}/{DESCRIPTION_MAX_LENGTH}
+                                </p>
                                 {fieldState.invalid && (
                                     <FieldError errors={[fieldState.error]} />
                                 )}

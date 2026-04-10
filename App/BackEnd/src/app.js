@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
+import cookieParser from 'cookie-parser';
 
 //rutas
 import productRoutes from './routes/product.routes.js';
@@ -22,6 +23,7 @@ app.use(
 );
 app.use(morgan(isDev ? 'dev' : 'combined'));
 app.use(express.json());  
+app.use(cookieParser());
 
 // Routes
 app.use('/api', productRoutes);

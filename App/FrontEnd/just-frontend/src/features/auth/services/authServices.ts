@@ -1,7 +1,6 @@
 import { signinParams, signupParams } from "@/features/auth/types/authTypes";
 import { useCallback } from "react";
 import { http } from "@/shared/api/http";
-import { setToken } from "@/shared/api/authTokens";
 import { getApiErrorMessage } from "@/shared/api/error";
 
 export default function useAuthServices() {
@@ -10,9 +9,8 @@ export default function useAuthServices() {
   const Signin = useCallback( async ({ correo, contraseña }: signinParams) => {
     try {
         const response = await http.post("/auth/signin", { correo : correo, contraseña: contraseña });
-      setToken(response.data.accessToken); // Almacena el token
       console.log("user data signin:", response.data);
-        return response.data; // Devuelve el token
+        return response.data;
     }catch (error : unknown) {
         console.error("Error en signin:", error);
         throw new Error(getApiErrorMessage(error, "Error al iniciar sesion. Por favor, verifica tus credenciales."));

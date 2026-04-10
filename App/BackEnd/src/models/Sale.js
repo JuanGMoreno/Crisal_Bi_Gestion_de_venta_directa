@@ -11,9 +11,13 @@ const Sale = sequelize.define('Sale', {
     type: DataTypes.UUID,
     allowNull: false
   },
+  id_usuario: {
+    type: DataTypes.UUID,
+    allowNull: true
+  },
   id_cliente: {
     type: DataTypes.UUID,
-    allowNull: false
+    allowNull: true
   },
   fecha_venta: {
     type: DataTypes.DATE,
@@ -28,6 +32,7 @@ const Sale = sequelize.define('Sale', {
   },
   estado: {
     type: DataTypes.ENUM('Abierta', 'Cerrada', 'Anulada'),
+    allowNull: false,
     defaultValue: 'Abierta'
   }
 }, {
@@ -36,6 +41,7 @@ const Sale = sequelize.define('Sale', {
   freezeTableName: true,
   indexes: [
     { fields: ['id_distribuidor'] },
+    { fields: ['id_usuario'] },
     { fields: ['id_cliente'] },
     { fields: ['fecha_venta'] },
     { fields: ['estado'] }

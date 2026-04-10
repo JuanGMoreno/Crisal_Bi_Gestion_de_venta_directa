@@ -1,6 +1,26 @@
 import { ProductRepository } from '../repositories/product.repository.js';
 import { DistributorRepository } from '../repositories/distributor.repository.js';
 
+const PRODUCT_CATEGORIES = [
+  'Aromaterapia',
+  'Bienestar emocional y mental',
+  'Bienestar físico',
+  'Bienestar dermo-comético'
+];
+
+function normalizeCategoryText(value) {
+  return String(value)
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+}
+
+const CATEGORY_BY_NORMALIZED_VALUE = PRODUCT_CATEGORIES.reduce((acc, category) => {
+  acc[normalizeCategoryText(category)] = category;
+  return acc;
+}, {});
+
 async function resolveDistributorIdByUserId(userId) {
   const distributor = await DistributorRepository.findByUserId(userId);
 
@@ -9,6 +29,35 @@ async function resolveDistributorIdByUserId(userId) {
   }
 
   return distributor.id_distribuidor;
+}
+
+function validateBaseSalePrice(data) {
+  if (data.precio_base_venta === undefined || data.precio_base_venta === null || data.precio_base_venta === '') {
+    return;
+  }
+
+  const baseSalePrice = Number(data.precio_base_venta);
+  if (Number.isNaN(baseSalePrice) || baseSalePrice < 0) {
+    throw new Error('El precio base de venta debe ser un número mayor o igual a 0');
+  }
+}
+
+function resolveCategoryOrThrow(category, { required = false } = {}) {
+  if (category === undefined || category === null || category === '') {
+    if (required) {
+      return PRODUCT_CATEGORIES[0];
+    }
+    return undefined;
+  }
+
+  const normalizedInput = normalizeCategoryText(category);
+  const resolvedCategory = CATEGORY_BY_NORMALIZED_VALUE[normalizedInput];
+
+  if (!resolvedCategory) {
+    throw new Error(`Categoría inválida. Valores permitidos: ${PRODUCT_CATEGORIES.join(', ')}`);
+  }
+
+  return resolvedCategory;
 }
 
 export const ProductService = {
@@ -50,13 +99,8 @@ export const ProductService = {
    */
   createProduct: async (data, userId) => {
     const distributorId = await resolveDistributorIdByUserId(userId);
-
-    // Validación de negocio: precio de venta debe ser mayor al de compra
-    if (data.precio_venta && data.precio_compra) {
-      if (parseFloat(data.precio_venta) < parseFloat(data.precio_compra)) {
-        throw new Error('El precio de venta no puede ser menor al precio de compra');
-      }
-    }
+    validateBaseSalePrice(data);
+    const categoria = resolveCategoryOrThrow(data.categoria, { required: true });
 
     // Validar que el código no exista
     if (data.codigo) {
@@ -68,6 +112,7 @@ export const ProductService = {
 
     return await ProductRepository.create({
       ...data,
+      categoria,
       id_distribuidor: distributorId
     });
   },
@@ -77,13 +122,8 @@ export const ProductService = {
    */
   updateProduct: async (id, data, userId) => {
     const distributorId = await resolveDistributorIdByUserId(userId);
-
-    // Validación de negocio: precio de venta debe ser mayor al de compra
-    if (data.precio_venta && data.precio_compra) {
-      if (parseFloat(data.precio_venta) < parseFloat(data.precio_compra)) {
-        throw new Error('El precio de venta no puede ser menor al precio de compra');
-      }
-    }
+    validateBaseSalePrice(data);
+    const categoria = resolveCategoryOrThrow(data.categoria);
 
     // Si se está actualizando el código, validar que no exista
     if (data.codigo) {
@@ -95,6 +135,7 @@ export const ProductService = {
 
     const product = await ProductRepository.updateByDistributor(id, distributorId, {
       ...data,
+      ...(categoria ? { categoria } : {}),
       id_distribuidor: distributorId
     });
     

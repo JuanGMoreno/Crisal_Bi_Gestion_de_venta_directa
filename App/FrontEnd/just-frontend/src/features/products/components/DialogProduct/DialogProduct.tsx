@@ -28,7 +28,7 @@ export function DialogProduct() {
 
     return (
         <Dialog open={isOpen && isProductDialog} onOpenChange={(open) => !open && closeDialog()}>
-                <DialogContent className="sm:max-w-sm md:max-w-lg">
+                <DialogContent className="sm:max-w-sm md:max-w-xl">
                     <DialogHeader>
                         <DialogTitle>{dialogTitle}</DialogTitle>
                         <DialogDescription>{dialogDescription}</DialogDescription>
