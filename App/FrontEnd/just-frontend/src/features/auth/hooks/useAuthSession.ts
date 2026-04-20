@@ -20,8 +20,10 @@ export function useAuthSession() {
       const response = await http.get<AuthMeResponse>("/auth/me");
       return response.data;
     },
-    retry: false,
+    retry: 2,
+    retryDelay: 400,
     staleTime: 60_000,
+    refetchOnMount: "always",
   });
 
   return {

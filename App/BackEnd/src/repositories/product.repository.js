@@ -52,6 +52,18 @@ export const ProductRepository = {
   },
 
   /**
+   * Buscar multiples productos por IDs dentro de un distribuidor
+   */
+  findByIdsAndDistributor: async (ids, distributorId) => {
+    return await Product.findAll({
+      where: {
+        id_producto: ids,
+        id_distribuidor: distributorId
+      }
+    });
+  },
+
+  /**
    * Crear nuevo producto
    */
   create: async (data) => {

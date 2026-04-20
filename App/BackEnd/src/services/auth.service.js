@@ -2,7 +2,6 @@ import argon2 from "argon2";
 import { UserRepository } from "../repositories/auth.repository.js";
 import { sequelize } from "../config/database.js";
 import { DistributorRepository } from "../repositories/distributor.repository.js";
-import { InventoryRepository } from "../repositories/inventory.repository.js";
 //intentos para crear codigo de referido unico y validez del codigo en dias
 const CODE_VALIDITY_DAYS = 3;
 const REFERRAL_CODE_ATTEMPTS = 5;
@@ -80,10 +79,6 @@ export async function registerUser({ email, password, name }) {
       id_usuario: newUser.id_usuario,
       codigo_referido: codigoReferido,
       fecha_vencimiento_codigo: fechaVencimientoCodigo,
-    }, { transaction: t });
-    //3. Crear inventario inicial para el distribuidor
-    await InventoryRepository.create({
-      id_distribuidor: newDistributor.id_distribuidor,
     }, { transaction: t });
 
     return {

@@ -20,8 +20,20 @@ export default function DashboardLayout({
     }
   }, [isError, isLoading, router, user]);
 
-  if (isLoading || isError || !user) {
-    return null;
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center text-sm text-muted-foreground">
+        Validando sesion...
+      </div>
+    );
+  }
+
+  if (isError || !user) {
+    return (
+      <div className="flex min-h-screen items-center justify-center text-sm text-muted-foreground">
+        Redirigiendo al inicio de sesion...
+      </div>
+    );
   }
 
   return (

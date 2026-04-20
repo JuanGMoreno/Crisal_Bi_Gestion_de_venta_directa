@@ -1,50 +1,64 @@
 import { InventoryService } from '../services/inventory.service.js';
 
-/**
- * Obtener el inventario completo
- */
 export const getInventory = async (req, res) => {
   try {
-    const inventory = await InventoryService.getInventory();
-    if (inventory.length === 0) {
-      res.status(404).json({ message: 'No se encontro el inventario' });
-    } else {
-      res.status(200).json(inventory);
+    const summary = await InventoryService.getInventorySummary(req.user.id);
+
+    if (summary.length === 0) {
+      return res.status(404).json({ message: 'No se encontraron existencias de inventario' });
     }
+
+    return res.status(200).json(summary);
   } catch (error) {
-    res.status(500).json({ 
-      message: 'Error al obtener el inventario', 
-      error: error.message 
+    return res.status(500).json({
+      message: 'Error al obtener inventario',
+      error: error.message
     });
   }
 };
 
-/**
- * Crear un inventario nuevo
- */
+export const getInventoryEntries = async (req, res) => {
+  try {
+    const entries = await InventoryService.getInventoryEntries(req.user.id);
+
+    if (entries.length === 0) {
+      return res.status(404).json({ message: 'No se encontraron ingresos de inventario' });
+    }
+
+    return res.status(200).json(entries);
+  } catch (error) {
+    return res.status(500).json({
+      message: 'Error al obtener ingresos de inventario',
+      error: error.message
+    });
+  }
+};
+
+export const getInventoryEntry = async (req, res) => {
+  try {
+    const entry = await InventoryService.getInventoryEntryById(req.params.id, req.user.id);
+    return res.status(200).json(entry);
+  } catch (error) {
+    const statusCode = error.message === 'Ingreso de inventario no encontrado' ? 404 : 400;
+    return res.status(statusCode).json({ message: error.message });
+  }
+};
+
 export const createInventory = async (req, res) => {
   try {
-    const inventory = await InventoryService.createInventory(req.body);
-    res.status(201).json(inventory);
+    const entry = await InventoryService.createInventoryEntry(req.body, req.user.id);
+    return res.status(201).json(entry);
   } catch (error) {
-    res.status(400).json({ 
-      message: error.message 
-    });
+    return res.status(400).json({ message: error.message });
   }
 };
 
-/**
- * Eliminar un inventario (soft delete)
- */
 export const deleteInventory = async (req, res) => {
   try {
-    const { id } = req.params;
-    const result = await InventoryService.deleteInventory(id);
-    res.json(result);
+    const result = await InventoryService.deleteInventoryEntry(req.params.id, req.user.id);
+    return res.status(200).json(result);
   } catch (error) {
-    const statusCode = error.message === 'Inventario no encontrado' ? 404 : 500;
-    res.status(statusCode).json({ 
-      message: error.message 
-    });
+    const statusCode = error.message === 'Ingreso de inventario no encontrado' ? 404 : 400;
+    return res.status(statusCode).json({ message: error.message });
   }
 };

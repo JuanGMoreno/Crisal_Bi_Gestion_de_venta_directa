@@ -2,14 +2,13 @@
 
 import User from './User.js';
 import Distributor from './Distributor.js';
-import Inventory from './Inventory.js';
-import InventoryIncome from './inventory_income.js';
 import Product from './Product.js';
+import InventoryIncome from './inventory_income.js';
 import EntryDetail from './entry_details.js';
 import Client from './Client.js';
 import Sale from './Sale.js';
 import SaleDetail from './SaleDetail.js';
-import SalesDetailsIncome from './SalesDetailsIncome.js';
+import SaleDetailConsumption from './SaleDetailConsumption.js';
 
 // --------------------
 // User <-> Distributor (1:1)
@@ -48,25 +47,7 @@ Distributor.hasMany(Distributor, {
 });
 
 // --------------------
-// Distributor <-> Inventory (1:N)
-// --------------------
-Inventory.belongsTo(Distributor, {
-  as: 'distribuidor',
-  foreignKey: {
-    name: 'id_distribuidor',
-    allowNull: false
-  },
-  onUpdate: 'CASCADE',
-  onDelete: 'CASCADE'
-});
-Distributor.hasMany(Inventory, {
-  as: 'inventarios',
-  foreignKey: 'id_distribuidor'
-});
-
-// --------------------
 // Distributor <-> Product (1:N)
-// Distributor <-> Client (1:N)
 // --------------------
 Product.belongsTo(Distributor, {
   as: 'distribuidor',
@@ -82,7 +63,12 @@ Distributor.hasMany(Product, {
   foreignKey: 'id_distribuidor'
 });
 
-Client.belongsTo(Distributor, {
+// --------------------
+// Distributor <-> InventoryIncome (1:N)
+// InventoryIncome <-> EntryDetail (1:N)
+// Product <-> EntryDetail (1:N)
+// --------------------
+InventoryIncome.belongsTo(Distributor, {
   as: 'distribuidor',
   foreignKey: {
     name: 'id_distribuidor',
@@ -91,32 +77,11 @@ Client.belongsTo(Distributor, {
   onUpdate: 'CASCADE',
   onDelete: 'CASCADE'
 });
-Distributor.hasMany(Client, {
-  as: 'clientes',
+Distributor.hasMany(InventoryIncome, {
+  as: 'ingresos_inventario',
   foreignKey: 'id_distribuidor'
 });
 
-// --------------------
-// Inventory <-> InventoryIncome (1:N)
-// --------------------
-InventoryIncome.belongsTo(Inventory, {
-  as: 'inventario',
-  foreignKey: {
-    name: 'id_inventario',
-    allowNull: false
-  },
-  onUpdate: 'CASCADE',
-  onDelete: 'CASCADE'
-});
-Inventory.hasMany(InventoryIncome, {
-  as: 'ingresos',
-  foreignKey: 'id_inventario'
-});
-
-// --------------------
-// InventoryIncome <-> EntryDetail (1:N)
-// Product <-> EntryDetail (1:N)
-// --------------------
 EntryDetail.belongsTo(InventoryIncome, {
   as: 'ingreso',
   foreignKey: {
@@ -138,7 +103,7 @@ EntryDetail.belongsTo(Product, {
     allowNull: false
   },
   onUpdate: 'CASCADE',
-  onDelete: 'CASCADE'
+  onDelete: 'RESTRICT'
 });
 Product.hasMany(EntryDetail, {
   as: 'detalles_ingreso',
@@ -194,8 +159,6 @@ User.hasMany(Sale, {
 // --------------------
 // Sale <-> SaleDetail (1:N)
 // Product <-> SaleDetail (1:N)
-// EntryDetail <-> SalesDetailsIncome (1:N)
-// SaleDetail <-> SalesDetailsIncome (1:N)
 // --------------------
 SaleDetail.belongsTo(Sale, {
   as: 'venta',
@@ -225,7 +188,7 @@ Product.hasMany(SaleDetail, {
   foreignKey: 'id_producto'
 });
 
-SalesDetailsIncome.belongsTo(SaleDetail, {
+SaleDetailConsumption.belongsTo(SaleDetail, {
   as: 'detalle_venta',
   foreignKey: {
     name: 'id_detalle_venta',
@@ -234,12 +197,12 @@ SalesDetailsIncome.belongsTo(SaleDetail, {
   onUpdate: 'CASCADE',
   onDelete: 'CASCADE'
 });
-SaleDetail.hasMany(SalesDetailsIncome, {
-  as: 'consumos_ingreso',
+SaleDetail.hasMany(SaleDetailConsumption, {
+  as: 'consumos_stock',
   foreignKey: 'id_detalle_venta'
 });
 
-SalesDetailsIncome.belongsTo(EntryDetail, {
+SaleDetailConsumption.belongsTo(EntryDetail, {
   as: 'detalle_ingreso',
   foreignKey: {
     name: 'id_detalle_ingreso',
@@ -248,23 +211,9 @@ SalesDetailsIncome.belongsTo(EntryDetail, {
   onUpdate: 'CASCADE',
   onDelete: 'RESTRICT'
 });
-EntryDetail.hasMany(SalesDetailsIncome, {
-  as: 'salidas_venta',
+EntryDetail.hasMany(SaleDetailConsumption, {
+  as: 'consumos_venta',
   foreignKey: 'id_detalle_ingreso'
-});
-
-SaleDetail.belongsToMany(EntryDetail, {
-  as: 'detalles_ingreso',
-  through: SalesDetailsIncome,
-  foreignKey: 'id_detalle_venta',
-  otherKey: 'id_detalle_ingreso'
-});
-
-EntryDetail.belongsToMany(SaleDetail, {
-  as: 'detalles_venta',
-  through: SalesDetailsIncome,
-  foreignKey: 'id_detalle_ingreso',
-  otherKey: 'id_detalle_venta'
 });
 
 // No exporta nada: basta con importar este archivo para registrar asociaciones.
