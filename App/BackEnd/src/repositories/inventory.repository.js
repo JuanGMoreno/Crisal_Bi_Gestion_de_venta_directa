@@ -130,8 +130,15 @@ export const InventoryRepository = {
     const entryDetail = await EntryDetail.findByPk(entryDetailId, { transaction });
     if (!entryDetail) return null;
 
-    return await entryDetail.increment(
-      { cantidad_disponible: amount },
+    const restoredQuantity = Number(entryDetail.cantidad_disponible) + Number(amount);
+
+    // Cuando una venta se anula, el lote debe volver a quedar plenamente
+    // disponible para los resúmenes y futuras salidas de inventario.
+    return await entryDetail.update(
+      {
+        cantidad_disponible: restoredQuantity,
+        estado: 'Activo'
+      },
       { transaction }
     );
   },
