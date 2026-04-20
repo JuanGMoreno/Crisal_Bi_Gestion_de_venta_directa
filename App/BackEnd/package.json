@@ -8,7 +8,8 @@
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
     "db:migrate:legacy": "node src/scripts/migrate-legacy-schema.js",
-    "db:migrate:add-product-category": "node src/scripts/migrate-add-product-category.js"
+    "db:migrate:add-product-category": "node src/scripts/migrate-add-product-category.js",
+    "db:migrate:simplify-domain": "node src/scripts/migrate-simplify-domain.js"
   },
   "keywords": [],
   "author": "",

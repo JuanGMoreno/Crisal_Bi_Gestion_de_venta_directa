@@ -1,5 +1,5 @@
 import { ProductRepository } from '../repositories/product.repository.js';
-import { DistributorRepository } from '../repositories/distributor.repository.js';
+import { resolveDistributorIdByUserId } from '../utils/distributor-context.js';
 
 const PRODUCT_CATEGORIES = [
   'Aromaterapia',
@@ -20,16 +20,6 @@ const CATEGORY_BY_NORMALIZED_VALUE = PRODUCT_CATEGORIES.reduce((acc, category) =
   acc[normalizeCategoryText(category)] = category;
   return acc;
 }, {});
-
-async function resolveDistributorIdByUserId(userId) {
-  const distributor = await DistributorRepository.findByUserId(userId);
-
-  if (!distributor) {
-    throw new Error('Distribuidor no encontrado para el usuario autenticado');
-  }
-
-  return distributor.id_distribuidor;
-}
 
 function validateBaseSalePrice(data) {
   if (data.precio_base_venta === undefined || data.precio_base_venta === null || data.precio_base_venta === '') {

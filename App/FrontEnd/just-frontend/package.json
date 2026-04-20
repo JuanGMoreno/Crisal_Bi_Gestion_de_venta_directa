@@ -6,7 +6,10 @@
     "dev": "next dev --webpack",
     "build": "next build --webpack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "jest",
+    "test:e2e": "dotenv -e .env.e2e -- jest tests/loginE2E.test.ts tests/productsE2E.test.ts --runInBand",
+    "test:e2e:auto": "start-server-and-test \"npm run dev\" http-get://localhost:3000 \"npm run test:e2e\""
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -41,15 +44,22 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.18",
+    "@types/jest": "^30.0.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/selenium-webdriver": "^4.35.5",
     "autoprefixer": "^10.4.23",
     "babel-plugin-react-compiler": "1.0.0",
+    "dotenv-cli": "^8.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.1.2",
+    "jest": "^30.3.0",
     "postcss": "^8.5.6",
+    "selenium-webdriver": "^4.43.0",
+    "start-server-and-test": "^2.1.2",
     "tailwindcss": "^4.1.18",
-    "typescript": "^5"
+    "ts-jest": "^29.4.9",
+    "typescript": "^5.9.3"
   }
 }

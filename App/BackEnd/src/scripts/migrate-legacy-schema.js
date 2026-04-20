@@ -10,38 +10,6 @@ function normalizeCountResult(result) {
   return Number(value) || 0;
 }
 
-async function tableExists(tableName) {
-  const rows = await sequelize.query(
-    `
-      SELECT 1
-      FROM information_schema.tables
-      WHERE table_schema = 'public'
-        AND table_name = :tableName
-      LIMIT 1;
-    `,
-    {
-      replacements: { tableName },
-      type: sequelize.QueryTypes.SELECT
-    }
-  );
-
-  return rows.length > 0;
-}
-
-async function renameTableIfNeeded(oldName, newName) {
-  const oldExists = await tableExists(oldName);
-  if (!oldExists) return;
-
-  const newExists = await tableExists(newName);
-  if (newExists) {
-    console.warn(`- Se mantiene "${oldName}" porque "${newName}" ya existe (revisa si deseas consolidar datos manualmente).`);
-    return;
-  }
-
-  await sequelize.query(`ALTER TABLE "${oldName}" RENAME TO "${newName}";`);
-  console.log(`- Tabla renombrada: "${oldName}" -> "${newName}"`);
-}
-
 async function ensureProductsDistributorIntegrity() {
   const nullRows = await sequelize.query(
     `SELECT COUNT(*) AS total FROM "productos" WHERE id_distribuidor IS NULL;`,
@@ -97,31 +65,24 @@ async function ensureProductsDistributorIntegrity() {
 async function dropLegacyTables() {
   await sequelize.query('DROP TABLE IF EXISTS "lote_productos" CASCADE;');
   await sequelize.query('DROP TABLE IF EXISTS "lotes" CASCADE;');
-  console.log('- Tablas legacy eliminadas: lote_productos, lotes');
-}
-
-async function migrateLegacyNames() {
-  // Compatibilidad con nombres de tablas previas del proyecto.
-  await renameTableIfNeeded('Ingresos Inventario', 'ingresos_inventario');
-  await renameTableIfNeeded('detalles de ingreso', 'detalle_ingreso');
-  await renameTableIfNeeded('ventas_ingresos', 'detalle_venta_ingresos');
+  await sequelize.query('DROP TABLE IF EXISTS "inventarios" CASCADE;');
+  console.log('- Tablas legacy eliminadas: lote_productos, lotes, inventarios');
 }
 
 async function main() {
   try {
     await sequelize.authenticate();
-    console.log('✓ Conectado a base de datos');
+    console.log('Conectado a base de datos');
 
-    await migrateLegacyNames();
     await ensureProductsDistributorIntegrity();
     await dropLegacyTables();
 
     await sequelize.sync({ alter: true });
-    console.log('✓ Migracion legacy completada y esquema sincronizado');
+    console.log('Migracion legacy completada y esquema sincronizado');
 
     process.exit(0);
   } catch (error) {
-    console.error('✗ Error en migracion legacy:', error.message);
+    console.error('Error en migracion legacy:', error.message);
     process.exit(1);
   }
 }

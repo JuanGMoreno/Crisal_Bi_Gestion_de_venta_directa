@@ -1,40 +1,166 @@
-import { Inventory } from "../models/index.js";
+import { Distributor, EntryDetail, InventoryIncome, Product, SaleDetailConsumption } from '../models/index.js';
+
+const entryInclude = [
+  {
+    model: Distributor,
+    as: 'distribuidor',
+    required: false
+  },
+  {
+    model: EntryDetail,
+    as: 'detalles',
+    required: false,
+    include: [
+      {
+        model: Product,
+        as: 'producto',
+        required: false
+      },
+      {
+        model: SaleDetailConsumption,
+        as: 'consumos_venta',
+        required: false
+      }
+    ]
+  }
+];
 
 export const InventoryRepository = {
-  /**
-   * Buscar todo el inventario con filtros opcionales
-   */
-  findAll: async (filters = {}) => {
-    return await Inventory.findAll({ 
-      where: filters,
+  findEntriesByDistributor: async (distributorId) => {
+    return await InventoryIncome.findAll({
+      where: {
+        id_distribuidor: distributorId,
+        estado: 'Activo'
+      },
+      include: entryInclude,
+      order: [['fecha_ingreso', 'DESC'], ['createdAt', 'DESC']]
+    });
+  },
+
+  findEntryByIdAndDistributor: async (id, distributorId, options = {}) => {
+    const { transaction } = options;
+
+    return await InventoryIncome.findOne({
+      where: {
+        id_ingreso: id,
+        id_distribuidor: distributorId
+      },
+      include: entryInclude,
+      transaction
+    });
+  },
+
+  createEntry: async (entryData, detailData, options = {}) => {
+    const { transaction } = options;
+    const entry = await InventoryIncome.create(entryData, { transaction });
+
+    await EntryDetail.bulkCreate(
+      detailData.map((detail) => ({
+        ...detail,
+        id_ingreso: entry.id_ingreso
+      })),
+      { transaction }
+    );
+
+    return await InventoryRepository.findEntryByIdAndDistributor(
+      entry.id_ingreso,
+      entry.id_distribuidor,
+      { transaction }
+    );
+  },
+
+  findActiveStockDetailsByDistributor: async (distributorId) => {
+    return await EntryDetail.findAll({
+      where: {
+        estado: 'Activo'
+      },
+      include: [
+        {
+          model: InventoryIncome,
+          as: 'ingreso',
+          required: true,
+          where: {
+            id_distribuidor: distributorId,
+            estado: 'Activo'
+          }
+        },
+        {
+          model: Product,
+          as: 'producto',
+          required: true
+        }
+      ],
       order: [['createdAt', 'DESC']]
     });
   },
 
-  /**
-   * Crear nuevo inventario
-   */
-  create: async (data, options = {}) => {
+  findConsumableStockDetailsByProducts: async (distributorId, productIds, options = {}) => {
     const { transaction } = options;
-    return await Inventory.create(data, { transaction });
+
+    return await EntryDetail.findAll({
+      where: {
+        id_producto: productIds,
+        estado: 'Activo'
+      },
+      include: [
+        {
+          model: InventoryIncome,
+          as: 'ingreso',
+          required: true,
+          where: {
+            id_distribuidor: distributorId,
+            estado: 'Activo'
+          }
+        }
+      ],
+      transaction,
+      lock: transaction ? transaction.LOCK.UPDATE : undefined
+    });
   },
 
-  /**
-   * Eliminación lógica (soft delete)
-   */
-  softDelete: async (id) => {
-    const inventory = await Inventory.findByPk(id);
-    if (!inventory) return null;
-    return await inventory.update({ estado: 'Inactivo' });
+  updateAvailableQuantity: async (entryDetailId, cantidadDisponible, options = {}) => {
+    const { transaction } = options;
+    const entryDetail = await EntryDetail.findByPk(entryDetailId, { transaction });
+    if (!entryDetail) return null;
+    return await entryDetail.update({ cantidad_disponible: cantidadDisponible }, { transaction });
   },
 
-  /**
-   * Eliminación física (hard delete) - usar con precaución
-   */
-  delete: async (id) => {
-    const inventory = await Inventory.findByPk(id);
-    if (!inventory) return null;
-    await inventory.destroy();
-    return true;
+  incrementAvailableQuantity: async (entryDetailId, amount, options = {}) => {
+    const { transaction } = options;
+    const entryDetail = await EntryDetail.findByPk(entryDetailId, { transaction });
+    if (!entryDetail) return null;
+
+    return await entryDetail.increment(
+      { cantidad_disponible: amount },
+      { transaction }
+    );
   },
+
+  softDeleteEntryByDistributor: async (id, distributorId) => {
+    const entry = await InventoryIncome.findOne({
+      where: {
+        id_ingreso: id,
+        id_distribuidor: distributorId
+      },
+      include: [
+        {
+          model: EntryDetail,
+          as: 'detalles',
+          required: false
+        }
+      ]
+    });
+
+    if (!entry) return null;
+
+    await entry.update({ estado: 'Inactivo' });
+    await EntryDetail.update(
+      { estado: 'Inactivo' },
+      {
+        where: { id_ingreso: entry.id_ingreso }
+      }
+    );
+
+    return entry;
+  }
 };

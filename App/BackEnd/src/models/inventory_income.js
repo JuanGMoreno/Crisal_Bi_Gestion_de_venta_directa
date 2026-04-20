@@ -7,7 +7,7 @@ const InventoryIncome = sequelize.define('InventoryIncome', {
     defaultValue: DataTypes.UUIDV4,
     primaryKey: true
   },
-  id_inventario: {
+  id_distribuidor: {
     type: DataTypes.UUID,
     allowNull: false
   },
@@ -30,7 +30,7 @@ const InventoryIncome = sequelize.define('InventoryIncome', {
   tableName: 'ingresos_inventario',
   freezeTableName: true,
   indexes: [
-    { fields: ['id_inventario'] },
+    { fields: ['id_distribuidor'] },
     { fields: ['fecha_ingreso'] },
     { fields: ['estado'] }
   ]
