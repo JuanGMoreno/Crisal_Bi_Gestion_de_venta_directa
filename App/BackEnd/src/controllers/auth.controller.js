@@ -4,6 +4,19 @@ import { signAccessToken } from "../utils/jwt.js";
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MIN_PASSWORD_LENGTH = 6;
 const MIN_NAME_LENGTH = 2;
+const AUTH_COOKIE_NAME = "access_token";
+
+function getAuthCookieOptions() {
+    const isProd = process.env.NODE_ENV === "production";
+
+    return {
+        httpOnly: true,
+        secure: isProd,
+        sameSite: isProd ? "none" : "lax",
+        maxAge: 1000 * 60 * 60 * 24,
+        path: "/",
+    };
+}
 
 const validateEmail = (email) => {
     return EMAIL_REGEX.test(String(email).trim());
@@ -87,9 +100,10 @@ export const loginController = async (req, res) => {
 
         const accessToken = signAccessToken(user);
 
+        res.cookie(AUTH_COOKIE_NAME, accessToken, getAuthCookieOptions());
+
         return res.json({
             message: "Login correcto",
-            accessToken,
             user,
         });
     } catch (error) {
@@ -98,6 +112,19 @@ export const loginController = async (req, res) => {
             message: "Error interno",
         });
     }
+};
+
+export const signoutController = async (_req, res) => {
+    res.clearCookie(AUTH_COOKIE_NAME, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        path: "/",
+    });
+
+    return res.json({
+        message: "Sesion cerrada",
+    });
 };
 
 export const meController = async (req, res) => {

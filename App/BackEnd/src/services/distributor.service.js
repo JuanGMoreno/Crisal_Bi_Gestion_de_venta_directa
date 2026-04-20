@@ -1,5 +1,18 @@
 import { DistributorRepository } from '../repositories/distributor.repository.js';
 
+async function validateReferralCodeUniqueness(codigoReferido, currentDistributorId = null) {
+  if (!codigoReferido) return;
+
+  const existingDistributor = await DistributorRepository.findByCode(codigoReferido);
+  if (!existingDistributor) return;
+
+  if (currentDistributorId && existingDistributor.id_distribuidor === currentDistributorId) {
+    return;
+  }
+
+  throw new Error('Ya existe un distribuidor con ese código de referido');
+}
+
 export const DistributorService = {
   /**
    * Obtener todos los distribuidores activos
@@ -34,12 +47,7 @@ export const DistributorService = {
    * Crear distribuidor con validaciones de negocio
    */
   createDistributor: async (data) => {
-    // Validación de negocio: precio de venta debe ser mayor al de compra
-    if (data.precio_venta && data.precio_compra) {
-      if (parseFloat(data.precio_venta) < parseFloat(data.precio_compra)) {
-        throw new Error('El precio de venta no puede ser menor al precio de compra');
-      }
-    }
+    await validateReferralCodeUniqueness(data.codigo_referido);
 
     return await DistributorRepository.create(data);
   },
@@ -48,28 +56,15 @@ export const DistributorService = {
    * Actualizar distribuidor con validaciones
    */
   updateDistributor: async (id, data) => {
-    // Validación de negocio: precio de venta debe ser mayor al de compra
-    if (data.precio_venta && data.precio_compra) {
-      if (parseFloat(data.precio_venta) < parseFloat(data.precio_compra)) {
-        throw new Error('El precio de venta no puede ser menor al precio de compra');
-      }
+    await validateReferralCodeUniqueness(data.codigo_referido, id);
+
+    const distributor = await DistributorRepository.update(id, data);
+
+    if (!distributor) {
+      throw new Error('Distribuidor no encontrado');
     }
 
-    // Si se está actualizando el código, validar que no exista
-    if (data.codigo) {
-      const existingProduct = await ProductRepository.findByCode(data.codigo);
-      if (existingProduct && existingProduct.id_producto !== id) {
-        throw new Error('Ya existe un producto con ese código');
-      }
-    }
-
-    const product = await ProductRepository.update(id, data);
-    
-    if (!product) {
-      throw new Error('Producto no encontrado');
-    }
-    
-    return product;
+    return distributor;
   },
 
   /**

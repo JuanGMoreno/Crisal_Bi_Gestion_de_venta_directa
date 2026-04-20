@@ -14,7 +14,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import AllUrls from "@/urls"
-import { User, PackageSearch, Archive, Users, BadgeDollarSign, ChartSpline } from "lucide-react"
+import { PackageSearch, Archive, Users, BadgeDollarSign, ChartSpline } from "lucide-react"
 export function AppSidebar() {
   const pathname = usePathname()
   return (

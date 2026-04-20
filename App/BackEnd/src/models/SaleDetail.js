@@ -15,10 +15,6 @@ const SaleDetail = sequelize.define('SaleDetail', {
     type: DataTypes.UUID,
     allowNull: false
   },
-  id_lote_producto: {
-    type: DataTypes.UUID,
-    allowNull: false
-  },
   cantidad: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -29,6 +25,12 @@ const SaleDetail = sequelize.define('SaleDetail', {
     allowNull: false,
     validate: { min: 0 }
   },
+  descuento_unitario: {
+    type: DataTypes.DECIMAL(12, 2),
+    allowNull: false,
+    defaultValue: 0,
+    validate: { min: 0 }
+  },
   subtotal: {
     type: DataTypes.DECIMAL(12, 2),
     allowNull: false,
@@ -36,6 +38,7 @@ const SaleDetail = sequelize.define('SaleDetail', {
   },
   estado: {
     type: DataTypes.ENUM('Activo', 'Inactivo'),
+    allowNull: false,
     defaultValue: 'Activo'
   }
 }, {
@@ -45,14 +48,18 @@ const SaleDetail = sequelize.define('SaleDetail', {
   indexes: [
     { fields: ['id_venta'] },
     { fields: ['id_producto'] },
-    { fields: ['id_lote_producto'] }
+    { fields: ['estado'] }
   ]
 });
 
 // subtotal automático
 SaleDetail.beforeValidate((d) => {
-  if (d.cantidad && d.precio_unitario) {
-    d.subtotal = (Number(d.cantidad) * Number(d.precio_unitario)).toFixed(2);
+  if (d.cantidad != null && d.precio_unitario != null) {
+    const cantidad = Number(d.cantidad || 0);
+    const precio = Number(d.precio_unitario || 0);
+    const descuento = Number(d.descuento_unitario || 0);
+    const precioNeto = Math.max(precio - descuento, 0);
+    d.subtotal = (cantidad * precioNeto).toFixed(2);
   }
 });
 

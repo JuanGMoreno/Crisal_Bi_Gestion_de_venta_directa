@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
@@ -15,10 +16,20 @@ import {
 } from "@/shared/components/ui/field"
 import { authSigninSchema } from "@/features/auth/validations/authSigninSchema";
 import { AuthSignin } from "@/features/auth/validations/authSigninSchema";
-import authServices from "@/features/auth/services/authServices";
+import useAuthServices from "@/features/auth/services/authServices";
+
+type SigninResponse = {
+    message: string;
+    user?: {
+        id: string;
+        email: string;
+    };
+};
+
 export default function SigninForm() {
-    const authSrv = authServices();
+    const authSrv = useAuthServices();
     const router = useRouter();
+    const queryClient = useQueryClient();
 
     const form = useForm({
         resolver: zodResolver(
@@ -32,13 +43,22 @@ export default function SigninForm() {
 
     const onSubmit = async (data: AuthSignin) => {
         try {
-            const response = await toast.promise(authSrv.Signin(data), {
+            const response = (await toast.promise(authSrv.Signin(data), {
                 loading: "Validando credenciales...",
                 success: "Inicio de sesion correcto",
                 error: (error) => (error instanceof Error ? error.message : "Error al iniciar sesion"),
                 position: "top-right",
-            });
-            console.log("Token recibido:", response);
+            })) as unknown as SigninResponse;
+
+            if (response?.user) {
+                queryClient.setQueryData(["auth", "me"], {
+                    message: "Sesion iniciada",
+                    user: response.user,
+                });
+            }
+
+            // Fuerza refresco de sesion para que el layout protegido lea el estado mas reciente.
+            await queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
             router.replace("/system");
         } catch (error) {
             console.error("Error al iniciar sesión:", error);

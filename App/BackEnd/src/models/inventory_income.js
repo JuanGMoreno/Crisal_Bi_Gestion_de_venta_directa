@@ -1,41 +1,39 @@
 import { sequelize } from '../config/database.js';
 import { DataTypes } from 'sequelize';
 
-const Batch = sequelize.define('Batch', {
-  id_lote: {
+const InventoryIncome = sequelize.define('InventoryIncome', {
+  id_ingreso: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
     primaryKey: true
   },
-  id_inventario: {
+  id_distribuidor: {
     type: DataTypes.UUID,
     allowNull: false
   },
-  fecha_entrada: {
+  fecha_ingreso: {
     type: DataTypes.DATE,
-    allowNull: false
-  },
-  fecha_vencimiento: {
-    type: DataTypes.DATE,
-    allowNull: false
-  },
-  total: {
-    type: DataTypes.INTEGER,
     allowNull: false,
-    validate: { min: 0, isInt: true }
+    defaultValue: DataTypes.NOW
+  },
+  observacion: {
+    type: DataTypes.TEXT,
+    allowNull: true
   },
   estado: {
     type: DataTypes.ENUM('Activo', 'Inactivo'),
+    allowNull: false,
     defaultValue: 'Activo'
   }
 }, {
   timestamps: true,
-  tableName: 'lotes',
+  tableName: 'ingresos_inventario',
   freezeTableName: true,
   indexes: [
-    { fields: ['id_inventario'] },
-    { fields: ['fecha_vencimiento'] }
+    { fields: ['id_distribuidor'] },
+    { fields: ['fecha_ingreso'] },
+    { fields: ['estado'] }
   ]
 });
 
-export default Batch;
+export default InventoryIncome;

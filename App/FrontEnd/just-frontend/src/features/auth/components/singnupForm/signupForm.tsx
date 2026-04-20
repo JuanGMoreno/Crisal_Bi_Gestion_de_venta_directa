@@ -17,7 +17,7 @@ import {
     FieldSet,
 } from "@/shared/components/ui/field"
 import { authSignupSchema } from "@/features/auth/validations/authSignupSchema";
-import authServices from "@/features/auth/services/authServices";
+import useAuthServices from "@/features/auth/services/authServices";
 import { signupParams } from "@/features/auth/types/authTypes";
 
 type SignupFormInput = z.input<typeof authSignupSchema>;
@@ -25,7 +25,7 @@ type SignupFormOutput = z.output<typeof authSignupSchema>;
 
 
 export default function SignupForm() {
-    const authSrv = authServices();
+    const authSrv = useAuthServices();
     const router = useRouter();
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
