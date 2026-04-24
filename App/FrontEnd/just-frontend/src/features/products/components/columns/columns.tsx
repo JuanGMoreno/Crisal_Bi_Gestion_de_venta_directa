@@ -13,18 +13,25 @@ import { Badge } from "@/shared/components/ui/badge"
 import { Button } from "@/shared/components/ui/button"
 import { MoreHorizontal, TrashIcon, Pencil, Info } from "lucide-react"
 import { useDialogStore } from "@/store/use-dialog-store"
+import { getCategoryIndicatorClass } from "@/shared/lib/product-category-indicators"
+import {
+  destructiveMenuItemClass,
+  getStateIndicatorClass,
+} from "@/shared/lib/status-indicators"
+import { cn } from "@/shared/lib/utils"
 
 const DEFAULT_PRODUCT_IMAGE = "/Logo_Just.svg"
 
 const CellDeleteProduct = ({ row }: { row: { original: Product } }) => {
   const product = row.original;
   const { openDialog } = useDialogStore();
+
   return (
     <div className="flex justify-center">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Abrir menú</span>
+            <span className="sr-only">Abrir menu</span>
             <MoreHorizontal className="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
@@ -42,21 +49,20 @@ const CellDeleteProduct = ({ row }: { row: { original: Product } }) => {
               openDialog("detailsProduct", { id: product.id_producto });
             }}
           >
-            <Info />Ver detalles
+            <Info />
+            Ver detalles
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
-            className="text-red-500 hover:bg-red-200 focus:bg-red-100 data-[state=open]:bg-red-100 hover:text-red-700 focus:text-red-700"
+            className={destructiveMenuItemClass}
             onClick={() => {
               openDialog("deleteProduct", { id: product.id_producto });
-              // Aquí puedes manejar la acción de eliminar el producto, por ejemplo, mostrando una confirmación antes de eliminar.
               console.log("Eliminar producto:", product);
             }}
           >
             <TrashIcon />
             Eliminar
           </DropdownMenuItem>
-
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
@@ -88,33 +94,26 @@ export const columns: ColumnDef<Product>[] = [
   },
   {
     accessorKey: "nombre",
-    header: () => <div className="">Nombre</div>,
+    header: () => <div>Nombre</div>,
     cell: ({ row }) => {
       const nombre: string = row.getValue("nombre")
-      return <div className=""><span className="font-semibold">{nombre}</span></div>;
+      return <div><span className="font-semibold">{nombre}</span></div>;
     }
   },
   {
     accessorKey: "categoria",
-    header: () => <div className="text-center">Categoría</div>,
+    header: () => <div className="text-center">Categoria</div>,
     cell: ({ row }) => {
       const categoria: string = row.getValue("categoria")
-      {/*Colores por categoría  
-        Aromaterapia: #ac85bc
-        Bienestar emocional y mental: #84b1cf
-        Bienestar físico: #8bb994
-        Bienestar dermo-comético: #fec465
-        */}
-      const colorMap: { [key: string]: string } = {
-        "Aromaterapia": "border border-purple-300 bg-purple-100 text-purple-800 dark:border-purple-700 dark:bg-purple-900/35 dark:text-purple-200",
-        "Bienestar emocional y mental": "border border-blue-300 bg-blue-100 text-blue-800 dark:border-blue-700 dark:bg-blue-900/35 dark:text-blue-200",
-        "Bienestar físico": "border border-emerald-300 bg-emerald-100 text-emerald-800 dark:border-emerald-700 dark:bg-emerald-900/35 dark:text-emerald-200",
-        "Bienestar dermo-comético": "border border-amber-300 bg-amber-100 text-amber-800 dark:border-amber-700 dark:bg-amber-900/35 dark:text-amber-200",
-      }
-      const variant = colorMap[categoria] || "border border-slate-300 bg-slate-100 text-slate-800 dark:border-slate-700 dark:bg-slate-900/35 dark:text-slate-200"
+
       return (
         <div className="flex justify-center">
-          <span className={`rounded-md ${variant} px-2 py-1 text-xs font-medium`}>
+          <span
+            className={cn(
+              "rounded-md border px-2 py-1 text-xs font-medium",
+              getCategoryIndicatorClass(categoria)
+            )}
+          >
             {categoria}
           </span>
         </div>
@@ -123,7 +122,7 @@ export const columns: ColumnDef<Product>[] = [
   },
   {
     accessorKey: "codigo",
-    header: () => <div className="text-center">Código</div>,
+    header: () => <div className="text-center">Codigo</div>,
     cell: ({ row }) => {
       const codigo: string = row.getValue("codigo")
       return (
@@ -139,13 +138,12 @@ export const columns: ColumnDef<Product>[] = [
     accessorKey: "precio_base_venta",
     header: () => <div className="text-center">Precio Base de Venta</div>,
     cell: ({ row }) => {
-      //conversion a formato de modena local
       const precio = parseFloat(row.getValue("precio_base_venta"))
       const formatted = new Intl.NumberFormat("es-CO", {
         style: "currency",
         currency: "COP",
       }).format(precio)
-      return <div className="flex justify-center"><span className="text-primary font-semibold">{formatted}</span></div>;
+      return <div className="flex justify-center"><span className="font-semibold text-primary">{formatted}</span></div>;
     },
   },
   {
@@ -153,12 +151,9 @@ export const columns: ColumnDef<Product>[] = [
     header: () => <div className="text-center">Estado</div>,
     cell: ({ row }) => {
       const estado: string = row.getValue("estado")
-      const estadoClassName = estado === "Activo"
-        ? "border-emerald-300 bg-emerald-100 text-emerald-800 hover:bg-emerald-200 dark:border-emerald-700 dark:bg-emerald-900/35 dark:text-emerald-200 dark:hover:bg-emerald-900/50"
-        : "border-rose-300 bg-rose-100 text-rose-800 hover:bg-rose-200 dark:border-rose-700 dark:bg-rose-900/35 dark:text-rose-200 dark:hover:bg-rose-900/50"
       return (
         <div className="flex justify-center">
-          <Badge variant="outline" className={estadoClassName}>
+          <Badge variant="outline" className={getStateIndicatorClass(estado)}>
             {estado}
           </Badge>
         </div>
@@ -170,5 +165,4 @@ export const columns: ColumnDef<Product>[] = [
     header: () => <div className="text-center">Acciones</div>,
     cell: ({ row }) => <CellDeleteProduct row={row} />,
   }
-
 ]

@@ -10,6 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/shared/components/ui/dialog";
+import { getStateIndicatorClass } from "@/shared/lib/status-indicators";
 import { Sale } from "../../types/Sale";
 
 function formatDate(value: string) {
@@ -53,13 +54,7 @@ export function SaleDetailsDialog({ sale, onClose }: SaleDetailsDialogProps) {
                 <p className="text-sm text-muted-foreground">Estado</p>
                 <Badge
                   variant="outline"
-                  className={`mt-2 ${
-                    sale.estado === "Cerrada"
-                      ? "border-emerald-300 bg-emerald-100 text-emerald-800"
-                      : sale.estado === "Abierta"
-                        ? "border-amber-300 bg-amber-100 text-amber-800"
-                        : "border-rose-300 bg-rose-100 text-rose-800"
-                  }`}
+                  className={`mt-2 ${getStateIndicatorClass(sale.estado)}`}
                 >
                   {sale.estado}
                 </Badge>
@@ -130,4 +125,3 @@ export function SaleDetailsDialog({ sale, onClose }: SaleDetailsDialogProps) {
     </Dialog>
   );
 }
-

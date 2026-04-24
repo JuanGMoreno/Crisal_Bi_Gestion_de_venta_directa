@@ -9,9 +9,18 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { Search, SearchX } from "lucide-react";
+import { AlertTriangle, CalendarClock, Search, SearchX } from "lucide-react";
+import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
+import { getCategoryIndicatorClass } from "@/shared/lib/product-category-indicators";
+import {
+  getExpiryLabel,
+  getExpiryTone,
+  getIndicatorClass,
+  getStockTone,
+} from "@/shared/lib/status-indicators";
+import { cn } from "@/shared/lib/utils";
 import {
   Table,
   TableBody,
@@ -38,6 +47,33 @@ function formatDate(value?: string) {
   }).format(new Date(value));
 }
 
+function ExpiryIndicator({ date }: { date?: string }) {
+  const tone = getExpiryTone(date);
+  const label = getExpiryLabel(date);
+  const isUrgent = tone === "bad" && Boolean(date);
+
+  return (
+    <div className="flex flex-col items-center gap-1">
+      <Badge
+        variant="outline"
+        className={cn(
+          "gap-1.5 border font-medium",
+          getIndicatorClass(tone),
+          isUrgent ? "shadow-[0_0_0_3px_rgba(244,63,94,0.10)]" : ""
+        )}
+      >
+        {isUrgent ? (
+          <AlertTriangle className="h-3.5 w-3.5" />
+        ) : (
+          <CalendarClock className="h-3.5 w-3.5" />
+        )}
+        {label}
+      </Badge>
+      <span className="text-xs text-muted-foreground">{formatDate(date)}</span>
+    </div>
+  );
+}
+
 const columns: ColumnDef<InventorySummaryItem>[] = [
   {
     accessorKey: "nombre",
@@ -51,14 +87,32 @@ const columns: ColumnDef<InventorySummaryItem>[] = [
   },
   {
     accessorKey: "categoria",
-    header: "Categoria",
+    header: () => <div className="text-center">Categoría</div>,
+    cell: ({ row }) => (
+      <div className="flex justify-center">
+        <Badge
+          variant="outline"
+          className={cn("border font-medium", getCategoryIndicatorClass(row.original.categoria))}
+        >
+          {row.original.categoria}
+        </Badge>
+      </div>
+    ),
   },
   {
     accessorKey: "stock_total",
     header: () => <div className="text-center">Stock</div>,
     cell: ({ row }) => (
-      <div className="text-center font-semibold">
-        {row.original.stock_total.toLocaleString("es-CO")}
+      <div className="flex justify-center">
+        <Badge
+          variant="outline"
+          className={cn(
+            "border font-semibold",
+            getIndicatorClass(getStockTone(row.original.stock_total))
+          )}
+        >
+          {row.original.stock_total.toLocaleString("es-CO")} unidades
+        </Badge>
       </div>
     ),
   },
@@ -84,8 +138,8 @@ const columns: ColumnDef<InventorySummaryItem>[] = [
     accessorFn: (row) => row.proximas_fechas_vencimiento?.[0] || "",
     header: () => <div className="text-center">Proximo Vencimiento</div>,
     cell: ({ row }) => (
-      <div className="text-center">
-        {formatDate(row.original.proximas_fechas_vencimiento?.[0])}
+      <div className="flex justify-center">
+        <ExpiryIndicator date={row.original.proximas_fechas_vencimiento?.[0]} />
       </div>
     ),
   },

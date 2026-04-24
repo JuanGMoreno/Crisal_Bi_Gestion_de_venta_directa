@@ -101,7 +101,7 @@ function buildStockSummary(details) {
     stockMap.set(product.id_producto, current);
   }
 
-  return [...stockMap.values()].sort((a, b) => a.nombre.localeCompare(b.nombre));
+  return [...stockMap.values()].sort((a, b) => a.categoria.localeCompare(b.categoria));
 }
 
 export const InventoryService = {

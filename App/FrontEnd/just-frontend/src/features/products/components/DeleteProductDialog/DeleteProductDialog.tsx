@@ -11,6 +11,7 @@ import {
 import { useDialogStore } from "@/store/use-dialog-store"
 import { toast } from "sonner"
 import { useDeleteProductMutation } from "../../hooks/useProductMutations"
+import { getIndicatorClass } from "@/shared/lib/status-indicators"
 
 
 export function DeleteProductDialog() {
@@ -42,9 +43,9 @@ export function DeleteProductDialog() {
                 <AlertDialogFooter>
                     <AlertDialogCancel  >Cancelar</AlertDialogCancel>
                     <AlertDialogAction
-                        className="bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90"
                         onClick={onConfirmDelete}
                         disabled={!productId || deleteProductMutation.isPending}
+                        className={getIndicatorClass("bad")}
                     >
                         Eliminar
                     </AlertDialogAction>

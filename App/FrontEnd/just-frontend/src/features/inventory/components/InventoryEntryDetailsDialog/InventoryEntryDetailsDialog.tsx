@@ -10,6 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/shared/components/ui/dialog";
+import { getStateIndicatorClass } from "@/shared/lib/status-indicators";
 import { InventoryEntry } from "../../types/Inventory";
 
 function formatDate(value?: string) {
@@ -58,7 +59,7 @@ export function InventoryEntryDetailsDialog({
                 <p className="text-sm text-muted-foreground">Estado</p>
                 <Badge
                   variant="outline"
-                  className="mt-2 border-emerald-300 bg-emerald-100 text-emerald-800"
+                  className={`mt-2 ${getStateIndicatorClass(entry.estado)}`}
                 >
                   {entry.estado}
                 </Badge>

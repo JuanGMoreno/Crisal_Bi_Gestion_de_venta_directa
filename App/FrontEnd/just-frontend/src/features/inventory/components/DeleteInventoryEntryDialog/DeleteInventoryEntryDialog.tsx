@@ -13,6 +13,7 @@ import {
 } from "@/shared/components/ui/alert-dialog";
 import { InventoryEntry } from "../../types/Inventory";
 import { useDeleteInventoryEntryMutation } from "../../hooks/useInventoryMutations";
+import { getIndicatorClass } from "@/shared/lib/status-indicators";
 
 interface DeleteInventoryEntryDialogProps {
   entry: InventoryEntry | null;
@@ -56,7 +57,7 @@ export function DeleteInventoryEntryDialog({
           <AlertDialogCancel onClick={onClose}>Cancelar</AlertDialogCancel>
           <AlertDialogAction
             onClick={handleDelete}
-            className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
+            className={getIndicatorClass("bad")}
           >
             Eliminar
           </AlertDialogAction>
