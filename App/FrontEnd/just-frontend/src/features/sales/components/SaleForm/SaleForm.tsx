@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
 import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
 import { Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -23,17 +24,54 @@ import {
 import { ProductCombobox } from "@/features/products/components/ProductCombobox/ProductCombobox";
 import { useProductsQuery } from "@/features/products/hooks/useProductsQuery";
 import { useInventorySummaryQuery } from "@/features/inventory/hooks/useInventorySummaryQuery";
-import { useCreateSaleMutation } from "../../hooks/useSaleMutations";
+import { useCreateSaleMutation, useUpdateSaleMutation } from "../../hooks/useSaleMutations";
 import { useSaleClientsQuery } from "../../hooks/useSaleClientsQuery";
+import { Sale } from "../../types/Sale";
 import { SaleFormData, SaleFormInput, saleSchema } from "../../validations/SaleSchema";
+import { array } from "zod";
 
 interface SaleFormProps {
+  mode?: "create" | "edit";
+  saleId?: string;
+  initialSale?: Sale | null;
   onSuccess?: () => void;
 }
 
 function toDateTimeLocalString(value: Date) {
   const timezoneOffset = value.getTimezoneOffset() * 60000;
   return new Date(value.getTime() - timezoneOffset).toISOString().slice(0, 16);
+}
+
+function getDefaultSaleValues(status: SaleFormInput["estado"] = "Cerrada"): SaleFormInput {
+  return {
+    id_cliente: "",
+    fecha_venta: toDateTimeLocalString(new Date()),
+    estado: status,
+    detalles: [
+      {
+        id_producto: "",
+        cantidad: 1,
+        precio_unitario: "",
+        descuento_unitario: 0,
+      },
+    ],
+  };
+}
+
+function mapSaleToFormValues(sale: Sale): SaleFormInput {
+  const selectedClientId = sale.id_cliente || sale.cliente?.id_cliente || "";
+
+  return {
+    id_cliente: selectedClientId,
+    fecha_venta: toDateTimeLocalString(new Date(sale.fecha_venta)),
+    estado: sale.estado === "Cerrada" ? "Cerrada" : "Abierta",
+    detalles: sale.detalles.map((detail) => ({
+      id_producto: detail.id_producto,
+      cantidad: Number(detail.cantidad),
+      precio_unitario: Number(detail.precio_unitario),
+      descuento_unitario: Number(detail.descuento_unitario || 0),
+    })),
+  };
 }
 
 function formatCurrency(value: number) {
@@ -44,36 +82,47 @@ function formatCurrency(value: number) {
   }).format(value);
 }
 
-export function SaleForm({ onSuccess }: SaleFormProps) {
+export function SaleForm({
+  mode = "create",
+  saleId,
+  initialSale,
+  onSuccess,
+}: SaleFormProps) {
   const createSaleMutation = useCreateSaleMutation();
+  const updateSaleMutation = useUpdateSaleMutation();
   const { data: products = [] } = useProductsQuery();
   const { data: clients = [] } = useSaleClientsQuery();
   const { data: inventorySummary = [] } = useInventorySummaryQuery();
 
   const activeProducts = products.filter((product) => product.estado === "Activo");
+  const availableClients = initialSale?.cliente
+    ? clients.some((client) => client.id_cliente === initialSale.cliente?.id_cliente)
+      ? clients
+      : [initialSale.cliente, ...clients]
+    : clients;
   const stockByProduct = new Map(
     inventorySummary.map((item) => [item.id_producto, Number(item.stock_total)])
   );
 
   const form = useForm<SaleFormInput, unknown, SaleFormData>({
     resolver: zodResolver(saleSchema),
-    defaultValues: {
-      id_cliente: "",
-      fecha_venta: toDateTimeLocalString(new Date()),
-      estado: "Cerrada",
-      detalles: [
-        {
-          id_producto: "",
-          cantidad: 1,
-          precio_unitario: "",
-          descuento_unitario: 0,
-        },
-      ],
-    },
+    defaultValues: getDefaultSaleValues(mode === "edit" ? "Abierta" : "Cerrada"),
   });
 
+  useEffect(() => {
+    if (mode === "edit" && initialSale) {
+      form.reset(mapSaleToFormValues(initialSale));
+      return;
+    }
+
+    if (mode === "create") {
+      form.reset(getDefaultSaleValues("Cerrada"));
+    }
+  }, [form, initialSale, mode]);
+
   const details = useWatch({ control: form.control, name: "detalles" }) || [];
-  const currentStatus = useWatch({ control: form.control, name: "estado" });
+  const currentStatus =
+    useWatch({ control: form.control, name: "estado" }) || (mode === "edit" ? "Abierta" : "Cerrada");
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
@@ -137,31 +186,35 @@ export function SaleForm({ onSuccess }: SaleFormProps) {
         }
       }
 
-      await toast.promise(createSaleMutation.mutateAsync(data), {
-        loading: "Registrando venta...",
-        success: "Venta registrada correctamente",
+      const submitAction =
+        mode === "edit" && saleId
+          ? updateSaleMutation.mutateAsync({ id: saleId, data })
+          : createSaleMutation.mutateAsync(data);
+
+      await toast.promise(submitAction, {
+        loading: mode === "edit" ? "Actualizando venta..." : "Registrando venta...",
+        success: mode === "edit" ? "Venta actualizada correctamente" : "Venta registrada correctamente",
         error: (error) =>
-          error instanceof Error ? error.message : "No se pudo registrar la venta",
+          error instanceof Error
+            ? error.message
+            : mode === "edit"
+              ? "No se pudo actualizar la venta"
+              : "No se pudo registrar la venta",
         position: "top-right",
       });
 
-      form.reset({
-        id_cliente: "",
-        fecha_venta: toDateTimeLocalString(new Date()),
-        estado: "Cerrada",
-        detalles: [
-          {
-            id_producto: "",
-            cantidad: 1,
-            precio_unitario: "",
-            descuento_unitario: 0,
-          },
-        ],
-      });
+      if (mode === "create") {
+        form.reset(getDefaultSaleValues("Cerrada"));
+      }
+
       onSuccess?.();
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "No se pudo registrar la venta",
+        error instanceof Error
+          ? error.message
+          : mode === "edit"
+            ? "No se pudo actualizar la venta"
+            : "No se pudo registrar la venta",
         { position: "top-right" }
       );
     }
@@ -171,29 +224,41 @@ export function SaleForm({ onSuccess }: SaleFormProps) {
     <form id="form-sale" className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
       <FieldSet className="w-full">
         <FieldGroup className="gap-4">
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className={`grid gap-4 ${mode === "edit" ? "md:grid-cols-2" : "md:grid-cols-3"}`}>
             <Controller
               name="id_cliente"
               control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel>Cliente</FieldLabel>
-                  <Select value={field.value || "none"} onValueChange={(value) => field.onChange(value === "none" ? "" : value)}>
-                    <SelectTrigger className="h-9" aria-invalid={fieldState.invalid}>
-                      <SelectValue placeholder="Selecciona un cliente" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="none">Venta sin cliente</SelectItem>
-                      {clients.map((client) => (
-                        <SelectItem key={client.id_cliente} value={client.id_cliente}>
-                          {client.nombre}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {fieldState.invalid ? <FieldError errors={[fieldState.error]} /> : null}
-                </Field>
-              )}
+              render={({ field, fieldState }) => {
+                const selectedClient = availableClients.find(
+                  (client) => client.id_cliente === field.value
+                );
+                console.log(availableClients);
+                console.log(selectedClient, "selected client");
+                return (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel>Cliente</FieldLabel>
+                    <Select value={field.value || undefined} onValueChange={field.onChange}>
+                      <SelectTrigger className="h-9" aria-invalid={fieldState.invalid}>
+                        <span
+                          className={
+                            selectedClient ? "truncate" : "truncate text-muted-foreground"
+                          }
+                        >
+                          {selectedClient?.nombre || "Selecciona un cliente"}
+                        </span>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableClients.map((client) => (
+                          <SelectItem key={client.id_cliente} value={client.id_cliente}>
+                            {client.nombre}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {fieldState.invalid ? <FieldError errors={[fieldState.error]} /> : null}
+                  </Field>
+                );
+              }}
             />
             <Controller
               name="fecha_venta"
@@ -212,25 +277,27 @@ export function SaleForm({ onSuccess }: SaleFormProps) {
                 </Field>
               )}
             />
-            <Controller
-              name="estado"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel>Estado inicial</FieldLabel>
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger className="h-9" aria-invalid={fieldState.invalid}>
-                      <SelectValue placeholder="Selecciona un estado" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Cerrada">Cerrada</SelectItem>
-                      <SelectItem value="Abierta">Abierta</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  {fieldState.invalid ? <FieldError errors={[fieldState.error]} /> : null}
-                </Field>
-              )}
-            />
+            {mode === "create" ? (
+              <Controller
+                name="estado"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel>Estado inicial</FieldLabel>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger className="h-9" aria-invalid={fieldState.invalid}>
+                        <SelectValue placeholder="Selecciona un estado" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Cerrada">Cerrada</SelectItem>
+                        <SelectItem value="Abierta">Abierta</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {fieldState.invalid ? <FieldError errors={[fieldState.error]} /> : null}
+                  </Field>
+                )}
+              />
+            ) : null}
           </div>
 
           <div className="rounded-xl border bg-muted/20 p-4">
@@ -419,7 +486,9 @@ export function SaleForm({ onSuccess }: SaleFormProps) {
               <p className="text-sm text-muted-foreground">
                 {currentStatus === "Cerrada"
                   ? "La venta impactara el inventario al guardarse."
-                  : "La venta se guardara abierta y podra cerrarse despues."}
+                  : mode === "edit"
+                    ? "La venta seguira abierta hasta que decidas cerrarla."
+                    : "La venta se guardara abierta y podra cerrarse despues."}
               </p>
             </div>
           </div>

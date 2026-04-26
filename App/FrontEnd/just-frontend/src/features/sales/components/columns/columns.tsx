@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/shared/components/ui/dropdown-menu";
-import { CheckCircle2, Eye, MoreHorizontal, OctagonX } from "lucide-react";
+import { CheckCircle2, Eye, MoreHorizontal, OctagonX, Pencil } from "lucide-react";
 import {
   destructiveMenuItemClass,
   getStateIndicatorClass,
@@ -33,12 +33,14 @@ function formatCurrency(value: number) {
 
 interface SalesColumnsOptions {
   onViewDetails: (sale: Sale) => void;
+  onEditSale: (sale: Sale) => void;
   onCloseSale: (sale: Sale) => void;
   onCancelSale: (sale: Sale) => void;
 }
 
 export function createSalesColumns({
   onViewDetails,
+  onEditSale,
   onCloseSale,
   onCancelSale,
 }: SalesColumnsOptions): ColumnDef<Sale>[] {
@@ -141,6 +143,12 @@ export function createSalesColumns({
                   <Eye />
                   Ver detalle
                 </DropdownMenuItem>
+                {sale.estado === "Abierta" ? (
+                  <DropdownMenuItem onClick={() => onEditSale(sale)}>
+                    <Pencil />
+                    Editar venta
+                  </DropdownMenuItem>
+                ) : null}
                 {sale.estado === "Abierta" ? (
                   <DropdownMenuItem onClick={() => onCloseSale(sale)}>
                     <CheckCircle2 />

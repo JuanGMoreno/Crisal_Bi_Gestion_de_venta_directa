@@ -36,6 +36,16 @@ export const createSale = async (req, res) => {
   }
 };
 
+export const updateSale = async (req, res) => {
+  try {
+    const sale = await SaleService.updateSale(req.params.id, req.body, req.user.id);
+    return res.status(200).json(sale);
+  } catch (error) {
+    const statusCode = error.message === 'Venta no encontrada' ? 404 : 400;
+    return res.status(statusCode).json({ message: error.message });
+  }
+};
+
 export const updateSaleStatus = async (req, res) => {
   try {
     const sale = await SaleService.updateSaleStatus(req.params.id, req.body.estado, req.user.id);

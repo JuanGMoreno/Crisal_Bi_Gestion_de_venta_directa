@@ -219,11 +219,32 @@ export const schemas = {
   },
   CreateSaleRequest: {
     type: 'object',
-    required: ['detalles'],
+    required: ['id_cliente', 'detalles'],
     properties: {
-      id_cliente: { type: 'string', format: 'uuid', nullable: true },
+      id_cliente: { type: 'string', format: 'uuid' },
       fecha_venta: { type: 'string', format: 'date-time', nullable: true },
       estado: { type: 'string', enum: ['Abierta', 'Cerrada'], default: 'Cerrada' },
+      detalles: {
+        type: 'array',
+        items: {
+          type: 'object',
+          required: ['id_producto', 'cantidad'],
+          properties: {
+            id_producto: { type: 'string', format: 'uuid' },
+            cantidad: { type: 'integer' },
+            precio_unitario: { type: 'number', nullable: true },
+            descuento_unitario: { type: 'number', nullable: true }
+          }
+        }
+      }
+    }
+  },
+  UpdateSaleRequest: {
+    type: 'object',
+    required: ['id_cliente', 'detalles'],
+    properties: {
+      id_cliente: { type: 'string', format: 'uuid' },
+      fecha_venta: { type: 'string', format: 'date-time', nullable: true },
       detalles: {
         type: 'array',
         items: {

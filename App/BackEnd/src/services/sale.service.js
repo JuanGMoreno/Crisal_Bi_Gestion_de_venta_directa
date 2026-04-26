@@ -67,8 +67,10 @@ function normalizeSaleDetails(details) {
   });
 }
 
-async function validateClientIfNeeded(clientId) {
-  if (!clientId) return null;
+async function validateRequiredClient(clientId) {
+  if (!clientId) {
+    throw new Error('Debes seleccionar un cliente');
+  }
 
   const client = await ClientRepository.findById(clientId);
 
@@ -228,9 +230,9 @@ export const SaleService = {
   createSale: async (data, userId) => {
     const distributorId = await resolveDistributorIdByUserId(userId);
     const normalizedDetails = normalizeSaleDetails(data.detalles);
-    const clientId = data.id_cliente || null;
+    const clientId = data.id_cliente;
 
-    await validateClientIfNeeded(clientId);
+    await validateRequiredClient(clientId);
 
     const productIds = [...new Set(normalizedDetails.map((detail) => detail.id_producto))];
     const products = await ProductRepository.findByIdsAndDistributor(productIds, distributorId);
@@ -277,6 +279,66 @@ export const SaleService = {
         distributorId,
         { transaction }
       );
+    });
+  },
+
+  updateSale: async (id, data, userId) => {
+    const distributorId = await resolveDistributorIdByUserId(userId);
+    const normalizedDetails = normalizeSaleDetails(data.detalles);
+    const clientId = data.id_cliente;
+
+    await validateRequiredClient(clientId);
+
+    const productIds = [...new Set(normalizedDetails.map((detail) => detail.id_producto))];
+    const products = await ProductRepository.findByIdsAndDistributor(productIds, distributorId);
+
+    if (products.length !== productIds.length) {
+      throw new Error('Uno o mas productos no pertenecen al distribuidor autenticado');
+    }
+
+    const productsById = new Map(products.map((product) => [product.id_producto, product]));
+
+    const details = normalizedDetails.map((detail) => {
+      const product = productsById.get(detail.id_producto);
+
+      if (!product || product.estado !== 'Activo') {
+        throw new Error('No se puede vender un producto inactivo o inexistente');
+      }
+
+      return buildDetailFromProduct(detail, product);
+    });
+
+    const total = Number(
+      details.reduce((sum, detail) => sum + Number(detail.subtotal), 0).toFixed(2)
+    );
+
+    return await sequelize.transaction(async (transaction) => {
+      const existingSale = await SaleRepository.findByIdAndDistributor(id, distributorId, {
+        transaction
+      });
+
+      if (!existingSale) {
+        throw new Error('Venta no encontrada');
+      }
+
+      if (existingSale.estado !== 'Abierta') {
+        throw new Error('Solo se pueden editar ventas abiertas');
+      }
+
+      await SaleRepository.updateByDistributor(
+        id,
+        distributorId,
+        {
+          id_cliente: clientId,
+          fecha_venta: normalizeSaleDate(data.fecha_venta),
+          total
+        },
+        { transaction }
+      );
+
+      await SaleRepository.replaceSaleDetails(id, details, { transaction });
+
+      return await SaleRepository.findByIdAndDistributor(id, distributorId, { transaction });
     });
   },
 
