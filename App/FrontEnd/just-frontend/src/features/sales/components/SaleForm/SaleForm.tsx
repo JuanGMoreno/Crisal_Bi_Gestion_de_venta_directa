@@ -20,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/components/ui/select";
+import { ProductCombobox } from "@/features/products/components/ProductCombobox/ProductCombobox";
 import { useProductsQuery } from "@/features/products/hooks/useProductsQuery";
 import { useInventorySummaryQuery } from "@/features/inventory/hooks/useInventorySummaryQuery";
 import { useCreateSaleMutation } from "../../hooks/useSaleMutations";
@@ -90,6 +91,28 @@ export function SaleForm({ onSuccess }: SaleFormProps) {
     const lineTotal = Math.max(basePrice - discount, 0) * quantity;
     return sum + lineTotal;
   }, 0);
+
+  const updateDetailProduct = (index: number, productId: string) => {
+    form.setValue(`detalles.${index}.id_producto`, productId, {
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: true,
+    });
+
+    const selectedProduct = activeProducts.find(
+      (product) => product.id_producto === productId
+    );
+
+    form.setValue(
+      `detalles.${index}.precio_unitario`,
+      selectedProduct ? Number(selectedProduct.precio_base_venta) : "",
+      {
+        shouldDirty: true,
+        shouldTouch: true,
+        shouldValidate: true,
+      }
+    );
+  };
 
   const onSubmit = async (data: SaleFormData) => {
     try {
@@ -266,41 +289,19 @@ export function SaleForm({ onSuccess }: SaleFormProps) {
                       </Button>
                     </div>
 
-                    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                    <div className="grid gap-4 md:grid-cols-2">
                       <Controller
                         name={`detalles.${index}.id_producto`}
                         control={form.control}
                         render={({ field, fieldState }) => (
                           <Field data-invalid={fieldState.invalid}>
                             <FieldLabel>Producto</FieldLabel>
-                            <Select
+                            <ProductCombobox
+                              products={activeProducts}
                               value={field.value}
-                              onValueChange={(value) => {
-                                field.onChange(value);
-                                const product = activeProducts.find(
-                                  (item) => item.id_producto === value
-                                );
-                                if (product) {
-                                  form.setValue(
-                                    `detalles.${index}.precio_unitario`,
-                                    Number(product.precio_base_venta)
-                                  );
-                                } else {
-                                  form.setValue(`detalles.${index}.precio_unitario`, "");
-                                }
-                              }}
-                            >
-                              <SelectTrigger className="h-9" aria-invalid={fieldState.invalid}>
-                                <SelectValue placeholder="Selecciona un producto" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {activeProducts.map((product) => (
-                                  <SelectItem key={product.id_producto} value={product.id_producto}>
-                                    {product.nombre}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                              invalid={fieldState.invalid}
+                              onChange={(value) => updateDetailProduct(index, value)}
+                            />
                             {fieldState.invalid ? <FieldError errors={[fieldState.error]} /> : null}
                           </Field>
                         )}
@@ -334,6 +335,9 @@ export function SaleForm({ onSuccess }: SaleFormProps) {
                           </Field>
                         )}
                       />
+                    </div>
+
+                    <div className="mt-4 grid gap-4 md:grid-cols-2">
 
                       <Controller
                         name={`detalles.${index}.precio_unitario`}

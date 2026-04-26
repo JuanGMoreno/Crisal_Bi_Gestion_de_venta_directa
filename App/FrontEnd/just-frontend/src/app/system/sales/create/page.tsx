@@ -2,30 +2,31 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Boxes, ReceiptText, ShoppingCart, Users } from "lucide-react";
+import {
+  ArrowLeft,
+  Boxes,
+  ReceiptText,
+  ShoppingCart,
+  Sparkles,
+  Users,
+} from "lucide-react";
 import { SaleForm } from "@/features/sales/components/SaleForm/SaleForm";
 import { useSaleClientsQuery } from "@/features/sales/hooks/useSaleClientsQuery";
 import { useProductsQuery } from "@/features/products/hooks/useProductsQuery";
 import { useInventorySummaryQuery } from "@/features/inventory/hooks/useInventorySummaryQuery";
 import AllUrls from "@/urls";
-import { Button } from "@/shared/components/ui/button";
 import { Badge } from "@/shared/components/ui/badge";
+import { Button } from "@/shared/components/ui/button";
 import { Skeleton } from "@/shared/components/ui/skeleton";
 import { getIndicatorClass, getStockTone } from "@/shared/lib/status-indicators";
 
 function SummarySkeleton() {
   return (
-    <div className="space-y-4">
-      <div className="rounded-2xl border p-5">
-        <Skeleton className="h-4 w-28" />
-        <Skeleton className="mt-3 h-7 w-24" />
-        <Skeleton className="mt-4 h-4 w-full" />
-      </div>
-      <div className="rounded-2xl border p-5">
-        <Skeleton className="h-4 w-32" />
-        <Skeleton className="mt-3 h-7 w-20" />
-        <Skeleton className="mt-4 h-4 w-full" />
-      </div>
+    <div className="rounded-[28px] border p-5 shadow-sm">
+      <Skeleton className="h-4 w-32" />
+      <Skeleton className="mt-4 h-10 w-32" />
+      <Skeleton className="mt-4 h-4 w-full" />
+      <Skeleton className="mt-3 h-20 w-full" />
     </div>
   );
 }
@@ -34,7 +35,8 @@ export default function PageCreateSales() {
   const router = useRouter();
   const { data: clients = [], isLoading: isClientsLoading } = useSaleClientsQuery();
   const { data: products = [], isLoading: isProductsLoading } = useProductsQuery();
-  const { data: inventorySummary = [], isLoading: isInventoryLoading } = useInventorySummaryQuery();
+  const { data: inventorySummary = [], isLoading: isInventoryLoading } =
+    useInventorySummaryQuery();
 
   const activeProducts = products.filter((product) => product.estado === "Activo");
   const totalStock = inventorySummary.reduce((sum, item) => sum + Number(item.stock_total), 0);
@@ -43,11 +45,15 @@ export default function PageCreateSales() {
 
   return (
     <div className="m-4 space-y-6">
-      <div className="rounded-[28px] border bg-gradient-to-br from-background via-background to-muted/30 p-6 shadow-sm">
-        <div className="space-y-4">
+      <div className="relative overflow-hidden rounded-[28px] border bg-gradient-to-br from-primary/25 via-primary/10 to-sky-500/15 p-6 shadow-sm dark:from-primary/25 dark:via-primary/10 dark:to-sky-500/10">
+        <div className="pointer-events-none absolute -right-14 -top-14 h-44 w-44 rounded-full bg-primary/30 blur-3xl dark:bg-primary/20" />
+        <div className="pointer-events-none absolute bottom-0 left-0 h-36 w-36 rounded-full bg-sky-400/20 blur-3xl dark:bg-sky-500/10" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+
+        <div className="relative space-y-4">
           <Link
             href={AllUrls["system:sales"]}
-            className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+            className="inline-flex items-center gap-2 text-sm text-foreground/70 transition-colors hover:text-foreground"
           >
             <ArrowLeft className="h-4 w-4" />
             Volver a ventas
@@ -55,27 +61,32 @@ export default function PageCreateSales() {
 
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div className="space-y-3">
-              <div className="inline-flex items-center gap-2 rounded-full border bg-background px-3 py-1 text-sm text-muted-foreground shadow-sm">
+              <div className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-background/90 px-3 py-1 text-sm text-foreground/75 shadow-sm backdrop-blur dark:border-primary/35 dark:bg-background/80">
                 <ShoppingCart className="h-4 w-4 text-primary" />
                 Nueva venta
               </div>
+
               <div>
-                <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
-                  Crear venta
-                </h1>
-                <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground md:text-base">
-                  Completa la venta con más espacio y mejor contexto. El formulario queda al frente y
-                  la información clave se mantiene visible sin recargar la pantalla.
+                <h1 className="text-3xl font-bold tracking-tight md:text-4xl">Crear venta</h1>
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-foreground/70 md:text-base">
+                  Registra la venta con una vista más clara, con el formulario al centro y el
+                  contexto útil acompañando sin distraer.
                 </p>
               </div>
             </div>
 
             <div className="flex flex-wrap items-center gap-3">
-              <Badge variant="outline" className="px-3 py-1.5">
+              <Badge
+                variant="outline"
+                className="border-primary/25 bg-background/90 px-3 py-1.5 shadow-sm dark:border-primary/35 dark:bg-background/80"
+              >
                 <Users className="mr-2 h-4 w-4" />
                 {clients.length.toLocaleString("es-CO")} clientes activos
               </Badge>
-              <Badge variant="outline" className="px-3 py-1.5">
+              <Badge
+                variant="outline"
+                className="border-primary/25 bg-background/90 px-3 py-1.5 shadow-sm dark:border-primary/35 dark:bg-background/80"
+              >
                 <ReceiptText className="mr-2 h-4 w-4" />
                 {activeProducts.length.toLocaleString("es-CO")} productos activos
               </Badge>
@@ -85,15 +96,15 @@ export default function PageCreateSales() {
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
-        <section className="rounded-[28px] border bg-background p-6 shadow-sm">
-          <div className="mb-6 flex items-center gap-3 border-b pb-5">
-            <div className="rounded-2xl border bg-muted/40 p-2.5 text-primary">
+        <section className="rounded-[28px] border bg-gradient-to-b from-background via-background to-primary/5 p-6 shadow-sm">
+          <div className="mb-6 flex items-center gap-3 border-b border-border/70 pb-5">
+            <div className="rounded-2xl border border-primary/25 bg-gradient-to-br from-primary/20 to-sky-500/10 p-2.5 text-primary dark:border-primary/35 dark:from-primary/20 dark:to-sky-500/10">
               <ReceiptText className="h-5 w-5" />
             </div>
             <div>
               <h2 className="text-xl font-semibold tracking-tight">Datos de la venta</h2>
               <p className="text-sm text-muted-foreground">
-                Selecciona cliente, productos, cantidades y precio antes de guardar.
+                Define cliente, productos, cantidades y precios antes de registrar la operación.
               </p>
             </div>
           </div>
@@ -116,59 +127,66 @@ export default function PageCreateSales() {
           </div>
         </section>
 
-        <aside className="space-y-4 xl:sticky xl:top-6 xl:self-start">
+        <aside className="xl:sticky xl:top-6 xl:self-start">
           {isSummaryLoading ? (
             <SummarySkeleton />
           ) : (
-            <>
-              <div className="rounded-[28px] border bg-background p-5 shadow-sm">
-                <div className="mb-4 flex items-center gap-2">
-                  <Boxes className="h-5 w-5 text-primary" />
-                  <h3 className="font-semibold">Contexto rapido</h3>
+            <div className="overflow-hidden rounded-[28px] border bg-gradient-to-br from-primary/10 via-background to-sky-500/10 shadow-sm">
+              <div className="border-b border-border/70 bg-gradient-to-r from-primary/15 via-primary/10 to-sky-500/10 p-5 dark:from-primary/20 dark:via-primary/10 dark:to-sky-500/10">
+                <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-primary/25 bg-background/85 px-3 py-1 text-xs font-medium text-foreground/70 dark:border-primary/35 dark:bg-background/80">
+                  <Sparkles className="h-3.5 w-3.5 text-primary" />
+                  Contexto de la operación
                 </div>
-                <div className="space-y-4">
-                  <div className="rounded-2xl border bg-muted/20 p-4">
-                    <p className="text-sm text-muted-foreground">Stock disponible</p>
-                    <div className="mt-3 flex items-center justify-between gap-3">
-                      <p className="text-2xl font-semibold">
+
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h3 className="font-semibold">Stock disponible</h3>
+                    <p className="mt-1 text-sm text-foreground/70">
+                      Referencia rápida mientras completas la venta.
+                    </p>
+                  </div>
+                  <div className="rounded-2xl border border-primary/25 bg-background/90 p-2 text-primary shadow-sm dark:border-primary/35 dark:bg-background/80">
+                    <Boxes className="h-5 w-5" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4 p-5">
+                <div className="rounded-2xl border border-primary/15 bg-background/90 p-4 shadow-sm dark:border-primary/20">
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Unidades disponibles</p>
+                      <p className="mt-1 text-3xl font-semibold tracking-tight">
                         {totalStock.toLocaleString("es-CO")}
                       </p>
-                      <Badge variant="outline" className={getIndicatorClass(stockTone)}>
-                        {stockTone === "good"
-                          ? "Stock saludable"
-                          : stockTone === "warning"
-                            ? "Stock moderado"
-                            : "Stock bajo"}
-                      </Badge>
                     </div>
+                    <Badge variant="outline" className={getIndicatorClass(stockTone)}>
+                      {stockTone === "good"
+                        ? "Stock saludable"
+                        : stockTone === "warning"
+                          ? "Stock moderado"
+                          : "Stock bajo"}
+                    </Badge>
                   </div>
 
-                  <div className="rounded-2xl border bg-muted/20 p-4 text-sm text-muted-foreground">
-                    Si guardas la venta como <span className="font-medium text-foreground">cerrada</span>,
-                    el inventario se actualiza de inmediato. Si la dejas
-                    <span className="font-medium text-foreground"> abierta</span>, podrás cerrarla después.
-                  </div>
+                  <p className="mt-3 text-sm text-muted-foreground">
+                    {inventorySummary.length.toLocaleString("es-CO")} referencias con stock para
+                    vender.
+                  </p>
                 </div>
-              </div>
 
-              <div className="rounded-[28px] border bg-background p-5 shadow-sm">
-                <h3 className="font-semibold">Resumen rapido</h3>
-                <div className="mt-4 grid gap-3">
-                  <div className="rounded-2xl border bg-muted/20 p-4">
-                    <p className="text-sm text-muted-foreground">Clientes activos</p>
-                    <p className="mt-1 text-lg font-semibold">
-                      {clients.length.toLocaleString("es-CO")}
-                    </p>
-                  </div>
-                  <div className="rounded-2xl border bg-muted/20 p-4">
-                    <p className="text-sm text-muted-foreground">Referencias con stock</p>
-                    <p className="mt-1 text-lg font-semibold">
-                      {inventorySummary.length.toLocaleString("es-CO")}
-                    </p>
-                  </div>
+                <div className="rounded-2xl border border-primary/20 bg-gradient-to-r from-primary/18 to-sky-500/10 p-4 text-sm text-foreground dark:border-primary/25 dark:from-primary/15 dark:to-sky-500/10">
+                  Si guardas la venta como <span className="font-semibold">cerrada</span>, el
+                  inventario se actualiza al momento.
+                </div>
+
+                <div className="rounded-2xl border bg-background/75 p-4 text-sm text-muted-foreground">
+                  Si prefieres revisarla después, puedes dejarla{" "}
+                  <span className="font-medium text-foreground">abierta</span> y cerrarla más
+                  adelante.
                 </div>
               </div>
-            </>
+            </div>
           )}
         </aside>
       </div>
