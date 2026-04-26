@@ -24,7 +24,7 @@ import { useProductsQuery } from "@/features/products/hooks/useProductsQuery";
 import { useInventorySummaryQuery } from "@/features/inventory/hooks/useInventorySummaryQuery";
 import { useCreateSaleMutation } from "../../hooks/useSaleMutations";
 import { useSaleClientsQuery } from "../../hooks/useSaleClientsQuery";
-import { SaleFormData, saleSchema } from "../../validations/SaleSchema";
+import { SaleFormData, SaleFormInput, saleSchema } from "../../validations/SaleSchema";
 
 interface SaleFormProps {
   onSuccess?: () => void;
@@ -54,7 +54,7 @@ export function SaleForm({ onSuccess }: SaleFormProps) {
     inventorySummary.map((item) => [item.id_producto, Number(item.stock_total)])
   );
 
-  const form = useForm<SaleFormData>({
+  const form = useForm<SaleFormInput, unknown, SaleFormData>({
     resolver: zodResolver(saleSchema),
     defaultValues: {
       id_cliente: "",
@@ -318,7 +318,12 @@ export function SaleForm({ onSuccess }: SaleFormProps) {
                               min="1"
                               step="1"
                               className="h-9"
-                              value={field.value ?? ""}
+                              value={
+                                typeof field.value === "number" ||
+                                typeof field.value === "string"
+                                  ? field.value
+                                  : ""
+                              }
                               onChange={(event) => field.onChange(event.target.value)}
                               onBlur={field.onBlur}
                               name={field.name}
@@ -347,7 +352,12 @@ export function SaleForm({ onSuccess }: SaleFormProps) {
                                   ? `Base: ${selectedProduct.precio_base_venta}`
                                   : "Usar precio base"
                               }
-                              value={field.value ?? ""}
+                              value={
+                                typeof field.value === "number" ||
+                                typeof field.value === "string"
+                                  ? field.value
+                                  : ""
+                              }
                               onChange={(event) => field.onChange(event.target.value)}
                               onBlur={field.onBlur}
                               name={field.name}
@@ -371,7 +381,12 @@ export function SaleForm({ onSuccess }: SaleFormProps) {
                               min="0"
                               step="0.01"
                               className="h-9"
-                              value={field.value ?? ""}
+                              value={
+                                typeof field.value === "number" ||
+                                typeof field.value === "string"
+                                  ? field.value
+                                  : ""
+                              }
                               onChange={(event) => field.onChange(event.target.value)}
                               onBlur={field.onBlur}
                               name={field.name}

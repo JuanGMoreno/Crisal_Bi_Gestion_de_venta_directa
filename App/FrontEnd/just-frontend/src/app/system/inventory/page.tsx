@@ -100,7 +100,7 @@ export default function PageInventory() {
   if (isLoading) {
     return (
       <div>
-        <HeaderManagerInventory onCreateEntry={() => setIsCreateDialogOpen(true)} />
+        <HeaderManagerInventory />
         <InventoryEntryDialog
           open={isCreateDialogOpen}
           onOpenChange={setIsCreateDialogOpen}
@@ -123,7 +123,7 @@ export default function PageInventory() {
 
     return (
       <div>
-        <HeaderManagerInventory onCreateEntry={() => setIsCreateDialogOpen(true)} />
+        <HeaderManagerInventory />
         <InventoryEntryDialog
           open={isCreateDialogOpen}
           onOpenChange={setIsCreateDialogOpen}
@@ -144,7 +144,7 @@ export default function PageInventory() {
 
   return (
     <div>
-      <HeaderManagerInventory onCreateEntry={() => setIsCreateDialogOpen(true)} />
+      <HeaderManagerInventory />
 
       <InventoryEntryDialog
         open={isCreateDialogOpen}

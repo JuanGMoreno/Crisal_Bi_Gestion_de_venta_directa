@@ -13,7 +13,7 @@ import {
 import { getStateIndicatorClass } from "@/shared/lib/status-indicators";
 import { InventoryEntry } from "../../types/Inventory";
 
-function formatDate(value?: string) {
+function formatDate(value?: string | null) {
   if (!value) return "Sin fecha registrada";
 
   return new Intl.DateTimeFormat("es-CO", {

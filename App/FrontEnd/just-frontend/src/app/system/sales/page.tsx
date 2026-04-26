@@ -66,7 +66,7 @@ export default function PageSales() {
   if (isLoading) {
     return (
       <div>
-        <HeaderManagerSales onCreateSale={() => setIsCreateDialogOpen(true)} />
+        <HeaderManagerSales />
         <SaleDialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen} />
         <SalesSummarySkeleton />
         <div className="m-4">
@@ -79,7 +79,7 @@ export default function PageSales() {
   if (isError) {
     return (
       <div>
-        <HeaderManagerSales onCreateSale={() => setIsCreateDialogOpen(true)} />
+        <HeaderManagerSales />
         <SaleDialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen} />
         <div className="m-4">
           <EmptyGlobal
@@ -99,7 +99,7 @@ export default function PageSales() {
 
   return (
     <div>
-      <HeaderManagerSales onCreateSale={() => setIsCreateDialogOpen(true)} />
+      <HeaderManagerSales />
 
       <SaleDialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen} />
       <SaleDetailsDialog sale={selectedSale} onClose={() => setSelectedSale(null)} />

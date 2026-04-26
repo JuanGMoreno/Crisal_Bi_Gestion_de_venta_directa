@@ -25,6 +25,7 @@ import { useProductsQuery } from "@/features/products/hooks/useProductsQuery";
 import { useCreateInventoryEntryMutation } from "../../hooks/useInventoryMutations";
 import {
   InventoryEntryFormData,
+  InventoryEntryFormInput,
   inventoryEntrySchema,
 } from "../../validations/InventoryEntrySchema";
 
@@ -41,7 +42,7 @@ export function InventoryEntryForm({ onSuccess }: InventoryEntryFormProps) {
   const createInventoryEntryMutation = useCreateInventoryEntryMutation();
   const { data: products = [] } = useProductsQuery();
 
-  const form = useForm<InventoryEntryFormData>({
+  const form = useForm<InventoryEntryFormInput, unknown, InventoryEntryFormData>({
     resolver: zodResolver(inventoryEntrySchema),
     defaultValues: {
       fecha_ingreso: toDateTimeLocalString(new Date()),
@@ -65,7 +66,7 @@ export function InventoryEntryForm({ onSuccess }: InventoryEntryFormProps) {
 
   const onSubmit = async (data: InventoryEntryFormData) => {
     const payload = {
-      fecha_ingreso: new Date(data.fecha_ingreso).toISOString(),
+      fecha_ingreso: new Date(data.fecha_ingreso || new Date().toISOString()).toISOString(),
       observacion: data.observacion?.trim() || undefined,
       detalles: data.detalles.map((detail) => ({
         id_producto: detail.id_producto,
@@ -231,7 +232,11 @@ export function InventoryEntryForm({ onSuccess }: InventoryEntryFormProps) {
                             min="1"
                             step="1"
                             className="h-9"
-                            value={field.value ?? ""}
+                            value={
+                              typeof field.value === "number" || typeof field.value === "string"
+                                ? field.value
+                                : ""
+                            }
                             onChange={(event) => field.onChange(event.target.value)}
                             onBlur={field.onBlur}
                             name={field.name}
@@ -255,7 +260,11 @@ export function InventoryEntryForm({ onSuccess }: InventoryEntryFormProps) {
                             min="0"
                             step="0.01"
                             className="h-9"
-                            value={field.value ?? ""}
+                            value={
+                              typeof field.value === "number" || typeof field.value === "string"
+                                ? field.value
+                                : ""
+                            }
                             onChange={(event) => field.onChange(event.target.value)}
                             onBlur={field.onBlur}
                             name={field.name}

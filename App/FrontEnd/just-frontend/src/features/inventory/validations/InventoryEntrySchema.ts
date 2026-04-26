@@ -31,4 +31,5 @@ export const inventoryEntrySchema = z.object({
     .min(1, "Debes agregar al menos un detalle de inventario"),
 });
 
-export type InventoryEntryFormData = z.infer<typeof inventoryEntrySchema>;
+export type InventoryEntryFormInput = z.input<typeof inventoryEntrySchema>;
+export type InventoryEntryFormData = z.output<typeof inventoryEntrySchema>;

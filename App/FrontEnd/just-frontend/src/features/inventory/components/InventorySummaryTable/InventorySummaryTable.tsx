@@ -39,7 +39,7 @@ function formatCurrency(value: number) {
   }).format(value);
 }
 
-function formatDate(value?: string) {
+function formatDate(value?: string | null) {
   if (!value) return "Sin vencimiento";
 
   return new Intl.DateTimeFormat("es-CO", {
