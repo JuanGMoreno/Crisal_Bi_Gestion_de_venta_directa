@@ -84,10 +84,10 @@ export default function PageEditSale({ params }: EditSalePageProps) {
 
   return (
     <div className="m-4 space-y-6">
-      <div className="relative overflow-hidden rounded-[28px] border bg-gradient-to-br from-primary/25 via-primary/10 to-sky-500/15 p-6 shadow-sm dark:from-primary/25 dark:via-primary/10 dark:to-sky-500/10">
-        <div className="pointer-events-none absolute -right-14 -top-14 h-44 w-44 rounded-full bg-primary/30 blur-3xl dark:bg-primary/20" />
-        <div className="pointer-events-none absolute bottom-0 left-0 h-36 w-36 rounded-full bg-sky-400/20 blur-3xl dark:bg-sky-500/10" />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+      <div className="relative overflow-hidden rounded-[28px] border bg-gradient-to-br from-sky-100 via-background to-blue-100 p-6 shadow-sm dark:from-sky-950/25 dark:via-background dark:to-blue-950/15">
+        <div className="pointer-events-none absolute -right-14 -top-14 h-44 w-44 rounded-full bg-sky-300/35 blur-3xl dark:bg-sky-500/15" />
+        <div className="pointer-events-none absolute bottom-0 left-0 h-36 w-36 rounded-full bg-blue-300/20 blur-3xl dark:bg-blue-500/10" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-sky-300/80 to-transparent dark:via-sky-500/30" />
 
         <div className="relative space-y-4">
           <Link
@@ -100,8 +100,8 @@ export default function PageEditSale({ params }: EditSalePageProps) {
 
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div className="space-y-3">
-              <div className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-background/90 px-3 py-1 text-sm text-foreground/75 shadow-sm backdrop-blur dark:border-primary/35 dark:bg-background/80">
-                <PencilLine className="h-4 w-4 text-primary" />
+              <div className="inline-flex items-center gap-2 rounded-full border border-sky-200 bg-background/90 px-3 py-1 text-sm text-foreground/75 shadow-sm backdrop-blur dark:border-sky-900/70 dark:bg-background/80">
+                <PencilLine className="h-4 w-4 text-sky-700 dark:text-sky-300" />
                 Editar venta abierta
               </div>
 
@@ -117,14 +117,14 @@ export default function PageEditSale({ params }: EditSalePageProps) {
             <div className="flex flex-wrap items-center gap-3">
               <Badge
                 variant="outline"
-                className="border-primary/25 bg-background/90 px-3 py-1.5 shadow-sm dark:border-primary/35 dark:bg-background/80"
+                className="border-sky-200 bg-background/90 px-3 py-1.5 shadow-sm dark:border-sky-900/70 dark:bg-background/80"
               >
                 <Users className="mr-2 h-4 w-4" />
                 {clients.length.toLocaleString("es-CO")} clientes activos
               </Badge>
               <Badge
                 variant="outline"
-                className="border-primary/25 bg-background/90 px-3 py-1.5 shadow-sm dark:border-primary/35 dark:bg-background/80"
+                className="border-blue-200 bg-background/90 px-3 py-1.5 shadow-sm dark:border-blue-900/70 dark:bg-background/80"
               >
                 <ReceiptText className="mr-2 h-4 w-4" />
                 {sale.detalles.length} producto{sale.detalles.length > 1 ? "s" : ""}
@@ -135,9 +135,9 @@ export default function PageEditSale({ params }: EditSalePageProps) {
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
-        <section className="rounded-[28px] border bg-gradient-to-b from-background via-background to-primary/5 p-6 shadow-sm">
+        <section className="rounded-[28px] border bg-gradient-to-b from-background via-background to-sky-50/70 p-6 shadow-sm dark:to-sky-950/10">
           <div className="mb-6 flex items-center gap-3 border-b border-border/70 pb-5">
-            <div className="rounded-2xl border border-primary/25 bg-gradient-to-br from-primary/20 to-sky-500/10 p-2.5 text-primary dark:border-primary/35 dark:from-primary/20 dark:to-sky-500/10">
+            <div className="rounded-2xl border border-sky-200 bg-sky-100 p-2.5 text-sky-700 dark:border-sky-900/70 dark:bg-sky-950/30 dark:text-sky-300">
               <ClipboardPen className="h-5 w-5" />
             </div>
             <div>
@@ -170,10 +170,10 @@ export default function PageEditSale({ params }: EditSalePageProps) {
         </section>
 
         <aside className="xl:sticky xl:top-6 xl:self-start">
-          <div className="overflow-hidden rounded-[28px] border bg-gradient-to-br from-primary/10 via-background to-sky-500/10 shadow-sm">
-            <div className="border-b border-border/70 bg-gradient-to-r from-primary/15 via-primary/10 to-sky-500/10 p-5 dark:from-primary/20 dark:via-primary/10 dark:to-sky-500/10">
-              <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-primary/25 bg-background/85 px-3 py-1 text-xs font-medium text-foreground/70 dark:border-primary/35 dark:bg-background/80">
-                <Sparkles className="h-3.5 w-3.5 text-primary" />
+          <div className="overflow-hidden rounded-[28px] border bg-gradient-to-br from-sky-50 via-background to-blue-50 shadow-sm dark:from-sky-950/15 dark:via-background dark:to-blue-950/15">
+            <div className="border-b border-border/70 bg-gradient-to-r from-sky-100/75 via-sky-50/50 to-blue-100/75 p-5 dark:from-sky-950/25 dark:via-background dark:to-blue-950/20">
+              <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-sky-200 bg-background/85 px-3 py-1 text-xs font-medium text-foreground/70 dark:border-sky-900/70 dark:bg-background/80">
+                <Sparkles className="h-3.5 w-3.5 text-sky-700 dark:text-sky-300" />
                 Edición rápida
               </div>
               <h3 className="font-semibold">Siguiente paso</h3>
@@ -184,12 +184,12 @@ export default function PageEditSale({ params }: EditSalePageProps) {
             </div>
 
             <div className="space-y-4 p-5">
-              <div className="rounded-2xl border border-primary/15 bg-background/90 p-4 shadow-sm dark:border-primary/20">
+              <div className="rounded-2xl border border-sky-100 bg-background/90 p-4 shadow-sm dark:border-sky-900/40">
                 <p className="text-sm text-muted-foreground">Cliente actual</p>
                 <p className="mt-1 font-semibold">{sale.cliente?.nombre || "Cliente sin cargar"}</p>
               </div>
 
-              <div className="rounded-2xl border border-primary/20 bg-gradient-to-r from-primary/18 to-sky-500/10 p-4 text-sm text-foreground dark:border-primary/25 dark:from-primary/15 dark:to-sky-500/10">
+              <div className="rounded-2xl border border-sky-200 bg-sky-50/80 p-4 text-sm text-sky-950 dark:border-sky-900/40 dark:bg-sky-950/20 dark:text-sky-100">
                 Los cambios solo están disponibles porque la venta sigue abierta.
               </div>
             </div>

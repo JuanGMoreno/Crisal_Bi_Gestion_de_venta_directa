@@ -2,6 +2,7 @@ import express from 'express';
 import { authMiddleware } from '../middleware/auth.middleware.js';
 import {
   createInventory,
+  updateInventory,
   deleteInventory,
   getInventory,
   getInventoryEntries,
@@ -14,6 +15,7 @@ router.get('/inventory', authMiddleware, getInventory);
 router.get('/inventory/entries', authMiddleware, getInventoryEntries);
 router.get('/inventory/entries/:id', authMiddleware, getInventoryEntry);
 router.post('/inventory/entries', authMiddleware, createInventory);
+router.put('/inventory/entries/:id', authMiddleware, updateInventory);
 router.delete('/inventory/entries/:id', authMiddleware, deleteInventory);
 
 export default router;

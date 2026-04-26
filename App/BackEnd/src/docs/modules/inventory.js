@@ -69,6 +69,28 @@ export const inventoryDocs = {
           200: { description: 'Ingreso encontrado' }
         }
       },
+      put: {
+        tags: ['Inventory'],
+        summary: 'Actualizar ingreso de inventario sin movimientos',
+        description:
+          'Permite editar solo ingresos cuyos lotes no hayan sido consumidos ni alterados por movimientos posteriores.',
+        security: [{ bearerAuth: [] }, { cookieAuth: [] }],
+        parameters: [
+          { in: 'path', name: 'id', required: true, schema: { type: 'string', format: 'uuid' } }
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/UpdateInventoryEntryRequest' }
+            }
+          }
+        },
+        responses: {
+          200: { description: 'Ingreso actualizado' },
+          400: { description: 'Ingreso con movimientos o payload invalido' }
+        }
+      },
       delete: {
         tags: ['Inventory'],
         summary: 'Eliminar ingreso de inventario sin movimientos',

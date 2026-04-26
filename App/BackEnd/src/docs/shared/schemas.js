@@ -239,6 +239,28 @@ export const schemas = {
       }
     }
   },
+  UpdateInventoryEntryRequest: {
+    type: 'object',
+    required: ['detalles'],
+    properties: {
+      fecha_ingreso: { type: 'string', format: 'date-time' },
+      observacion: { type: 'string' },
+      detalles: {
+        type: 'array',
+        items: {
+          type: 'object',
+          required: ['id_producto', 'cantidad_inicial', 'costo_unitario_compra'],
+          properties: {
+            id_producto: { type: 'string', format: 'uuid' },
+            cantidad_inicial: { type: 'integer' },
+            costo_unitario_compra: { type: 'number' },
+            fecha_vencimiento: { type: 'string', format: 'date-time', nullable: true },
+            numero_lote_fabricacion: { type: 'string', nullable: true }
+          }
+        }
+      }
+    }
+  },
   UpdateSaleRequest: {
     type: 'object',
     required: ['id_cliente', 'detalles'],

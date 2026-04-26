@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/shared/components/ui/dropdown-menu";
-import { Eye, MoreHorizontal, Trash2 } from "lucide-react";
+import { Eye, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import {
   destructiveMenuItemClass,
   getStateIndicatorClass,
@@ -33,11 +33,13 @@ function formatCurrency(value: number) {
 
 interface InventoryColumnsOptions {
   onViewDetails: (entry: InventoryEntry) => void;
+  onEdit: (entry: InventoryEntry) => void;
   onDelete: (entry: InventoryEntry) => void;
 }
 
 export function createInventoryColumns({
   onViewDetails,
+  onEdit,
   onDelete,
 }: InventoryColumnsOptions): ColumnDef<InventoryEntry>[] {
   return [
@@ -170,6 +172,10 @@ export function createInventoryColumns({
                 <DropdownMenuItem onClick={() => onViewDetails(entry)}>
                   <Eye />
                   Ver detalle
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onEdit(entry)}>
+                  <Pencil />
+                  Editar ingreso
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem

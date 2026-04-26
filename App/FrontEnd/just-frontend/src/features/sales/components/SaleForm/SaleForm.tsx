@@ -28,7 +28,6 @@ import { useCreateSaleMutation, useUpdateSaleMutation } from "../../hooks/useSal
 import { useSaleClientsQuery } from "../../hooks/useSaleClientsQuery";
 import { Sale } from "../../types/Sale";
 import { SaleFormData, SaleFormInput, saleSchema } from "../../validations/SaleSchema";
-import { array } from "zod";
 
 interface SaleFormProps {
   mode?: "create" | "edit";

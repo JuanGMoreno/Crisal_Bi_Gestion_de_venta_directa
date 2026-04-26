@@ -104,6 +104,14 @@ function buildStockSummary(details) {
   return [...stockMap.values()].sort((a, b) => a.categoria.localeCompare(b.categoria));
 }
 
+function entryHasConsumedStock(entry) {
+  return entry.detalles?.some(
+    (detail) =>
+      Number(detail.cantidad_disponible) !== Number(detail.cantidad_inicial) ||
+      (detail.consumos_venta?.length ?? 0) > 0
+  );
+}
+
 export const InventoryService = {
   getInventoryEntries: async (userId) => {
     const distributorId = await resolveDistributorIdByUserId(userId);
@@ -161,6 +169,55 @@ export const InventoryService = {
     });
   },
 
+  updateInventoryEntry: async (id, data, userId) => {
+    const distributorId = await resolveDistributorIdByUserId(userId);
+    const normalizedDetails = normalizeEntryDetails(data.detalles);
+    const productIds = [...new Set(normalizedDetails.map((detail) => detail.id_producto))];
+    const products = await ProductRepository.findByIdsAndDistributor(productIds, distributorId);
+
+    if (products.length !== productIds.length) {
+      throw new Error('Uno o mas productos no pertenecen al distribuidor autenticado');
+    }
+
+    const productsById = new Map(products.map((product) => [product.id_producto, product]));
+
+    for (const detail of normalizedDetails) {
+      const product = productsById.get(detail.id_producto);
+
+      if (!product || product.estado !== 'Activo') {
+        throw new Error('No se puede ingresar inventario para un producto inactivo o inexistente');
+      }
+    }
+
+    return await sequelize.transaction(async (transaction) => {
+      const existingEntry = await InventoryRepository.findEntryByIdAndDistributor(id, distributorId, {
+        transaction
+      });
+
+      if (!existingEntry) {
+        throw new Error('Ingreso de inventario no encontrado');
+      }
+
+      if (entryHasConsumedStock(existingEntry)) {
+        throw new Error('No se puede editar un ingreso de inventario que ya tuvo movimientos');
+      }
+
+      await InventoryRepository.updateEntryByDistributor(
+        id,
+        distributorId,
+        {
+          fecha_ingreso: normalizeEntryDate(data.fecha_ingreso),
+          observacion: normalizeOptionalText(data.observacion)
+        },
+        { transaction }
+      );
+
+      await InventoryRepository.replaceEntryDetails(id, normalizedDetails, { transaction });
+
+      return await InventoryRepository.findEntryByIdAndDistributor(id, distributorId, { transaction });
+    });
+  },
+
   deleteInventoryEntry: async (id, userId) => {
     const distributorId = await resolveDistributorIdByUserId(userId);
     const entry = await InventoryRepository.findEntryByIdAndDistributor(id, distributorId);
@@ -169,11 +226,7 @@ export const InventoryService = {
       throw new Error('Ingreso de inventario no encontrado');
     }
 
-    const hasConsumedStock = entry.detalles?.some(
-      (detail) =>
-        Number(detail.cantidad_disponible) !== Number(detail.cantidad_inicial) ||
-        (detail.consumos_venta?.length ?? 0) > 0
-    );
+    const hasConsumedStock = entryHasConsumedStock(entry);
 
     if (hasConsumedStock) {
       throw new Error('No se puede eliminar un ingreso de inventario que ya tuvo movimientos');

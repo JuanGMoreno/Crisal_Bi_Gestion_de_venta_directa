@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Plus, Trash2 } from "lucide-react";
@@ -14,15 +15,13 @@ import {
   FieldLabel,
   FieldSet,
 } from "@/shared/components/ui/field";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/shared/components/ui/select";
+import { ProductCombobox } from "@/features/products/components/ProductCombobox/ProductCombobox";
 import { useProductsQuery } from "@/features/products/hooks/useProductsQuery";
-import { useCreateInventoryEntryMutation } from "../../hooks/useInventoryMutations";
+import {
+  useCreateInventoryEntryMutation,
+  useUpdateInventoryEntryMutation,
+} from "../../hooks/useInventoryMutations";
+import { InventoryEntry } from "../../types/Inventory";
 import {
   InventoryEntryFormData,
   InventoryEntryFormInput,
@@ -30,6 +29,9 @@ import {
 } from "../../validations/InventoryEntrySchema";
 
 interface InventoryEntryFormProps {
+  mode?: "create" | "edit";
+  entryId?: string;
+  initialEntry?: InventoryEntry | null;
   onSuccess?: () => void;
 }
 
@@ -38,26 +40,67 @@ function toDateTimeLocalString(value: Date) {
   return new Date(value.getTime() - timezoneOffset).toISOString().slice(0, 16);
 }
 
-export function InventoryEntryForm({ onSuccess }: InventoryEntryFormProps) {
+function getDefaultInventoryEntryValues(): InventoryEntryFormInput {
+  return {
+    fecha_ingreso: toDateTimeLocalString(new Date()),
+    observacion: "",
+    detalles: [
+      {
+        id_producto: "",
+        cantidad_inicial: 1,
+        costo_unitario_compra: 0,
+        fecha_vencimiento: "",
+        numero_lote_fabricacion: "",
+      },
+    ],
+  };
+}
+
+function toDateInputString(value?: string | null) {
+  if (!value) return "";
+  return new Date(value).toISOString().slice(0, 10);
+}
+
+function mapEntryToFormValues(entry: InventoryEntry): InventoryEntryFormInput {
+  return {
+    fecha_ingreso: toDateTimeLocalString(new Date(entry.fecha_ingreso)),
+    observacion: entry.observacion || "",
+    detalles: entry.detalles.map((detail) => ({
+      id_producto: detail.id_producto,
+      cantidad_inicial: Number(detail.cantidad_inicial),
+      costo_unitario_compra: Number(detail.costo_unitario_compra),
+      fecha_vencimiento: toDateInputString(detail.fecha_vencimiento),
+      numero_lote_fabricacion: detail.numero_lote_fabricacion || "",
+    })),
+  };
+}
+
+export function InventoryEntryForm({
+  mode = "create",
+  entryId,
+  initialEntry,
+  onSuccess,
+}: InventoryEntryFormProps) {
   const createInventoryEntryMutation = useCreateInventoryEntryMutation();
+  const updateInventoryEntryMutation = useUpdateInventoryEntryMutation();
   const { data: products = [] } = useProductsQuery();
+  const activeProducts = products.filter((product) => product.estado === "Activo");
 
   const form = useForm<InventoryEntryFormInput, unknown, InventoryEntryFormData>({
     resolver: zodResolver(inventoryEntrySchema),
-    defaultValues: {
-      fecha_ingreso: toDateTimeLocalString(new Date()),
-      observacion: "",
-      detalles: [
-        {
-          id_producto: "",
-          cantidad_inicial: 1,
-          costo_unitario_compra: 0,
-          fecha_vencimiento: "",
-          numero_lote_fabricacion: "",
-        },
-      ],
-    },
+    defaultValues: getDefaultInventoryEntryValues(),
   });
+
+  useEffect(() => {
+    if (mode === "edit" && initialEntry) {
+      form.reset(mapEntryToFormValues(initialEntry));
+      return;
+    }
+
+    if (mode === "create") {
+      form.reset(getDefaultInventoryEntryValues());
+    }
+  }, [form, initialEntry, mode]);
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
@@ -79,27 +122,33 @@ export function InventoryEntryForm({ onSuccess }: InventoryEntryFormProps) {
       })),
     };
 
-    await toast.promise(createInventoryEntryMutation.mutateAsync(payload), {
-      loading: "Registrando ingreso de inventario...",
-      success: "Ingreso registrado correctamente",
+    const submitAction =
+      mode === "edit" && entryId
+        ? updateInventoryEntryMutation.mutateAsync({ id: entryId, data: payload })
+        : createInventoryEntryMutation.mutateAsync(payload);
+
+    await toast.promise(submitAction, {
+      loading:
+        mode === "edit"
+          ? "Actualizando ingreso de inventario..."
+          : "Registrando ingreso de inventario...",
+      success:
+        mode === "edit"
+          ? "Ingreso actualizado correctamente"
+          : "Ingreso registrado correctamente",
       error: (error) =>
-        error instanceof Error ? error.message : "No se pudo registrar el ingreso",
+        error instanceof Error
+          ? error.message
+          : mode === "edit"
+            ? "No se pudo actualizar el ingreso"
+            : "No se pudo registrar el ingreso",
       position: "top-right",
     });
 
-    form.reset({
-      fecha_ingreso: toDateTimeLocalString(new Date()),
-      observacion: "",
-      detalles: [
-        {
-          id_producto: "",
-          cantidad_inicial: 1,
-          costo_unitario_compra: 0,
-          fecha_vencimiento: "",
-          numero_lote_fabricacion: "",
-        },
-      ],
-    });
+    if (mode === "create") {
+      form.reset(getDefaultInventoryEntryValues());
+    }
+
     onSuccess?.();
   };
 
@@ -201,20 +250,14 @@ export function InventoryEntryForm({ onSuccess }: InventoryEntryFormProps) {
                       name={`detalles.${index}.id_producto`}
                       control={form.control}
                       render={({ field, fieldState }) => (
-                        <Field data-invalid={fieldState.invalid}>
+                        <Field data-invalid={fieldState.invalid} className="md:col-span-2 xl:col-span-1">
                           <FieldLabel>Producto</FieldLabel>
-                          <Select value={field.value} onValueChange={field.onChange}>
-                            <SelectTrigger className="h-9" aria-invalid={fieldState.invalid}>
-                              <SelectValue placeholder="Selecciona un producto" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {products.map((product) => (
-                                <SelectItem key={product.id_producto} value={product.id_producto}>
-                                  {product.nombre}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                          <ProductCombobox
+                            products={activeProducts}
+                            value={field.value}
+                            invalid={fieldState.invalid}
+                            onChange={field.onChange}
+                          />
                           {fieldState.invalid ? <FieldError errors={[fieldState.error]} /> : null}
                         </Field>
                       )}
