@@ -13,7 +13,6 @@ import {
   FieldSet,
 } from "@/shared/components/ui/field";
 import { Input } from "@/shared/components/ui/input";
-import { Textarea } from "@/shared/components/ui/textarea";
 import { useCreateClientMutation, useUpdateClientMutation } from "../../hooks/useClientMutations";
 import { Client } from "../../types/Client";
 import { ClientFormData, ClientFormInput, clientSchema } from "../../validations/ClientSchema";

@@ -27,8 +27,18 @@ export default function useAuthServices() {
     }
   }, []);
 
+  const Signout = useCallback(async () => {
+    try {
+      const response = await http.post("/auth/signout");
+      return response.data;
+    } catch (error: unknown) {
+      throw new Error(getApiErrorMessage(error, "Error al cerrar sesion."));
+    }
+  }, []);
+
   return {
     Signin,
-    Signup
+    Signup,
+    Signout
   };
 }

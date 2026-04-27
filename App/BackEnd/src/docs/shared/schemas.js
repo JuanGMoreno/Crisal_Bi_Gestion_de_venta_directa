@@ -40,10 +40,57 @@ export const schemas = {
     type: 'object',
     properties: {
       id_distribuidor: { type: 'string', format: 'uuid' },
+      id_usuario: { type: 'string', format: 'uuid' },
       nombre: { type: 'string' },
       rol: { type: 'string', enum: ['Consultora', 'Lider de Grupo', 'Lider'] },
+      foto_avatar: { type: 'string', nullable: true },
       codigo_referido: { type: 'string', nullable: true },
+      fecha_vencimiento_codigo: { type: 'string', format: 'date-time', nullable: true },
       estado: { type: 'string', enum: ['Activo', 'Inactivo'] }
+    }
+  },
+  DistributorProfile: {
+    type: 'object',
+    properties: {
+      id_distribuidor: { type: 'string', format: 'uuid' },
+      id_usuario: { type: 'string', format: 'uuid' },
+      nombre: { type: 'string' },
+      rol: { type: 'string', enum: ['Consultora', 'Lider de Grupo', 'Lider'] },
+      foto_avatar: { type: 'string', nullable: true },
+      codigo_referido: { type: 'string', nullable: true },
+      fecha_vencimiento_codigo: { type: 'string', format: 'date-time', nullable: true },
+      estado: { type: 'string', enum: ['Activo', 'Inactivo'] },
+      createdAt: { type: 'string', format: 'date-time' },
+      updatedAt: { type: 'string', format: 'date-time' },
+      usuario: {
+        type: 'object',
+        properties: {
+          id_usuario: { type: 'string', format: 'uuid' },
+          correo: { type: 'string', format: 'email' },
+          estado: { type: 'string', enum: ['Activo', 'Inactivo'] },
+          createdAt: { type: 'string', format: 'date-time' },
+          updatedAt: { type: 'string', format: 'date-time' }
+        }
+      },
+      padre: {
+        allOf: [{ $ref: '#/components/schemas/Distributor' }],
+        nullable: true
+      }
+    }
+  },
+  RenewReferralCodeResponse: {
+    type: 'object',
+    properties: {
+      message: { type: 'string' },
+      profile: { $ref: '#/components/schemas/DistributorProfile' }
+    }
+  },
+  UpdateCurrentDistributorProfileRequest: {
+    type: 'object',
+    required: ['nombre'],
+    properties: {
+      nombre: { type: 'string' },
+      foto_avatar: { type: 'string', nullable: true }
     }
   },
   CreateDistributorRequest: {
