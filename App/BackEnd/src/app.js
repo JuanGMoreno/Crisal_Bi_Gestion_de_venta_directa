@@ -10,6 +10,7 @@ import distributorRoutes from './routes/distributor.routes.js';
 import clientRoutes from './routes/client.routes.js';
 import inventoryRoutes from './routes/inventory.routes.js';
 import saleRoutes from './routes/sale.routes.js';
+import dashboardRoutes from './routes/dashboard.routes.js';
 import docsRoutes from './routes/docs.routes.js';
 
 const app = express();
@@ -34,6 +35,7 @@ app.use('/api', distributorRoutes);
 app.use('/api', clientRoutes);
 app.use('/api', inventoryRoutes);
 app.use('/api', saleRoutes);
+app.use('/api', dashboardRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api', docsRoutes);
 
