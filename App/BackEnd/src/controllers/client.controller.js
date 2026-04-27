@@ -1,5 +1,25 @@
 import { ClientService } from '../services/client.service.js';
 
+function assignUploadedImageToBody(req) {
+  const uploadedImageUrl = req.file
+    ? (req.file.path || req.file.secure_url || req.file.url || null)
+    : null;
+
+  if (Array.isArray(req.body?.foto_avatar)) {
+    req.body.foto_avatar = req.body.foto_avatar[0] ?? null;
+  } else if (req.body?.foto_avatar && typeof req.body.foto_avatar === 'object') {
+    req.body.foto_avatar =
+      req.body.foto_avatar.path ||
+      req.body.foto_avatar.secure_url ||
+      req.body.foto_avatar.url ||
+      null;
+  }
+
+  if (uploadedImageUrl) {
+    req.body.foto_avatar = uploadedImageUrl;
+  }
+}
+
 export const getClients = async (_req, res) => {
   try {
     const clients = await ClientService.getClients();
@@ -28,6 +48,8 @@ export const getClient = async (req, res) => {
 };
 
 export const createClient = async (req, res) => {
+  assignUploadedImageToBody(req);
+
   try {
     const client = await ClientService.createClient(req.body);
     return res.status(201).json(client);
@@ -37,6 +59,8 @@ export const createClient = async (req, res) => {
 };
 
 export const updateClient = async (req, res) => {
+  assignUploadedImageToBody(req);
+
   try {
     const client = await ClientService.updateClient(req.params.id, req.body);
     return res.status(200).json(client);

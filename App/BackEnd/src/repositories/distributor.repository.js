@@ -1,4 +1,4 @@
-import { Distributor } from "../models/index.js";
+import { Distributor, User } from "../models/index.js";
 
 export const DistributorRepository = {
   /**
@@ -24,6 +24,27 @@ export const DistributorRepository = {
   findByUserId: async (userId) => {
     return await Distributor.findOne({
       where: { id_usuario: userId }
+    });
+  },
+
+  /**
+   * Buscar perfil completo del distribuidor autenticado
+   */
+  findProfileByUserId: async (userId) => {
+    return await Distributor.findOne({
+      where: { id_usuario: userId },
+      include: [
+        {
+          model: User,
+          as: 'usuario',
+          attributes: ['id_usuario', 'correo', 'estado', 'createdAt', 'updatedAt']
+        },
+        {
+          model: Distributor,
+          as: 'padre',
+          attributes: ['id_distribuidor', 'nombre', 'rol', 'codigo_referido', 'estado']
+        }
+      ]
     });
   },
 
@@ -80,6 +101,12 @@ export const DistributorRepository = {
   countByStatus: async (estado) => {
     return await Distributor.count({ 
       where: { estado } 
+    });
+  },
+
+  countByParent: async (idDistribuidorPadre) => {
+    return await Distributor.count({
+      where: { id_distribuidor_padre: idDistribuidorPadre }
     });
   }
 };

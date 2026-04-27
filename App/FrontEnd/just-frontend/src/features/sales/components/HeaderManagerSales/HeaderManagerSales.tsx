@@ -1,13 +1,9 @@
 import { Button } from "@/shared/components/ui/button";
 import { ShoppingCart } from "lucide-react";
+import Link from "next/link";
+import AllUrls from "@/urls";
 
-interface HeaderManagerSalesProps {
-  onCreateSale: () => void;
-}
-
-export default function HeaderManagerSales({
-  onCreateSale,
-}: HeaderManagerSalesProps) {
+export default function HeaderManagerSales() {
   return (
     <div className="mb-4 m-4 flex items-center justify-between gap-4">
       <div>
@@ -16,10 +12,12 @@ export default function HeaderManagerSales({
           Registra ventas, consulta su estado y controla el impacto sobre el inventario.
         </p>
       </div>
-      <Button size="lg" onClick={onCreateSale}>
-        Registrar venta
-        <ShoppingCart className="ml-2" />
-      </Button>
+      <Link href={AllUrls['sales:create']}>
+        <Button size="lg">
+          Registrar venta
+          <ShoppingCart className="ml-2" />
+        </Button>
+      </Link>
     </div>
   );
 }

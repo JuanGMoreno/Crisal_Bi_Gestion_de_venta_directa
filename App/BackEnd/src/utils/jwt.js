@@ -19,7 +19,7 @@ export function signAccessToken(user) {
     },
     getJwtSecret(),
     {
-      expiresIn: process.env.JWT_EXPIRES_IN || "15m",
+      expiresIn: process.env.JWT_EXPIRES_IN || "3h",
       issuer: "mi-api",
       audience: "mi-app",
     }

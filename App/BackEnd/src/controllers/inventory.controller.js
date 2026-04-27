@@ -53,6 +53,16 @@ export const createInventory = async (req, res) => {
   }
 };
 
+export const updateInventory = async (req, res) => {
+  try {
+    const entry = await InventoryService.updateInventoryEntry(req.params.id, req.body, req.user.id);
+    return res.status(200).json(entry);
+  } catch (error) {
+    const statusCode = error.message === 'Ingreso de inventario no encontrado' ? 404 : 400;
+    return res.status(statusCode).json({ message: error.message });
+  }
+};
+
 export const deleteInventory = async (req, res) => {
   try {
     const result = await InventoryService.deleteInventoryEntry(req.params.id, req.user.id);

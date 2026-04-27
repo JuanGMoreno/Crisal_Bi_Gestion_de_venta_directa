@@ -10,7 +10,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/shared/components/ui/dropdown-menu";
-import { CheckCircle2, Eye, MoreHorizontal, OctagonX } from "lucide-react";
+import { CheckCircle2, Eye, MoreHorizontal, OctagonX, Pencil } from "lucide-react";
+import {
+  destructiveMenuItemClass,
+  getStateIndicatorClass,
+} from "@/shared/lib/status-indicators";
 import { Sale } from "../../types/Sale";
 
 function formatDate(value: string) {
@@ -29,12 +33,14 @@ function formatCurrency(value: number) {
 
 interface SalesColumnsOptions {
   onViewDetails: (sale: Sale) => void;
+  onEditSale: (sale: Sale) => void;
   onCloseSale: (sale: Sale) => void;
   onCancelSale: (sale: Sale) => void;
 }
 
 export function createSalesColumns({
   onViewDetails,
+  onEditSale,
   onCloseSale,
   onCancelSale,
 }: SalesColumnsOptions): ColumnDef<Sale>[] {
@@ -93,7 +99,9 @@ export function createSalesColumns({
       id: "items",
       accessorFn: (row) => row.detalles.length,
       header: () => <div className="text-center">Items</div>,
-      cell: ({ row }) => <div className="text-center font-semibold">{row.original.detalles.length}</div>,
+      cell: ({ row }) => (
+        <div className="text-center font-semibold">{row.original.detalles.length}</div>
+      ),
     },
     {
       accessorKey: "total",
@@ -107,23 +115,13 @@ export function createSalesColumns({
     {
       accessorKey: "estado",
       header: () => <div className="text-center">Estado</div>,
-      cell: ({ row }) => {
-        const estado = row.original.estado;
-        const className =
-          estado === "Cerrada"
-            ? "border-emerald-300 bg-emerald-100 text-emerald-800"
-            : estado === "Abierta"
-              ? "border-amber-300 bg-amber-100 text-amber-800"
-              : "border-rose-300 bg-rose-100 text-rose-800";
-
-        return (
-          <div className="flex justify-center">
-            <Badge variant="outline" className={className}>
-              {estado}
-            </Badge>
-          </div>
-        );
-      },
+      cell: ({ row }) => (
+        <div className="flex justify-center">
+          <Badge variant="outline" className={getStateIndicatorClass(row.original.estado)}>
+            {row.original.estado}
+          </Badge>
+        </div>
+      ),
     },
     {
       id: "actions",
@@ -146,6 +144,12 @@ export function createSalesColumns({
                   Ver detalle
                 </DropdownMenuItem>
                 {sale.estado === "Abierta" ? (
+                  <DropdownMenuItem onClick={() => onEditSale(sale)}>
+                    <Pencil />
+                    Editar venta
+                  </DropdownMenuItem>
+                ) : null}
+                {sale.estado === "Abierta" ? (
                   <DropdownMenuItem onClick={() => onCloseSale(sale)}>
                     <CheckCircle2 />
                     Cerrar venta
@@ -155,7 +159,7 @@ export function createSalesColumns({
                   <>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
-                      className="text-red-500 hover:bg-red-200 focus:bg-red-100 data-[state=open]:bg-red-100 hover:text-red-700 focus:text-red-700"
+                      className={destructiveMenuItemClass}
                       onClick={() => onCancelSale(sale)}
                     >
                       <OctagonX />
@@ -171,4 +175,3 @@ export function createSalesColumns({
     },
   ];
 }
-

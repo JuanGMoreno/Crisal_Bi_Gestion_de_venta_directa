@@ -1,13 +1,9 @@
 import { Button } from "@/shared/components/ui/button";
 import { PackagePlus } from "lucide-react";
+import Link from "next/link";
+import AllUrls from "@/urls";
 
-interface HeaderManagerInventoryProps {
-  onCreateEntry: () => void;
-}
-
-export default function HeaderManagerInventory({
-  onCreateEntry,
-}: HeaderManagerInventoryProps) {
+export default function HeaderManagerInventory() {
   return (
     <div className="mb-4 m-4 flex items-center justify-between gap-4">
       <div>
@@ -16,10 +12,12 @@ export default function HeaderManagerInventory({
           Gestiona el stock de tus productos registrando ingresos, vencimientos y costos de compra.
         </p>
       </div>
-      <Button size="lg" onClick={onCreateEntry}>
-        Registrar Ingreso
-        <PackagePlus className="ml-2" />
-      </Button>
+      <Link href={AllUrls['inventory:create']}>
+        <Button size="lg">
+          Registrar Ingreso
+          <PackagePlus className="ml-2" />
+        </Button>
+      </Link>
     </div>
   );
 }

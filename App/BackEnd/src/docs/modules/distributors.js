@@ -37,6 +37,65 @@ export const distributorsDocs = {
         }
       }
     },
+    '/distributors/me': {
+      get: {
+        tags: ['Distributors'],
+        summary: 'Obtener el perfil del distribuidor autenticado',
+        security: [{ bearerAuth: [] }, { cookieAuth: [] }],
+        responses: {
+          200: {
+            description: 'Perfil del distribuidor autenticado',
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/DistributorProfile' }
+              }
+            }
+          },
+          404: { description: 'Distribuidor no encontrado' }
+        }
+      },
+      put: {
+        tags: ['Distributors'],
+        summary: 'Actualizar el perfil del distribuidor autenticado',
+        security: [{ bearerAuth: [] }, { cookieAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            'multipart/form-data': {
+              schema: { $ref: '#/components/schemas/UpdateCurrentDistributorProfileRequest' }
+            }
+          }
+        },
+        responses: {
+          200: {
+            description: 'Perfil actualizado',
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/DistributorProfile' }
+              }
+            }
+          },
+          404: { description: 'Distribuidor no encontrado' }
+        }
+      },
+      post: {
+        tags: ['Distributors'],
+        summary: 'Solicitar un nuevo codigo de referido cuando el actual haya vencido',
+        security: [{ bearerAuth: [] }, { cookieAuth: [] }],
+        responses: {
+          200: {
+            description: 'Codigo de referido renovado',
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/RenewReferralCodeResponse' }
+              }
+            }
+          },
+          400: { description: 'El codigo actual aun se encuentra vigente' },
+          404: { description: 'Distribuidor no encontrado' }
+        }
+      }
+    },
     '/distributors/{id}': {
       get: {
         tags: ['Distributors'],

@@ -69,6 +69,38 @@ export const InventoryRepository = {
     );
   },
 
+  replaceEntryDetails: async (entryId, detailData, options = {}) => {
+    const { transaction } = options;
+
+    await EntryDetail.destroy({
+      where: { id_ingreso: entryId },
+      transaction
+    });
+
+    await EntryDetail.bulkCreate(
+      detailData.map((detail) => ({
+        ...detail,
+        id_ingreso: entryId
+      })),
+      { transaction }
+    );
+  },
+
+  updateEntryByDistributor: async (id, distributorId, payload, options = {}) => {
+    const { transaction } = options;
+    const entry = await InventoryIncome.findOne({
+      where: {
+        id_ingreso: id,
+        id_distribuidor: distributorId
+      },
+      transaction
+    });
+
+    if (!entry) return null;
+
+    return await entry.update(payload, { transaction });
+  },
+
   findActiveStockDetailsByDistributor: async (distributorId) => {
     return await EntryDetail.findAll({
       where: {

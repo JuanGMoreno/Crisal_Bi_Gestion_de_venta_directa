@@ -12,3 +12,13 @@ export function useSalesQuery() {
   });
 }
 
+export function useSaleQuery(id: string) {
+  const { getSaleById } = useSaleServices();
+
+  return useQuery<Sale, Error>({
+    queryKey: saleQueryKeys.detail(id),
+    queryFn: () => getSaleById(id),
+    enabled: Boolean(id),
+  });
+}
+

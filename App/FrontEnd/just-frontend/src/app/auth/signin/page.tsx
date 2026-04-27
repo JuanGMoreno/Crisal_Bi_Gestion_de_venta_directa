@@ -24,6 +24,7 @@ export default function LoginPage() {
         <Image
           width={320}
           height={320}
+          loading="eager"
           src="/Logo_Just.svg"
           alt="Logo Just"
           className="w-64 h-auto max-w-xs drop-shadow-2xl "

@@ -1,5 +1,25 @@
 import { DistributorService } from '../services/distributor.service.js';
 
+function assignUploadedImageToBody(req) {
+  const uploadedImageUrl = req.file
+    ? (req.file.path || req.file.secure_url || req.file.url || null)
+    : null;
+
+  if (Array.isArray(req.body?.foto_avatar)) {
+    req.body.foto_avatar = req.body.foto_avatar[0] ?? null;
+  } else if (req.body?.foto_avatar && typeof req.body.foto_avatar === 'object') {
+    req.body.foto_avatar =
+      req.body.foto_avatar.path ||
+      req.body.foto_avatar.secure_url ||
+      req.body.foto_avatar.url ||
+      null;
+  }
+
+  if (uploadedImageUrl) {
+    req.body.foto_avatar = uploadedImageUrl;
+  }
+}
+
 /**
  * Obtener todos los distribuidores
  */
@@ -31,6 +51,62 @@ export const getDistributor = async (req, res) => {
     const statusCode = error.message === 'Distribuidor no encontrado' ? 404 : 500;
     res.status(statusCode).json({ 
       message: error.message 
+    });
+  }
+};
+
+/**
+ * Obtener el perfil del distribuidor autenticado
+ */
+export const getCurrentDistributorProfile = async (req, res) => {
+  try {
+    const profile = await DistributorService.getCurrentDistributorProfile(req.user.id);
+    res.status(200).json(profile);
+  } catch (error) {
+    const statusCode = error.message === 'Distribuidor no encontrado' ? 404 : 500;
+    res.status(statusCode).json({
+      message: error.message
+    });
+  }
+};
+
+/**
+ * Actualizar el perfil del distribuidor autenticado
+ */
+export const updateCurrentDistributorProfile = async (req, res) => {
+  assignUploadedImageToBody(req);
+
+  try {
+    const profile = await DistributorService.updateCurrentDistributorProfile(req.user.id, req.body);
+    res.status(200).json(profile);
+  } catch (error) {
+    const statusCode = error.message === 'Distribuidor no encontrado' ? 404 : 400;
+    res.status(statusCode).json({
+      message: error.message
+    });
+  }
+};
+
+/**
+ * Renovar el codigo de referido del distribuidor autenticado
+ */
+export const renewCurrentDistributorReferralCode = async (req, res) => {
+  try {
+    const profile = await DistributorService.renewCurrentDistributorReferralCode(req.user.id);
+    res.status(200).json({
+      message: 'Codigo de referido renovado correctamente',
+      profile
+    });
+  } catch (error) {
+    const statusCode =
+      error.message === 'Distribuidor no encontrado'
+        ? 404
+        : error.message === 'El codigo de referido actual aun se encuentra vigente'
+          ? 400
+          : 500;
+
+    res.status(statusCode).json({
+      message: error.message
     });
   }
 };

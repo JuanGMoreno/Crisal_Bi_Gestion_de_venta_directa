@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Boxes, Loader2, PackageSearch } from "lucide-react";
 import { toast } from "sonner";
 import HeaderManagerInventory from "@/features/inventory/components/HeaderManagerInventory/HeaderManagerInventory";
@@ -18,6 +19,7 @@ import { InventoryEntry } from "@/features/inventory/types/Inventory";
 import { EmptyGlobal } from "@/shared/components/empty-global";
 import { Button } from "@/shared/components/ui/button";
 import { Skeleton } from "@/shared/components/ui/skeleton";
+import AllUrls from "@/urls";
 
 function InventorySummarySkeleton() {
   return (
@@ -34,6 +36,7 @@ function InventorySummarySkeleton() {
 }
 
 export default function PageInventory() {
+  const router = useRouter();
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState<InventoryEntry | null>(null);
   const [entryToDelete, setEntryToDelete] = useState<InventoryEntry | null>(null);
@@ -61,9 +64,10 @@ export default function PageInventory() {
     () =>
       createInventoryColumns({
         onViewDetails: (entry) => setSelectedEntry(entry),
+        onEdit: (entry) => router.push(AllUrls["inventory:edit"](entry.id_ingreso)),
         onDelete: (entry) => setEntryToDelete(entry),
       }),
-    []
+    [router]
   );
 
   useEffect(() => {
@@ -100,7 +104,7 @@ export default function PageInventory() {
   if (isLoading) {
     return (
       <div>
-        <HeaderManagerInventory onCreateEntry={() => setIsCreateDialogOpen(true)} />
+        <HeaderManagerInventory />
         <InventoryEntryDialog
           open={isCreateDialogOpen}
           onOpenChange={setIsCreateDialogOpen}
@@ -123,7 +127,7 @@ export default function PageInventory() {
 
     return (
       <div>
-        <HeaderManagerInventory onCreateEntry={() => setIsCreateDialogOpen(true)} />
+        <HeaderManagerInventory />
         <InventoryEntryDialog
           open={isCreateDialogOpen}
           onOpenChange={setIsCreateDialogOpen}
@@ -144,7 +148,7 @@ export default function PageInventory() {
 
   return (
     <div>
-      <HeaderManagerInventory onCreateEntry={() => setIsCreateDialogOpen(true)} />
+      <HeaderManagerInventory />
 
       <InventoryEntryDialog
         open={isCreateDialogOpen}

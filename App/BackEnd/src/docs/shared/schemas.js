@@ -40,10 +40,57 @@ export const schemas = {
     type: 'object',
     properties: {
       id_distribuidor: { type: 'string', format: 'uuid' },
+      id_usuario: { type: 'string', format: 'uuid' },
       nombre: { type: 'string' },
       rol: { type: 'string', enum: ['Consultora', 'Lider de Grupo', 'Lider'] },
+      foto_avatar: { type: 'string', nullable: true },
       codigo_referido: { type: 'string', nullable: true },
+      fecha_vencimiento_codigo: { type: 'string', format: 'date-time', nullable: true },
       estado: { type: 'string', enum: ['Activo', 'Inactivo'] }
+    }
+  },
+  DistributorProfile: {
+    type: 'object',
+    properties: {
+      id_distribuidor: { type: 'string', format: 'uuid' },
+      id_usuario: { type: 'string', format: 'uuid' },
+      nombre: { type: 'string' },
+      rol: { type: 'string', enum: ['Consultora', 'Lider de Grupo', 'Lider'] },
+      foto_avatar: { type: 'string', nullable: true },
+      codigo_referido: { type: 'string', nullable: true },
+      fecha_vencimiento_codigo: { type: 'string', format: 'date-time', nullable: true },
+      estado: { type: 'string', enum: ['Activo', 'Inactivo'] },
+      createdAt: { type: 'string', format: 'date-time' },
+      updatedAt: { type: 'string', format: 'date-time' },
+      usuario: {
+        type: 'object',
+        properties: {
+          id_usuario: { type: 'string', format: 'uuid' },
+          correo: { type: 'string', format: 'email' },
+          estado: { type: 'string', enum: ['Activo', 'Inactivo'] },
+          createdAt: { type: 'string', format: 'date-time' },
+          updatedAt: { type: 'string', format: 'date-time' }
+        }
+      },
+      padre: {
+        allOf: [{ $ref: '#/components/schemas/Distributor' }],
+        nullable: true
+      }
+    }
+  },
+  RenewReferralCodeResponse: {
+    type: 'object',
+    properties: {
+      message: { type: 'string' },
+      profile: { $ref: '#/components/schemas/DistributorProfile' }
+    }
+  },
+  UpdateCurrentDistributorProfileRequest: {
+    type: 'object',
+    required: ['nombre'],
+    properties: {
+      nombre: { type: 'string' },
+      foto_avatar: { type: 'string', nullable: true }
     }
   },
   CreateDistributorRequest: {
@@ -219,11 +266,54 @@ export const schemas = {
   },
   CreateSaleRequest: {
     type: 'object',
-    required: ['detalles'],
+    required: ['id_cliente', 'detalles'],
     properties: {
-      id_cliente: { type: 'string', format: 'uuid', nullable: true },
+      id_cliente: { type: 'string', format: 'uuid' },
       fecha_venta: { type: 'string', format: 'date-time', nullable: true },
       estado: { type: 'string', enum: ['Abierta', 'Cerrada'], default: 'Cerrada' },
+      detalles: {
+        type: 'array',
+        items: {
+          type: 'object',
+          required: ['id_producto', 'cantidad'],
+          properties: {
+            id_producto: { type: 'string', format: 'uuid' },
+            cantidad: { type: 'integer' },
+            precio_unitario: { type: 'number', nullable: true },
+            descuento_unitario: { type: 'number', nullable: true }
+          }
+        }
+      }
+    }
+  },
+  UpdateInventoryEntryRequest: {
+    type: 'object',
+    required: ['detalles'],
+    properties: {
+      fecha_ingreso: { type: 'string', format: 'date-time' },
+      observacion: { type: 'string' },
+      detalles: {
+        type: 'array',
+        items: {
+          type: 'object',
+          required: ['id_producto', 'cantidad_inicial', 'costo_unitario_compra'],
+          properties: {
+            id_producto: { type: 'string', format: 'uuid' },
+            cantidad_inicial: { type: 'integer' },
+            costo_unitario_compra: { type: 'number' },
+            fecha_vencimiento: { type: 'string', format: 'date-time', nullable: true },
+            numero_lote_fabricacion: { type: 'string', nullable: true }
+          }
+        }
+      }
+    }
+  },
+  UpdateSaleRequest: {
+    type: 'object',
+    required: ['id_cliente', 'detalles'],
+    properties: {
+      id_cliente: { type: 'string', format: 'uuid' },
+      fecha_venta: { type: 'string', format: 'date-time', nullable: true },
       detalles: {
         type: 'array',
         items: {

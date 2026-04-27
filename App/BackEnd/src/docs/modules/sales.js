@@ -52,6 +52,28 @@ export const salesDocs = {
           200: { description: 'Venta encontrada' }
         }
       },
+      put: {
+        tags: ['Sales'],
+        summary: 'Actualizar venta abierta',
+        description:
+          'Permite editar solo ventas Abiertas. El cliente es obligatorio y los cambios no impactan inventario hasta cerrar la venta.',
+        security: [{ bearerAuth: [] }, { cookieAuth: [] }],
+        parameters: [
+          { in: 'path', name: 'id', required: true, schema: { type: 'string', format: 'uuid' } }
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/UpdateSaleRequest' }
+            }
+          }
+        },
+        responses: {
+          200: { description: 'Venta actualizada' },
+          400: { description: 'Venta no editable o payload invalido' }
+        }
+      },
       delete: {
         tags: ['Sales'],
         summary: 'Anular venta',

@@ -16,7 +16,7 @@ type CancelSaleResponse = {
 
 function normalizeSalePayload(data: SaleFormData) {
   return {
-    id_cliente: data.id_cliente || undefined,
+    id_cliente: data.id_cliente,
     fecha_venta: data.fecha_venta ? new Date(data.fecha_venta).toISOString() : undefined,
     estado: data.estado,
     detalles: data.detalles.map((detail) => ({
@@ -49,6 +49,24 @@ export default function useSaleServices() {
       return response.data;
     } catch (error: unknown) {
       throw new Error(getApiErrorMessage(error, "Error al registrar la venta."));
+    }
+  }, []);
+
+  const getSaleById = useCallback(async (id: string): Promise<Sale> => {
+    try {
+      const response = await http.get(`/sales/${id}`);
+      return response.data;
+    } catch (error: unknown) {
+      throw new Error(getApiErrorMessage(error, "Error al obtener la venta."));
+    }
+  }, []);
+
+  const updateSale = useCallback(async ({ id, data }: { id: string; data: SaleFormData }): Promise<Sale> => {
+    try {
+      const response = await http.put(`/sales/${id}`, normalizeSalePayload(data));
+      return response.data;
+    } catch (error: unknown) {
+      throw new Error(getApiErrorMessage(error, "Error al actualizar la venta."));
     }
   }, []);
 
@@ -90,7 +108,9 @@ export default function useSaleServices() {
 
   return {
     getSales,
+    getSaleById,
     createSale,
+    updateSale,
     updateSaleStatus,
     cancelSale,
     getClients,

@@ -10,7 +10,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/shared/components/ui/dropdown-menu";
-import { Eye, MoreHorizontal, Trash2 } from "lucide-react";
+import { Eye, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import {
+  destructiveMenuItemClass,
+  getStateIndicatorClass,
+} from "@/shared/lib/status-indicators";
 import { InventoryEntry } from "../../types/Inventory";
 
 function formatDate(value: string) {
@@ -29,11 +33,13 @@ function formatCurrency(value: number) {
 
 interface InventoryColumnsOptions {
   onViewDetails: (entry: InventoryEntry) => void;
+  onEdit: (entry: InventoryEntry) => void;
   onDelete: (entry: InventoryEntry) => void;
 }
 
 export function createInventoryColumns({
   onViewDetails,
+  onEdit,
   onDelete,
 }: InventoryColumnsOptions): ColumnDef<InventoryEntry>[] {
   return [
@@ -41,7 +47,7 @@ export function createInventoryColumns({
       accessorKey: "fecha_ingreso",
       header: () => <div>Fecha</div>,
       cell: ({ row }) => (
-        <span className="font-medium text-muted-foreground   text-xs">
+        <span className="text-xs font-medium text-muted-foreground">
           {formatDate(row.original.fecha_ingreso)}
         </span>
       ),
@@ -68,7 +74,8 @@ export function createInventoryColumns({
             ))}
             {remaining > 0 ? (
               <p className="text-xs text-muted-foreground">
-                +{remaining} producto{remaining > 1 ? "s" : ""} adicional{remaining > 1 ? "es" : ""}
+                +{remaining} producto{remaining > 1 ? "s" : ""} adicional
+                {remaining > 1 ? "es" : ""}
               </p>
             ) : null}
           </div>
@@ -110,8 +117,7 @@ export function createInventoryColumns({
         if (totalUnits === 0) return 0;
 
         const weightedCost = row.detalles.reduce(
-          (sum, detail) =>
-            sum + detail.costo_unitario_compra * detail.cantidad_inicial,
+          (sum, detail) => sum + detail.costo_unitario_compra * detail.cantidad_inicial,
           0
         );
 
@@ -124,8 +130,7 @@ export function createInventoryColumns({
           0
         );
         const weightedCost = row.original.detalles.reduce(
-          (sum, detail) =>
-            sum + detail.costo_unitario_compra * detail.cantidad_inicial,
+          (sum, detail) => sum + detail.costo_unitario_compra * detail.cantidad_inicial,
           0
         );
         const averageCost = totalUnits === 0 ? 0 : weightedCost / totalUnits;
@@ -140,21 +145,13 @@ export function createInventoryColumns({
     {
       accessorKey: "estado",
       header: () => <div className="text-center">Estado</div>,
-      cell: ({ row }) => {
-        const estado = row.original.estado;
-        const className =
-          estado === "Activo"
-            ? "border-emerald-300 bg-emerald-100 text-emerald-800"
-            : "border-rose-300 bg-rose-100 text-rose-800";
-
-        return (
-          <div className="flex justify-center">
-            <Badge variant="outline" className={className}>
-              {estado}
-            </Badge>
-          </div>
-        );
-      },
+      cell: ({ row }) => (
+        <div className="flex justify-center">
+          <Badge variant="outline" className={getStateIndicatorClass(row.original.estado)}>
+            {row.original.estado}
+          </Badge>
+        </div>
+      ),
     },
     {
       id: "actions",
@@ -167,18 +164,22 @@ export function createInventoryColumns({
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="h-8 w-8 p-0">
-                  <span className="sr-only">Abrir menú</span>
+                  <span className="sr-only">Abrir menu</span>
                   <MoreHorizontal className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem onClick={() => onViewDetails(entry)}>
                   <Eye />
-                  Ver detalles
+                  Ver detalle
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onEdit(entry)}>
+                  <Pencil />
+                  Editar ingreso
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
-                  className="text-red-500 hover:bg-red-200 focus:bg-red-100 data-[state=open]:bg-red-100 hover:text-red-700 focus:text-red-700"
+                  className={destructiveMenuItemClass}
                   onClick={() => onDelete(entry)}
                 >
                   <Trash2 />

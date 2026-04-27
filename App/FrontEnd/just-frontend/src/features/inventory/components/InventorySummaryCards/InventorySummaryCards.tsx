@@ -1,4 +1,11 @@
 import { Boxes, CalendarClock, PackageCheck, WalletCards } from "lucide-react";
+import { Badge } from "@/shared/components/ui/badge";
+import {
+  getExpiryLabel,
+  getExpiryTone,
+  getIndicatorClass,
+} from "@/shared/lib/status-indicators";
+import { cn } from "@/shared/lib/utils";
 import { InventorySummaryItem } from "../../types/Inventory";
 
 function formatCurrency(value: number) {
@@ -32,6 +39,8 @@ export function InventorySummaryCards({ items }: InventorySummaryCardsProps) {
   const nextExpiry = items
     .flatMap((item) => item.proximas_fechas_vencimiento)
     .sort((left, right) => new Date(left).getTime() - new Date(right).getTime())[0];
+  const nextExpiryTone = getExpiryTone(nextExpiry);
+  const nextExpiryLabel = getExpiryLabel(nextExpiry);
 
   const cards = [
     {
@@ -74,6 +83,22 @@ export function InventorySummaryCards({ items }: InventorySummaryCardsProps) {
               <div>
                 <p className="text-sm font-medium text-muted-foreground">{card.title}</p>
                 <h3 className="mt-2 text-2xl font-semibold tracking-tight">{card.value}</h3>
+                {card.title === "Proximo Vencimiento" ? (
+                  <div className="mt-3">
+                    <Badge
+                      variant="outline"
+                      className={cn(
+                        "border font-medium",
+                        getIndicatorClass(nextExpiryTone),
+                        nextExpiry && nextExpiryTone === "bad"
+                          ? "shadow-[0_0_0_3px_rgba(244,63,94,0.10)]"
+                          : ""
+                      )}
+                    >
+                      {nextExpiryLabel}
+                    </Badge>
+                  </div>
+                ) : null}
               </div>
               <div className="rounded-xl border bg-background p-2 text-primary">
                 <Icon className="h-5 w-5" />

@@ -25,6 +25,19 @@ export function useCreateSaleMutation() {
   });
 }
 
+export function useUpdateSaleMutation() {
+  const { updateSale } = useSaleServices();
+  const queryClient = useQueryClient();
+
+  return useMutation<Sale, Error, { id: string; data: SaleFormData }>({
+    mutationFn: updateSale,
+    onSuccess: async (sale) => {
+      await invalidateSalesRelatedQueries(queryClient);
+      await queryClient.invalidateQueries({ queryKey: saleQueryKeys.detail(sale.id_venta) });
+    },
+  });
+}
+
 export function useUpdateSaleStatusMutation() {
   const { updateSaleStatus } = useSaleServices();
   const queryClient = useQueryClient();

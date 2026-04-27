@@ -10,13 +10,17 @@ cloudinary.v2.config({
   api_secret: process.env.CLOUDINARY_SECRET
 });
 
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: 'productos_app',
-    allowed_formats: ['jpg', 'png', 'webp'],
-    transformation: [{ width: 800, height: 800, crop: 'limit' }]
-  }
-});
+export function createCloudinaryStorage(folder = 'productos_app') {
+  return new CloudinaryStorage({
+    cloudinary,
+    params: {
+      folder,
+      allowed_formats: ['jpg', 'png', 'webp'],
+      transformation: [{ width: 800, height: 800, crop: 'limit' }]
+    }
+  });
+}
+
+const storage = createCloudinaryStorage();
 
 export default storage;

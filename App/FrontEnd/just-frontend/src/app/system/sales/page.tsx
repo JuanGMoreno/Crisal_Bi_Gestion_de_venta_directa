@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Loader2, ReceiptText } from "lucide-react";
 import { toast } from "sonner";
 import HeaderManagerSales from "@/features/sales/components/HeaderManagerSales/HeaderManagerSales";
@@ -15,6 +16,7 @@ import { useSalesQuery } from "@/features/sales/hooks/useSalesQuery";
 import { Sale } from "@/features/sales/types/Sale";
 import { EmptyGlobal } from "@/shared/components/empty-global";
 import { Skeleton } from "@/shared/components/ui/skeleton";
+import AllUrls from "@/urls";
 
 function SalesSummarySkeleton() {
   return (
@@ -31,6 +33,7 @@ function SalesSummarySkeleton() {
 }
 
 export default function PageSales() {
+  const router = useRouter();
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [selectedSale, setSelectedSale] = useState<Sale | null>(null);
   const [saleToClose, setSaleToClose] = useState<Sale | null>(null);
@@ -49,10 +52,11 @@ export default function PageSales() {
     () =>
       createSalesColumns({
         onViewDetails: (sale) => setSelectedSale(sale),
+        onEditSale: (sale) => router.push(AllUrls["sales:edit"](sale.id_venta)),
         onCloseSale: (sale) => setSaleToClose(sale),
         onCancelSale: (sale) => setSaleToCancel(sale),
       }),
-    []
+    [router]
   );
 
   useEffect(() => {
@@ -66,7 +70,7 @@ export default function PageSales() {
   if (isLoading) {
     return (
       <div>
-        <HeaderManagerSales onCreateSale={() => setIsCreateDialogOpen(true)} />
+        <HeaderManagerSales />
         <SaleDialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen} />
         <SalesSummarySkeleton />
         <div className="m-4">
@@ -79,7 +83,7 @@ export default function PageSales() {
   if (isError) {
     return (
       <div>
-        <HeaderManagerSales onCreateSale={() => setIsCreateDialogOpen(true)} />
+        <HeaderManagerSales />
         <SaleDialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen} />
         <div className="m-4">
           <EmptyGlobal
@@ -99,7 +103,7 @@ export default function PageSales() {
 
   return (
     <div>
-      <HeaderManagerSales onCreateSale={() => setIsCreateDialogOpen(true)} />
+      <HeaderManagerSales />
 
       <SaleDialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen} />
       <SaleDetailsDialog sale={selectedSale} onClose={() => setSelectedSale(null)} />

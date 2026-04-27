@@ -83,6 +83,40 @@ export const SaleRepository = {
     });
   },
 
+  replaceSaleDetails: async (saleId, details, options = {}) => {
+    const { transaction } = options;
+
+    await SaleDetail.destroy({
+      where: { id_venta: saleId },
+      transaction
+    });
+
+    const payload = details.map((detail) => ({
+      ...detail,
+      id_venta: saleId
+    }));
+
+    return await SaleDetail.bulkCreate(payload, {
+      transaction,
+      returning: true
+    });
+  },
+
+  updateByDistributor: async (id, distributorId, payload, options = {}) => {
+    const { transaction } = options;
+    const sale = await Sale.findOne({
+      where: {
+        id_venta: id,
+        id_distribuidor: distributorId
+      },
+      transaction
+    });
+
+    if (!sale) return null;
+
+    return await sale.update(payload, { transaction });
+  },
+
   updateStatusByDistributor: async (id, distributorId, estado, options = {}) => {
     const { transaction } = options;
     const sale = await Sale.findOne({

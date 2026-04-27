@@ -13,6 +13,7 @@ import {
 } from "@/shared/components/ui/alert-dialog";
 import { useCancelSaleMutation, useUpdateSaleStatusMutation } from "../../hooks/useSaleMutations";
 import { Sale } from "../../types/Sale";
+import { getIndicatorClass } from "@/shared/lib/status-indicators";
 
 interface UpdateSaleStatusDialogProps {
   sale: Sale | null;
@@ -81,7 +82,7 @@ export function UpdateSaleStatusDialog({
             className={
               isCloseMode
                 ? undefined
-                : "bg-red-600 hover:bg-red-700 focus:ring-red-600"
+                : getIndicatorClass("bad")
             }
           >
             {isCloseMode ? "Cerrar venta" : "Anular venta"}

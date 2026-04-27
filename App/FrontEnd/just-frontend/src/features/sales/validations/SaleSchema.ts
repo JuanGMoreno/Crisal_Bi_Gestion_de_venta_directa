@@ -16,11 +16,12 @@ const saleDetailSchema = z.object({
 });
 
 export const saleSchema = z.object({
-  id_cliente: z.string().trim().optional().or(z.literal("")),
+  id_cliente: z.string().trim().min(1, "Debes seleccionar un cliente"),
   fecha_venta: z.string().trim().optional().or(z.literal("")),
   estado: z.enum(["Abierta", "Cerrada"]),
   detalles: z.array(saleDetailSchema).min(1, "Debes agregar al menos un producto"),
 });
 
-export type SaleFormData = z.infer<typeof saleSchema>;
+export type SaleFormInput = z.input<typeof saleSchema>;
+export type SaleFormData = z.output<typeof saleSchema>;
 
