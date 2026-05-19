@@ -1,6 +1,7 @@
 import axios from "axios";
 
 const AUTH_PUBLIC_ENDPOINTS = ["/auth/signin", "/auth/signup", "/auth/me"];
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, "") || "/api";
 
 function shouldHandleUnauthorizedGlobally(requestUrl?: string) {
   const isAuthEndpoint = AUTH_PUBLIC_ENDPOINTS.some((path) =>
@@ -15,7 +16,7 @@ function shouldHandleUnauthorizedGlobally(requestUrl?: string) {
 }
 
 export const http = axios.create({
-  baseURL:  "http://localhost:4001/api",
+  baseURL: API_BASE_URL,
   timeout: 15000,
   withCredentials: true,
 });

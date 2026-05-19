@@ -7,7 +7,8 @@ import { productsDocs } from './modules/products.js';
 import { salesDocs } from './modules/sales.js';
 import { schemas } from './shared/schemas.js';
 
-const apiBaseUrl = process.env.PUBLIC_API_BASE_URL || 'http://localhost:4000';
+const apiBaseUrl =
+  process.env.PUBLIC_API_BASE_URL || `http://localhost:${process.env.PORT || 4000}`;
 
 const docModules = [
   healthDocs,
