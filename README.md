@@ -138,6 +138,12 @@ cp .env.example .env
 
 Luego ajustar los valores locales de PostgreSQL, JWT y Cloudinary en `.env`.
 
+Aplicar migraciones de base de datos:
+
+```bash
+npm run db:migrate
+```
+
 Ejecutar backend:
 
 ```bash
@@ -180,6 +186,9 @@ http://localhost:3000
 ### Backend
 
 ```bash
+npm run db:migrate
+npm run db:migrate:status
+npm run db:migrate:undo
 npm run dev
 npm start
 ```
