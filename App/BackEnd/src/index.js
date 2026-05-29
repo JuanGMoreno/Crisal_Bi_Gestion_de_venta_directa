@@ -2,6 +2,7 @@ import "dotenv/config";
 
 import app from "./app.js";
 import { sequelize } from "./config/database.js";
+import { migrator } from "./db/migrator.js";
 import './models/index.js';
 
 const PORT = Number(process.env.PORT || 4000);
@@ -28,15 +29,19 @@ function startServer(port, retries = 10) {
 
 async function main() {
     try {
-        const shouldAlter = process.env.DB_SYNC_ALTER === 'true';
-
         if (!process.env.JWT_SECRET) {
             throw new Error('Falta JWT_SECRET en variables de entorno');
         }
 
         await sequelize.authenticate();
-        await sequelize.sync({ alter: shouldAlter });
-        console.log('✓ Database connected and models synchronized');
+        const pendingMigrations = await migrator.pending();
+
+        if (pendingMigrations.length > 0) {
+            console.warn(
+                `Hay ${pendingMigrations.length} migracion(es) pendiente(s). Ejecuta npm run db:migrate antes de iniciar en un entorno real.`
+            );
+        }
+        console.log('✓ Database connected');
         
         // Iniciar servidor
         startServer(PORT);
