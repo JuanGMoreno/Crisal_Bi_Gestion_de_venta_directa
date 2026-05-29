@@ -1,4 +1,6 @@
 import { DistributorService } from '../services/distributor.service.js';
+import { createApiError, withStatus } from '../utils/api-error.js';
+import { asyncHandler } from '../utils/async-handler.js';
 
 function assignUploadedImageToBody(req) {
   const uploadedImageUrl = req.file
@@ -20,139 +22,87 @@ function assignUploadedImageToBody(req) {
   }
 }
 
-/**
- * Obtener todos los distribuidores
- */
-export const getDistributors = async (req, res) => {
-  try {
-    const distributors = await DistributorService.getDistributors();
-    if (distributors.length === 0) {
-      res.status(404).json({ message: 'No se encontraron distribuidores' });
-    } else {
-    res.status(200).json(distributors);
-    }
-  } catch (error) {
-    res.status(500).json({ 
-      message: 'Error al obtener distribuidores', 
-      error: error.message 
-    });
-  }
-};
+export const getDistributors = asyncHandler(async (_req, res) => {
+  const distributors = await DistributorService.getDistributors();
 
-/**
- * Obtener un distribuidor por ID
- */
-export const getDistributor = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const distributor = await DistributorService.getDistributorById(id);
-    res.status(200).json(distributor);
-  } catch (error) {
-    const statusCode = error.message === 'Distribuidor no encontrado' ? 404 : 500;
-    res.status(statusCode).json({ 
-      message: error.message 
-    });
+  if (distributors.length === 0) {
+    throw createApiError('No se encontraron distribuidores', 404);
   }
-};
 
-/**
- * Obtener el perfil del distribuidor autenticado
- */
-export const getCurrentDistributorProfile = async (req, res) => {
+  return res.status(200).json(distributors);
+});
+
+export const getDistributor = asyncHandler(async (req, res) => {
+  try {
+    const distributor = await DistributorService.getDistributorById(req.params.id);
+    return res.status(200).json(distributor);
+  } catch (error) {
+    throw withStatus(error, error.message === 'Distribuidor no encontrado' ? 404 : 500);
+  }
+});
+
+export const getCurrentDistributorProfile = asyncHandler(async (req, res) => {
   try {
     const profile = await DistributorService.getCurrentDistributorProfile(req.user.id);
-    res.status(200).json(profile);
+    return res.status(200).json(profile);
   } catch (error) {
-    const statusCode = error.message === 'Distribuidor no encontrado' ? 404 : 500;
-    res.status(statusCode).json({
-      message: error.message
-    });
+    throw withStatus(error, error.message === 'Distribuidor no encontrado' ? 404 : 500);
   }
-};
+});
 
-/**
- * Actualizar el perfil del distribuidor autenticado
- */
-export const updateCurrentDistributorProfile = async (req, res) => {
+export const updateCurrentDistributorProfile = asyncHandler(async (req, res) => {
   assignUploadedImageToBody(req);
 
   try {
     const profile = await DistributorService.updateCurrentDistributorProfile(req.user.id, req.body);
-    res.status(200).json(profile);
+    return res.status(200).json(profile);
   } catch (error) {
-    const statusCode = error.message === 'Distribuidor no encontrado' ? 404 : 400;
-    res.status(statusCode).json({
-      message: error.message
-    });
+    throw withStatus(error, error.message === 'Distribuidor no encontrado' ? 404 : 400);
   }
-};
+});
 
-/**
- * Renovar el codigo de referido del distribuidor autenticado
- */
-export const renewCurrentDistributorReferralCode = async (req, res) => {
+export const renewCurrentDistributorReferralCode = asyncHandler(async (req, res) => {
   try {
     const profile = await DistributorService.renewCurrentDistributorReferralCode(req.user.id);
-    res.status(200).json({
+    return res.status(200).json({
       message: 'Codigo de referido renovado correctamente',
       profile
     });
   } catch (error) {
-    const statusCode =
+    const status =
       error.message === 'Distribuidor no encontrado'
         ? 404
         : error.message === 'El codigo de referido actual aun se encuentra vigente'
           ? 400
           : 500;
 
-    res.status(statusCode).json({
-      message: error.message
-    });
+    throw withStatus(error, status);
   }
-};
+});
 
-/**
- * Crear un nuevo distribuidor
- */
-export const createDistributor = async (req, res) => {
+export const createDistributor = asyncHandler(async (req, res) => {
   try {
     const distributor = await DistributorService.createDistributor(req.body);
-    res.status(201).json(distributor);
+    return res.status(201).json(distributor);
   } catch (error) {
-    res.status(400).json({ 
-      message: error.message 
-    });
+    throw withStatus(error, 400);
   }
-};
+});
 
-/**
- * Actualizar un distribuidor existente
- */
-export const updateDistributor = async (req, res) => {
+export const updateDistributor = asyncHandler(async (req, res) => {
   try {
-    const { id } = req.params;
-    const distributor = await DistributorService.updateDistributor(id, req.body);
-    res.status(200).json(distributor);
+    const distributor = await DistributorService.updateDistributor(req.params.id, req.body);
+    return res.status(200).json(distributor);
   } catch (error) {
-    const statusCode = error.message === 'Distribuidor no encontrado' ? 404 : 400;
-    res.status(statusCode).json({ 
-      message: error.message 
-    });
+    throw withStatus(error, error.message === 'Distribuidor no encontrado' ? 404 : 400);
   }
-};
+});
 
-/**
- * Eliminar un distribuidor (soft delete)
- */
-export const deleteDistributor = async (req, res) => {
+export const deleteDistributor = asyncHandler(async (req, res) => {
   try {
-    const { id } = req.params;
-    const result = await DistributorService.deleteDistributor(id);
-    res.json(result);
+    const result = await DistributorService.deleteDistributor(req.params.id);
+    return res.status(200).json(result);
   } catch (error) {
-    const statusCode = error.message === 'Distribuidor no encontrado' ? 404 : 500;
-    res.status(statusCode).json({ 
-      message: error.message 
-    });
+    throw withStatus(error, error.message === 'Distribuidor no encontrado' ? 404 : 500);
   }
-};
+});
