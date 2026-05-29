@@ -60,6 +60,20 @@ function buildProfileResponse(distributor) {
   };
 }
 
+function buildChildResponse(distributor) {
+  return {
+    id_distribuidor: distributor.id_distribuidor,
+    id_usuario: distributor.id_usuario,
+    nombre: distributor.nombre,
+    rol: distributor.rol,
+    foto_avatar: distributor.foto_avatar,
+    estado: distributor.estado,
+    createdAt: distributor.createdAt,
+    updatedAt: distributor.updatedAt,
+    usuario: distributor.usuario
+  };
+}
+
 function normalizeEditableProfilePayload(data) {
   const normalizedName = String(data.nombre || '').trim();
   const normalizedPhoto = data.foto_avatar === undefined
@@ -199,6 +213,10 @@ async function validateHierarchyRules({
   };
 }
 
+function normalizeReferralCode(value) {
+  return String(value || '').trim().toUpperCase();
+}
+
 async function validateReferralCodeUniqueness(codigoReferido, currentDistributorId = null) {
   if (!codigoReferido) return;
 
@@ -315,6 +333,78 @@ export const DistributorService = {
       usuario: distributor.usuario,
       padre: distributor.padre
     });
+  },
+
+  /**
+   * Vincular el distribuidor autenticado a una jerarquia mediante codigo de referido
+   */
+  linkCurrentDistributorByReferralCode: async (userId, codigoReferido) => {
+    const normalizedCode = normalizeReferralCode(codigoReferido);
+
+    if (!normalizedCode) {
+      throw new Error('Debes ingresar un codigo de referido');
+    }
+
+    const distributor = await DistributorRepository.findProfileByUserId(userId);
+
+    if (!distributor) {
+      throw new Error('Distribuidor no encontrado');
+    }
+
+    if (distributor.id_distribuidor_padre) {
+      throw new Error('El distribuidor ya se encuentra vinculado a una jerarquia');
+    }
+
+    const parent = await DistributorRepository.findByCode(normalizedCode);
+
+    if (!parent) {
+      throw new Error('Codigo de referido no encontrado');
+    }
+
+    if (parent.id_distribuidor === distributor.id_distribuidor) {
+      throw new Error('No puedes vincularte usando tu propio codigo de referido');
+    }
+
+    const expirationDate = parent.fecha_vencimiento_codigo
+      ? new Date(parent.fecha_vencimiento_codigo)
+      : null;
+
+    if (!expirationDate || expirationDate.getTime() <= Date.now()) {
+      throw new Error('El codigo de referido se encuentra vencido');
+    }
+
+    const hierarchyData = await validateHierarchyRules({
+      distributorId: distributor.id_distribuidor,
+      currentDistributor: distributor,
+      role: distributor.rol,
+      parentId: parent.id_distribuidor
+    });
+
+    await DistributorRepository.update(distributor.id_distribuidor, {
+      id_distribuidor_padre: hierarchyData.id_distribuidor_padre
+    });
+
+    const updatedDistributor = await DistributorRepository.findProfileByUserId(userId);
+
+    return buildProfileResponse(updatedDistributor);
+  },
+
+  /**
+   * Listar hijos directos activos del distribuidor autenticado
+   */
+  getCurrentDistributorChildren: async (userId) => {
+    const distributor = await DistributorRepository.findByUserId(userId);
+
+    if (!distributor) {
+      throw new Error('Distribuidor no encontrado');
+    }
+
+    const children = await DistributorRepository.findChildrenWithUserByParent(
+      distributor.id_distribuidor,
+      { estado: 'Activo' }
+    );
+
+    return children.map(buildChildResponse);
   },
 
   /**

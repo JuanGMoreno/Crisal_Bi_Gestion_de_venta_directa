@@ -85,6 +85,43 @@ export const schemas = {
       profile: { $ref: '#/components/schemas/DistributorProfile' }
     }
   },
+  LinkReferralCodeRequest: {
+    type: 'object',
+    required: ['codigo_referido'],
+    properties: {
+      codigo_referido: { type: 'string' }
+    }
+  },
+  LinkReferralCodeResponse: {
+    type: 'object',
+    properties: {
+      message: { type: 'string' },
+      profile: { $ref: '#/components/schemas/DistributorProfile' }
+    }
+  },
+  DistributorChild: {
+    type: 'object',
+    properties: {
+      id_distribuidor: { type: 'string', format: 'uuid' },
+      id_usuario: { type: 'string', format: 'uuid' },
+      nombre: { type: 'string' },
+      rol: { type: 'string', enum: ['Consultora', 'Lider de Grupo', 'Lider'] },
+      foto_avatar: { type: 'string', nullable: true },
+      estado: { type: 'string', enum: ['Activo', 'Inactivo'] },
+      createdAt: { type: 'string', format: 'date-time' },
+      updatedAt: { type: 'string', format: 'date-time' },
+      usuario: {
+        type: 'object',
+        properties: {
+          id_usuario: { type: 'string', format: 'uuid' },
+          correo: { type: 'string', format: 'email' },
+          estado: { type: 'string', enum: ['Activo', 'Inactivo'] },
+          createdAt: { type: 'string', format: 'date-time' },
+          updatedAt: { type: 'string', format: 'date-time' }
+        }
+      }
+    }
+  },
   UpdateCurrentDistributorProfileRequest: {
     type: 'object',
     required: ['nombre'],

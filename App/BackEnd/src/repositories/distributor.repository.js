@@ -48,6 +48,23 @@ export const DistributorRepository = {
     });
   },
 
+  findChildrenWithUserByParent: async (idDistribuidorPadre, filters = {}) => {
+    return await Distributor.findAll({
+      where: {
+        id_distribuidor_padre: idDistribuidorPadre,
+        ...filters
+      },
+      include: [
+        {
+          model: User,
+          as: 'usuario',
+          attributes: ['id_usuario', 'correo', 'estado', 'createdAt', 'updatedAt']
+        }
+      ],
+      order: [['createdAt', 'DESC']]
+    });
+  },
+
   /**
    * Buscar distribuidor por código
    */

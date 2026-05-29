@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { EditProfileDialog } from "@/features/profile/components/EditProfileDialog/EditProfileDialog";
 import { ProfileSkeleton } from "@/features/profile/components/ProfileSkeleton/ProfileSkeleton";
+import { ReferralLinkCard } from "@/features/profile/components/ReferralLinkCard/ReferralLinkCard";
 import { useProfileQuery } from "@/features/profile/hooks/useProfileQuery";
 import { useRenewReferralCodeMutation } from "@/features/profile/hooks/useRenewReferralCodeMutation";
 import useAuthServices from "@/features/auth/services/authServices";
@@ -312,6 +313,8 @@ export default function PageProfile() {
             Tu cuenta no tiene una relacion jerarquica registrada actualmente.
           </p>
         ) : null}
+
+        <ReferralLinkCard profile={profile} />
       </section>
 
       <EditProfileDialog

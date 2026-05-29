@@ -26,3 +26,21 @@ export type DistributorProfile = {
     estado: "Activo" | "Inactivo";
   } | null;
 };
+
+export type DistributorChild = {
+  id_distribuidor: string;
+  id_usuario: string;
+  nombre: string;
+  rol: "Consultora" | "Lider de Grupo" | "Lider";
+  foto_avatar?: string | null;
+  estado: "Activo" | "Inactivo";
+  createdAt: string;
+  updatedAt: string;
+  usuario: {
+    id_usuario: string;
+    correo: string;
+    estado: "Activo" | "Inactivo";
+    createdAt: string;
+    updatedAt: string;
+  };
+};
