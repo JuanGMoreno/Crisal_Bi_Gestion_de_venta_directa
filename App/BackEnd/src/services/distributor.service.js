@@ -2,6 +2,13 @@ import { DistributorRepository } from '../repositories/distributor.repository.js
 
 const CODE_VALIDITY_DAYS = 3;
 const REFERRAL_CODE_ATTEMPTS = 5;
+const MAX_DIRECT_CHILDREN = 15;
+const ROLE_LEVELS = {
+  'Consultora': 1,
+  'Lider de Grupo': 2,
+  'Lider': 3
+};
+const ALLOWED_ROLES = new Set(Object.keys(ROLE_LEVELS));
 
 function buildReferralPrefix(name) {
   const normalized = String(name || '')
@@ -71,6 +78,125 @@ function validateEditableProfilePayload(data) {
   if (!data.nombre || data.nombre.length < 2) {
     throw new Error('El nombre del distribuidor debe tener al menos 2 caracteres');
   }
+}
+
+function normalizeOptionalParentId(value) {
+  if (value === undefined) return undefined;
+  if (value === null || value === '') return null;
+  return String(value);
+}
+
+function normalizeRole(value, fallback = 'Consultora') {
+  const role = value || fallback;
+
+  if (!ALLOWED_ROLES.has(role)) {
+    throw new Error('Rol de distribuidor invalido');
+  }
+
+  return role;
+}
+
+function getRoleLevel(role) {
+  return ROLE_LEVELS[role] || 0;
+}
+
+function assertParentHasHigherRole(parent, childRole) {
+  if (getRoleLevel(parent.rol) <= getRoleLevel(childRole)) {
+    throw new Error('El distribuidor padre debe tener un rol superior al distribuidor hijo');
+  }
+}
+
+function assertRoleCanKeepChildren(role, children = []) {
+  const invalidChild = children.find((child) => getRoleLevel(role) <= getRoleLevel(child.rol));
+
+  if (invalidChild) {
+    throw new Error('No se puede asignar un rol igual o menor al rol de un distribuidor hijo');
+  }
+}
+
+async function assertParentDoesNotCreateCycle(distributorId, parentId) {
+  if (!distributorId || !parentId) return;
+
+  const visited = new Set();
+  let currentParentId = parentId;
+
+  while (currentParentId) {
+    if (currentParentId === distributorId) {
+      throw new Error('No se puede asignar como padre a un descendiente del distribuidor');
+    }
+
+    if (visited.has(currentParentId)) {
+      throw new Error('La jerarquia de distribuidores contiene un ciclo');
+    }
+
+    visited.add(currentParentId);
+
+    const currentParent = await DistributorRepository.findById(currentParentId);
+    currentParentId = currentParent?.id_distribuidor_padre || null;
+  }
+}
+
+async function assertParentHasAvailableCapacity(parentId, currentDistributor = null) {
+  if (!parentId) return;
+
+  const isAlreadyChildOfParent =
+    currentDistributor?.id_distribuidor_padre &&
+    currentDistributor.id_distribuidor_padre === parentId;
+
+  if (isAlreadyChildOfParent) return;
+
+  const activeChildrenCount = await DistributorRepository.countByParent(parentId, {
+    estado: 'Activo'
+  });
+
+  if (activeChildrenCount >= MAX_DIRECT_CHILDREN) {
+    throw new Error(`El distribuidor padre no puede tener mas de ${MAX_DIRECT_CHILDREN} hijos activos`);
+  }
+}
+
+async function validateHierarchyRules({
+  distributorId = null,
+  currentDistributor = null,
+  role,
+  parentId
+}) {
+  const normalizedRole = normalizeRole(role, currentDistributor?.rol);
+  const normalizedParentId =
+    parentId === undefined
+      ? currentDistributor?.id_distribuidor_padre || null
+      : normalizeOptionalParentId(parentId);
+
+  if (distributorId && normalizedParentId === distributorId) {
+    throw new Error('Un distribuidor no puede asignarse como padre de si mismo');
+  }
+
+  if (normalizedParentId) {
+    const parent = await DistributorRepository.findById(normalizedParentId);
+
+    if (!parent) {
+      throw new Error('Distribuidor padre no encontrado');
+    }
+
+    if (parent.estado !== 'Activo') {
+      throw new Error('No se puede asignar un distribuidor padre inactivo');
+    }
+
+    assertParentHasHigherRole(parent, normalizedRole);
+    await assertParentDoesNotCreateCycle(distributorId, normalizedParentId);
+    await assertParentHasAvailableCapacity(normalizedParentId, currentDistributor);
+  }
+
+  if (distributorId) {
+    const children = await DistributorRepository.findChildrenByParent(distributorId, {
+      estado: 'Activo'
+    });
+    assertRoleCanKeepChildren(normalizedRole, children);
+  }
+
+  return {
+    rol: normalizedRole,
+    id_distribuidor_padre: normalizedParentId
+  };
 }
 
 async function validateReferralCodeUniqueness(codigoReferido, currentDistributorId = null) {
@@ -196,8 +322,16 @@ export const DistributorService = {
    */
   createDistributor: async (data) => {
     await validateReferralCodeUniqueness(data.codigo_referido);
+    const hierarchyData = await validateHierarchyRules({
+      role: data.rol,
+      parentId: data.id_distribuidor_padre
+    });
 
-    return await DistributorRepository.create(data);
+    return await DistributorRepository.create({
+      ...data,
+      rol: hierarchyData.rol,
+      id_distribuidor_padre: hierarchyData.id_distribuidor_padre
+    });
   },
 
   /**
@@ -206,7 +340,26 @@ export const DistributorService = {
   updateDistributor: async (id, data) => {
     await validateReferralCodeUniqueness(data.codigo_referido, id);
 
-    const distributor = await DistributorRepository.update(id, data);
+    const currentDistributor = await DistributorRepository.findById(id);
+
+    if (!currentDistributor) {
+      throw new Error('Distribuidor no encontrado');
+    }
+
+    const hierarchyData = await validateHierarchyRules({
+      distributorId: id,
+      currentDistributor,
+      role: data.rol,
+      parentId: data.id_distribuidor_padre
+    });
+
+    const distributor = await DistributorRepository.update(id, {
+      ...data,
+      ...(data.rol !== undefined ? { rol: hierarchyData.rol } : {}),
+      ...(data.id_distribuidor_padre !== undefined
+        ? { id_distribuidor_padre: hierarchyData.id_distribuidor_padre }
+        : {})
+    });
 
     if (!distributor) {
       throw new Error('Distribuidor no encontrado');
