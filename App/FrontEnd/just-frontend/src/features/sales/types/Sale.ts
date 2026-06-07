@@ -1,5 +1,6 @@
 export interface SaleClient {
   id_cliente: string;
+  id_distribuidor: string;
   nombre: string;
   cedula: string;
   direccion?: string | null;

@@ -22,8 +22,8 @@ function assignUploadedImageToBody(req) {
   }
 }
 
-export const getClients = asyncHandler(async (_req, res) => {
-  const clients = await ClientService.getClients();
+export const getClients = asyncHandler(async (req, res) => {
+  const clients = await ClientService.getClients(req.user.id);
 
   if (clients.length === 0) {
     throw createApiError('No se encontraron clientes', 404);
@@ -34,7 +34,7 @@ export const getClients = asyncHandler(async (_req, res) => {
 
 export const getClient = asyncHandler(async (req, res) => {
   try {
-    const client = await ClientService.getClientById(req.params.id);
+    const client = await ClientService.getClientById(req.params.id, req.user.id);
     return res.status(200).json(client);
   } catch (error) {
     throw withStatus(error, error.message === 'Cliente no encontrado' ? 404 : 500);
@@ -45,7 +45,7 @@ export const createClient = asyncHandler(async (req, res) => {
   assignUploadedImageToBody(req);
 
   try {
-    const client = await ClientService.createClient(req.body);
+    const client = await ClientService.createClient(req.body, req.user.id);
     return res.status(201).json(client);
   } catch (error) {
     throw withStatus(error, 400);
@@ -56,7 +56,7 @@ export const updateClient = asyncHandler(async (req, res) => {
   assignUploadedImageToBody(req);
 
   try {
-    const client = await ClientService.updateClient(req.params.id, req.body);
+    const client = await ClientService.updateClient(req.params.id, req.body, req.user.id);
     return res.status(200).json(client);
   } catch (error) {
     throw withStatus(error, error.message === 'Cliente no encontrado' ? 404 : 400);
@@ -65,7 +65,7 @@ export const updateClient = asyncHandler(async (req, res) => {
 
 export const deleteClient = asyncHandler(async (req, res) => {
   try {
-    const result = await ClientService.deleteClient(req.params.id);
+    const result = await ClientService.deleteClient(req.params.id, req.user.id);
     return res.status(200).json(result);
   } catch (error) {
     throw withStatus(error, error.message === 'Cliente no encontrado' ? 404 : 400);

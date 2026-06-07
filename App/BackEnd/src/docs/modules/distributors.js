@@ -1,5 +1,5 @@
 export const distributorsDocs = {
-  tags: [{ name: 'Distributors', description: 'Gestion de distribuidores' }],
+  tags: [{ name: 'Distributors', description: 'Gestion de distribuidores; las rutas globales quedan reservadas para futura autorizacion admin-only' }],
   paths: {
     '/distributors': {
       get: {

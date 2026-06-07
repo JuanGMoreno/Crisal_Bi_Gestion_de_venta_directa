@@ -16,8 +16,9 @@ describe('SaleService', () => {
     mocks.replace(DistributorRepository, 'findByUserId', async () => ({
       id_distribuidor: 'distributor-1'
     }));
-    mocks.replace(ClientRepository, 'findById', async () => ({
+    mocks.replace(ClientRepository, 'findByIdAndDistributor', async () => ({
       id_cliente: 'client-1',
+      id_distribuidor: 'distributor-1',
       estado: 'Activo'
     }));
     mocks.replace(ProductRepository, 'findByIdsAndDistributor', async () => [{
@@ -116,6 +117,19 @@ describe('SaleService', () => {
           cantidad: 5
         }]
       }, 'user-1')).rejects.toThrow(/Stock insuficiente/);
+  });
+
+  test('rechaza crear venta con cliente ajeno al distribuidor autenticado', async () => {
+    mocks.replace(ClientRepository, 'findByIdAndDistributor', async () => null);
+
+    await expect(SaleService.createSale({
+      id_cliente: 'foreign-client',
+      estado: 'Cerrada',
+      detalles: [{
+        id_producto: 'product-1',
+        cantidad: 1
+      }]
+    }, 'user-1')).rejects.toThrow(/Cliente no encontrado/);
   });
 
   test('anular venta cerrada restaura stock en los lotes consumidos', async () => {

@@ -1,10 +1,10 @@
 export const clientsDocs = {
-  tags: [{ name: 'Clients', description: 'Clientes compartidos para ventas' }],
+  tags: [{ name: 'Clients', description: 'Cartera de clientes del distribuidor autenticado' }],
   paths: {
     '/clients': {
       get: {
         tags: ['Clients'],
-        summary: 'Listar clientes activos',
+        summary: 'Listar clientes activos del distribuidor autenticado',
         security: [{ bearerAuth: [] }, { cookieAuth: [] }],
         responses: {
           200: {
@@ -22,7 +22,7 @@ export const clientsDocs = {
       },
       post: {
         tags: ['Clients'],
-        summary: 'Crear cliente',
+        summary: 'Crear cliente para el distribuidor autenticado',
         security: [{ bearerAuth: [] }, { cookieAuth: [] }],
         requestBody: {
           required: true,
@@ -40,7 +40,7 @@ export const clientsDocs = {
     '/clients/{id}': {
       get: {
         tags: ['Clients'],
-        summary: 'Obtener cliente por id',
+        summary: 'Obtener cliente propio por id',
         security: [{ bearerAuth: [] }, { cookieAuth: [] }],
         parameters: [
           { in: 'path', name: 'id', required: true, schema: { type: 'string', format: 'uuid' } }
@@ -51,7 +51,7 @@ export const clientsDocs = {
       },
       put: {
         tags: ['Clients'],
-        summary: 'Actualizar cliente',
+        summary: 'Actualizar cliente propio',
         security: [{ bearerAuth: [] }, { cookieAuth: [] }],
         parameters: [
           { in: 'path', name: 'id', required: true, schema: { type: 'string', format: 'uuid' } }
@@ -62,7 +62,7 @@ export const clientsDocs = {
       },
       delete: {
         tags: ['Clients'],
-        summary: 'Eliminar cliente de forma logica',
+        summary: 'Eliminar cliente propio de forma logica',
         security: [{ bearerAuth: [] }, { cookieAuth: [] }],
         parameters: [
           { in: 'path', name: 'id', required: true, schema: { type: 'string', format: 'uuid' } }

@@ -67,12 +67,12 @@ function normalizeSaleDetails(details) {
   });
 }
 
-async function validateRequiredClient(clientId) {
+async function validateRequiredClient(clientId, distributorId) {
   if (!clientId) {
     throw new Error('Debes seleccionar un cliente');
   }
 
-  const client = await ClientRepository.findById(clientId);
+  const client = await ClientRepository.findByIdAndDistributor(clientId, distributorId);
 
   if (!client || client.estado !== 'Activo') {
     throw new Error('Cliente no encontrado');
@@ -232,7 +232,7 @@ export const SaleService = {
     const normalizedDetails = normalizeSaleDetails(data.detalles);
     const clientId = data.id_cliente;
 
-    await validateRequiredClient(clientId);
+    await validateRequiredClient(clientId, distributorId);
 
     const productIds = [...new Set(normalizedDetails.map((detail) => detail.id_producto))];
     const products = await ProductRepository.findByIdsAndDistributor(productIds, distributorId);
@@ -287,7 +287,7 @@ export const SaleService = {
     const normalizedDetails = normalizeSaleDetails(data.detalles);
     const clientId = data.id_cliente;
 
-    await validateRequiredClient(clientId);
+    await validateRequiredClient(clientId, distributorId);
 
     const productIds = [...new Set(normalizedDetails.map((detail) => detail.id_producto))];
     const products = await ProductRepository.findByIdsAndDistributor(productIds, distributorId);

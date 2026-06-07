@@ -170,6 +170,7 @@ export const schemas = {
     type: 'object',
     properties: {
       id_cliente: { type: 'string', format: 'uuid' },
+      id_distribuidor: { type: 'string', format: 'uuid' },
       nombre: { type: 'string' },
       cedula: { type: 'string' },
       direccion: { type: 'string', nullable: true },
@@ -269,6 +270,7 @@ export const schemas = {
   CreateClientRequest: {
     type: 'object',
     required: ['nombre', 'cedula'],
+    description: 'El distribuidor se toma del usuario autenticado; no se debe enviar id_distribuidor.',
     properties: {
       nombre: { type: 'string' },
       cedula: { type: 'string' },

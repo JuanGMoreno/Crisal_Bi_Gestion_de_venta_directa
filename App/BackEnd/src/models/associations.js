@@ -111,9 +111,24 @@ Product.hasMany(EntryDetail, {
 });
 
 // --------------------
+// Distributor <-> Client (1:N)
 // Client <-> Sale (1:N)
 // Distributor <-> Sale (1:N)
 // --------------------
+Client.belongsTo(Distributor, {
+  as: 'distribuidor',
+  foreignKey: {
+    name: 'id_distribuidor',
+    allowNull: false
+  },
+  onUpdate: 'CASCADE',
+  onDelete: 'CASCADE'
+});
+Distributor.hasMany(Client, {
+  as: 'clientes',
+  foreignKey: 'id_distribuidor'
+});
+
 Sale.belongsTo(Client, {
   as: 'cliente',
   foreignKey: {
