@@ -26,7 +26,7 @@ export default function RegisterPage() {
           width={320}
           height={320}
           loading="eager"
-          src="/Logo_Just.svg"
+          src="/CrisalBi_logo_vertical_color.png"
           alt="Logo Just"
           className="w-64 h-auto max-w-xs drop-shadow-2xl "
         />
