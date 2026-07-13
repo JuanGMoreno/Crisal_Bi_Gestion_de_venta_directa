@@ -150,8 +150,11 @@ export const DashboardService = {
   getDashboardSummary: async (userId) => {
     const distributorId = await resolveDistributorIdByUserId(userId);
     const sales = await SaleRepository.findAllByDistributor(distributorId);
-    const inventory = await InventoryService.getInventorySummary(userId);
     const today = new Date();
+    const inventory = await InventoryService.getInventorySummary(userId, {
+      notifyAlerts: true,
+      referenceDate: today
+    });
 
     const currentMonthStart = startOfMonth(today);
     const nextMonthStart = addMonths(currentMonthStart, 1);
@@ -199,8 +202,16 @@ export const DashboardService = {
         totalUnits: inventory.reduce((sum, item) => sum + Number(item.stock_total || 0), 0),
         estimatedValue: inventoryValue,
         lowStock: inventory
-          .filter((item) => Number(item.stock_total || 0) <= 5)
+          .filter((item) => item.alertas?.stock_bajo?.activa)
           .sort((a, b) => Number(a.stock_total || 0) - Number(b.stock_total || 0))
+          .slice(0, 5),
+        expiringOrExpired: inventory
+          .filter((item) => item.alertas?.vencimiento?.activa)
+          .sort((a, b) => {
+            const left = Number(a.alertas?.vencimiento?.dias_para_vencer ?? 9999);
+            const right = Number(b.alertas?.vencimiento?.dias_para_vencer ?? 9999);
+            return left - right;
+          })
           .slice(0, 5)
       },
       recentSales: sales.slice(0, 5).map((sale) => ({

@@ -3,7 +3,7 @@ import { createApiError, withStatus } from '../utils/api-error.js';
 import { asyncHandler } from '../utils/async-handler.js';
 
 export const getInventory = asyncHandler(async (req, res) => {
-  const summary = await InventoryService.getInventorySummary(req.user.id);
+  const summary = await InventoryService.getInventorySummary(req.user.id, { notifyAlerts: true });
 
   if (summary.length === 0) {
     throw createApiError('No se encontraron existencias de inventario', 404);
