@@ -1,4 +1,4 @@
-import { Boxes, CalendarClock, PackageCheck, WalletCards } from "lucide-react";
+import { AlertTriangle, Boxes, CalendarClock, WalletCards } from "lucide-react";
 import { Badge } from "@/shared/components/ui/badge";
 import {
   getExpiryLabel,
@@ -34,7 +34,9 @@ export function InventorySummaryCards({ items }: InventorySummaryCardsProps) {
     (sum, item) => sum + item.stock_total * Number(item.costo_promedio_compra),
     0
   );
-  const productsWithStock = items.filter((item) => item.stock_total > 0).length;
+  const productsWithAlerts = items.filter(
+    (item) => item.alertas?.stock_bajo?.activa || item.alertas?.vencimiento?.activa
+  ).length;
 
   const nextExpiry = items
     .flatMap((item) => item.proximas_fechas_vencimiento)
@@ -50,10 +52,10 @@ export function InventorySummaryCards({ items }: InventorySummaryCardsProps) {
       icon: Boxes,
     },
     {
-      title: "Productos con Stock",
-      value: productsWithStock.toLocaleString("es-CO"),
-      description: "Productos que aun tienen unidades disponibles",
-      icon: PackageCheck,
+      title: "Alertas Activas",
+      value: productsWithAlerts.toLocaleString("es-CO"),
+      description: "Productos con stock bajo o vencimiento cercano",
+      icon: AlertTriangle,
     },
     {
       title: "Valor del Inventario",
@@ -83,6 +85,19 @@ export function InventorySummaryCards({ items }: InventorySummaryCardsProps) {
               <div>
                 <p className="text-sm font-medium text-muted-foreground">{card.title}</p>
                 <h3 className="mt-2 text-2xl font-semibold tracking-tight">{card.value}</h3>
+                {card.title === "Alertas Activas" ? (
+                  <div className="mt-3">
+                    <Badge
+                      variant="outline"
+                      className={cn(
+                        "border font-medium",
+                        getIndicatorClass(productsWithAlerts > 0 ? "warning" : "good")
+                      )}
+                    >
+                      {productsWithAlerts > 0 ? "Requiere revision" : "Sin alertas"}
+                    </Badge>
+                  </div>
+                ) : null}
                 {card.title === "Proximo Vencimiento" ? (
                   <div className="mt-3">
                     <Badge

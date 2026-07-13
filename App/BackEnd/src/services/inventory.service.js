@@ -1,6 +1,8 @@
 import { sequelize } from '../config/database.js';
 import { InventoryRepository } from '../repositories/inventory.repository.js';
 import { ProductRepository } from '../repositories/product.repository.js';
+import { DistributorRepository } from '../repositories/distributor.repository.js';
+import { buildInventoryAlertState, InventoryAlertService } from './inventory-alert.service.js';
 import { resolveDistributorIdByUserId } from '../utils/distributor-context.js';
 
 function normalizeOptionalText(value) {
@@ -60,7 +62,7 @@ function normalizeEntryDetails(details) {
   });
 }
 
-function buildStockSummary(details) {
+function buildStockSummary(details, referenceDate = new Date()) {
   const stockMap = new Map();
 
   for (const detail of details) {
@@ -75,7 +77,8 @@ function buildStockSummary(details) {
       stock_total: 0,
       lotes_activos: 0,
       costo_promedio_compra: 0,
-      proximas_fechas_vencimiento: []
+      proximas_fechas_vencimiento: [],
+      fechas_vencimiento_disponibles: []
     };
 
     const cantidadDisponible = Number(detail.cantidad_disponible);
@@ -96,12 +99,26 @@ function buildStockSummary(details) {
       current.proximas_fechas_vencimiento.push(detail.fecha_vencimiento);
       current.proximas_fechas_vencimiento.sort((a, b) => new Date(a) - new Date(b));
       current.proximas_fechas_vencimiento = current.proximas_fechas_vencimiento.slice(0, 3);
+      current.fechas_vencimiento_disponibles.push(detail.fecha_vencimiento);
     }
 
     stockMap.set(product.id_producto, current);
   }
 
-  return [...stockMap.values()].sort((a, b) => a.categoria.localeCompare(b.categoria));
+  return [...stockMap.values()]
+    .map((item) => {
+      const { fechas_vencimiento_disponibles, ...summaryItem } = item;
+
+      return {
+        ...summaryItem,
+        alertas: buildInventoryAlertState({
+          stockTotal: item.stock_total,
+          expirationDates: fechas_vencimiento_disponibles,
+          referenceDate
+        })
+      };
+    })
+    .sort((a, b) => a.categoria.localeCompare(b.categoria));
 }
 
 function entryHasConsumedStock(entry) {
@@ -129,10 +146,30 @@ export const InventoryService = {
     return entry;
   },
 
-  getInventorySummary: async (userId) => {
+  getInventorySummary: async (userId, options = {}) => {
+    const { notifyAlerts = false, referenceDate = new Date() } = options;
     const distributorId = await resolveDistributorIdByUserId(userId);
     const details = await InventoryRepository.findActiveStockDetailsByDistributor(distributorId);
-    return buildStockSummary(details.filter((detail) => Number(detail.cantidad_disponible) > 0));
+    const summary = buildStockSummary(
+      details.filter((detail) => Number(detail.cantidad_disponible) > 0),
+      referenceDate
+    );
+
+    if (notifyAlerts) {
+      const profile = await DistributorRepository.findProfileByUserId(userId);
+      try {
+        await InventoryAlertService.notifyDailyAlerts({
+          distributorId,
+          recipientEmail: profile?.usuario?.correo,
+          items: summary,
+          referenceDate
+        });
+      } catch (error) {
+        console.error('No se pudieron enviar las alertas de inventario:', error);
+      }
+    }
+
+    return summary;
   },
 
   createInventoryEntry: async (data, userId) => {

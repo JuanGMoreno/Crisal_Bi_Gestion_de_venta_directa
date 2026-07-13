@@ -74,6 +74,51 @@ function ExpiryIndicator({ date }: { date?: string }) {
   );
 }
 
+function AlertBadges({ item }: { item: InventorySummaryItem }) {
+  const badges = [];
+
+  if (item.alertas?.stock_bajo?.activa) {
+    badges.push(
+      <Badge
+        key="stock"
+        variant="outline"
+        className={cn("gap-1.5 border font-medium", getIndicatorClass("bad"))}
+      >
+        <AlertTriangle className="h-3.5 w-3.5" />
+        Stock bajo
+      </Badge>
+    );
+  }
+
+  if (item.alertas?.vencimiento?.activa) {
+    const isExpired = item.alertas.vencimiento.estado === "vencido";
+
+    badges.push(
+      <Badge
+        key="expiry"
+        variant="outline"
+        className={cn(
+          "gap-1.5 border font-medium",
+          getIndicatorClass(isExpired ? "bad" : "warning")
+        )}
+      >
+        <CalendarClock className="h-3.5 w-3.5" />
+        {isExpired ? "Vencido" : "Por vencer"}
+      </Badge>
+    );
+  }
+
+  if (badges.length === 0) {
+    return (
+      <Badge variant="outline" className={cn("border font-medium", getIndicatorClass("good"))}>
+        Sin alertas
+      </Badge>
+    );
+  }
+
+  return <div className="flex flex-wrap justify-center gap-2">{badges}</div>;
+}
+
 const columns: ColumnDef<InventorySummaryItem>[] = [
   {
     accessorKey: "nombre",
@@ -142,6 +187,11 @@ const columns: ColumnDef<InventorySummaryItem>[] = [
         <ExpiryIndicator date={row.original.proximas_fechas_vencimiento?.[0]} />
       </div>
     ),
+  },
+  {
+    id: "alertas",
+    header: () => <div className="text-center">Alertas</div>,
+    cell: ({ row }) => <AlertBadges item={row.original} />,
   },
 ];
 
