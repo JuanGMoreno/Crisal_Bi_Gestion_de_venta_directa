@@ -85,6 +85,43 @@ export const schemas = {
       profile: { $ref: '#/components/schemas/DistributorProfile' }
     }
   },
+  LinkReferralCodeRequest: {
+    type: 'object',
+    required: ['codigo_referido'],
+    properties: {
+      codigo_referido: { type: 'string' }
+    }
+  },
+  LinkReferralCodeResponse: {
+    type: 'object',
+    properties: {
+      message: { type: 'string' },
+      profile: { $ref: '#/components/schemas/DistributorProfile' }
+    }
+  },
+  DistributorChild: {
+    type: 'object',
+    properties: {
+      id_distribuidor: { type: 'string', format: 'uuid' },
+      id_usuario: { type: 'string', format: 'uuid' },
+      nombre: { type: 'string' },
+      rol: { type: 'string', enum: ['Consultora', 'Lider de Grupo', 'Lider'] },
+      foto_avatar: { type: 'string', nullable: true },
+      estado: { type: 'string', enum: ['Activo', 'Inactivo'] },
+      createdAt: { type: 'string', format: 'date-time' },
+      updatedAt: { type: 'string', format: 'date-time' },
+      usuario: {
+        type: 'object',
+        properties: {
+          id_usuario: { type: 'string', format: 'uuid' },
+          correo: { type: 'string', format: 'email' },
+          estado: { type: 'string', enum: ['Activo', 'Inactivo'] },
+          createdAt: { type: 'string', format: 'date-time' },
+          updatedAt: { type: 'string', format: 'date-time' }
+        }
+      }
+    }
+  },
   UpdateCurrentDistributorProfileRequest: {
     type: 'object',
     required: ['nombre'],
@@ -133,6 +170,7 @@ export const schemas = {
     type: 'object',
     properties: {
       id_cliente: { type: 'string', format: 'uuid' },
+      id_distribuidor: { type: 'string', format: 'uuid' },
       nombre: { type: 'string' },
       cedula: { type: 'string' },
       direccion: { type: 'string', nullable: true },
@@ -183,6 +221,30 @@ export const schemas = {
       proximas_fechas_vencimiento: {
         type: 'array',
         items: { type: 'string', format: 'date-time' }
+      },
+      alertas: {
+        type: 'object',
+        properties: {
+          stock_bajo: {
+            type: 'object',
+            properties: {
+              activa: { type: 'boolean' },
+              umbral: { type: 'integer' },
+              stock_total: { type: 'integer' }
+            }
+          },
+          vencimiento: {
+            type: 'object',
+            properties: {
+              activa: { type: 'boolean' },
+              estado: { type: 'string', enum: ['sin_alerta', 'por_vencer', 'vencido'] },
+              dias_para_vencer: { type: 'integer', nullable: true },
+              fecha_mas_cercana: { type: 'string', format: 'date-time', nullable: true },
+              lotes_en_alerta: { type: 'integer' },
+              umbral_dias: { type: 'integer' }
+            }
+          }
+        }
       }
     }
   },
@@ -232,6 +294,7 @@ export const schemas = {
   CreateClientRequest: {
     type: 'object',
     required: ['nombre', 'cedula'],
+    description: 'El distribuidor se toma del usuario autenticado; no se debe enviar id_distribuidor.',
     properties: {
       nombre: { type: 'string' },
       cedula: { type: 'string' },

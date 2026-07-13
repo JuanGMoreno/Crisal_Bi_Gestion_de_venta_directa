@@ -7,6 +7,10 @@ const Client = sequelize.define('Client', {
     defaultValue: DataTypes.UUIDV4,
     primaryKey: true
   },
+  id_distribuidor: {
+    type: DataTypes.UUID,
+    allowNull: false
+  },
   nombre: {
     type: DataTypes.STRING(120),
     allowNull: false,
@@ -43,7 +47,8 @@ const Client = sequelize.define('Client', {
   tableName: 'clientes',
   freezeTableName: true,
   indexes: [
-    { unique: true, fields: ['cedula'] },
+    { fields: ['id_distribuidor'] },
+    { unique: true, fields: ['id_distribuidor', 'cedula'] },
     { fields: ['nombre'] },
     { fields: ['estado'] }
   ]

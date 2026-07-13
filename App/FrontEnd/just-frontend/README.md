@@ -35,48 +35,64 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
-## Pruebas E2E (Jest + Selenium)
+## Pruebas E2E (Playwright)
 
-Este proyecto incluye pruebas E2E en:
+Este proyecto usa Playwright para automatizar Chromium con contextos aislados por prueba,
+esperas automaticas y artefactos de diagnostico cuando ocurre un fallo.
 
-- `tests/loginE2E.test.ts`
-- `tests/productsE2E.test.ts`
+Las pruebas se encuentran en:
 
-Las variables E2E se leen automaticamente desde `.env.e2e`.
+- `e2e/auth.spec.ts`
+- `e2e/products.spec.ts`
+- `e2e/inventory.spec.ts`
 
-Tambien existe la plantilla versionable `.env.e2e.example` para estandarizar configuracion en equipo y CI.
+Instalar Chromium administrado por Playwright una vez:
 
-- `npm run test:e2e`: ejecuta los tests E2E de login y productos con variables de `.env.e2e`.
-- `npm run test:e2e:auto`: levanta frontend y luego ejecuta el E2E automaticamente.
-
-### Variables opcionales para login real
-
-Si quieres probar autenticacion completa (no solo render del formulario), define:
-
-- `E2E_EMAIL`
-- `E2E_PASSWORD`
-- `E2E_BASE_URL` (opcional, por defecto `http://localhost:3000`)
-
-Por defecto ya existe `.env.e2e` con:
-
-- `E2E_EMAIL=test@gmail.com`
-- `E2E_PASSWORD=test1234`
-
-Valores de referencia para el equipo:
-
-- `E2E_BASE_URL=http://localhost:3000`
-- `E2E_EMAIL=test@gmail.com`
-- `E2E_PASSWORD=test1234`
-- `E2E_STRICT_PRODUCTS=false`
-
-`E2E_STRICT_PRODUCTS=true` activa una prueba estricta que intenta crear un producto y falla si el sistema redirige a login o no permite abrir el modulo de productos.
-
-Ejemplo en PowerShell:
-
-```powershell
-$env:E2E_EMAIL="usuario@correo.com"
-$env:E2E_PASSWORD="tu-clave"
-npm run test:e2e:auto
+```bash
+npx playwright install chromium
 ```
 
-Si no defines credenciales, el test de login real se omite y solo se valida que la pantalla de inicio de sesion renderiza correctamente.
+Crear `.env.e2e` desde `.env.e2e.example` y ajustar credenciales de una usuaria
+existente en el backend local.
+
+Ejecutar todas las pruebas:
+
+```bash
+npm run test:e2e
+```
+
+Ejecutar solamente casos publicos que no necesitan backend:
+
+```bash
+npm run test:e2e:public
+```
+
+Estos casos simulan una respuesta `401` de `/auth/me` para representar una visita sin
+sesion activa. Los flujos autenticados no usan esa simulacion.
+
+Abrir la interfaz visual de Playwright:
+
+```bash
+npm run test:e2e:ui
+```
+
+Playwright inicia el frontend automaticamente. Los flujos autenticados requieren que
+backend y PostgreSQL esten levantados previamente:
+
+```bash
+cd ../../BackEnd
+npm run dev
+```
+
+Cobertura actual:
+
+- Render del formulario de login.
+- Redireccion de rutas protegidas sin sesion.
+- Login real y carga del sistema protegido.
+- Acceso autenticado al modulo de productos.
+- Creacion de producto desde el modal.
+- Registro de un ingreso de inventario para un producto nuevo.
+
+Si faltan `E2E_EMAIL` o `E2E_PASSWORD`, Playwright omite los flujos autenticados y
+mantiene activos los casos publicos. Si las variables existen pero backend no esta
+disponible o las credenciales son incorrectas, la suite falla de forma visible.

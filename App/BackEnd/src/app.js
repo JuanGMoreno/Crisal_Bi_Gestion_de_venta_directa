@@ -12,6 +12,7 @@ import inventoryRoutes from './routes/inventory.routes.js';
 import saleRoutes from './routes/sale.routes.js';
 import dashboardRoutes from './routes/dashboard.routes.js';
 import docsRoutes from './routes/docs.routes.js';
+import { errorMiddleware, notFoundMiddleware } from './middleware/error.middleware.js';
 
 const app = express();
 
@@ -42,5 +43,8 @@ app.use('/api', docsRoutes);
 app.use('/api/health', (_req, res) => {
   res.json({ message: 'API operativa' });
 });
+
+app.use(notFoundMiddleware);
+app.use(errorMiddleware);
 
 export default app;

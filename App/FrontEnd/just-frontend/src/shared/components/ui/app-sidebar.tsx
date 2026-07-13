@@ -14,9 +14,21 @@ import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import AllUrls from "@/urls"
-import { PackageSearch, Archive, Users, BadgeDollarSign, ChartSpline } from "lucide-react"
+import { PackageSearch, Archive, Users, BadgeDollarSign, ChartSpline, Network } from "lucide-react"
+import { useDistributorChildrenQuery } from "@/features/profile/hooks/useDistributorChildrenQuery"
+import { useProfileQuery } from "@/features/profile/hooks/useProfileQuery"
+
+function canManageTeam(role?: string) {
+  return role === "Lider" || role === "Lider de Grupo"
+}
+
 export function AppSidebar() {
   const pathname = usePathname()
+  const { data: profile } = useProfileQuery()
+  const canSeeTeam = canManageTeam(profile?.rol)
+  const { data: children = [] } = useDistributorChildrenQuery(Boolean(profile && canSeeTeam))
+  const shouldShowTeam = canSeeTeam && children.length > 0
+
   return (
     <Sidebar variant="inset">
       <SidebarHeader>
@@ -84,6 +96,16 @@ export function AppSidebar() {
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
+            {shouldShowTeam ? (
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild size="lg" isActive={pathname === AllUrls['system:team']}>
+                  <Link href={AllUrls['system:team']}>
+                    <Network size={244} />
+                    <span className="font-bold pl-1">Equipo</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ) : null}
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
@@ -93,14 +115,14 @@ export function AppSidebar() {
             <SidebarMenuButton asChild size="lg" isActive={pathname === AllUrls['system:profile']}>
               <Link href={AllUrls['system:profile']}>
                 <AvatarSidebar
-                  src="https://avatars.githubusercontent.com/u/118492050?s=400&u=ed3469fc5e2e6147c1367153eb9274cc7e3cb1fd&v=4"
-                  alt="Avatar de John Doe"
-                  fallback="JD"
+                  src={profile?.foto_avatar?.trim() || "/Logo_Just.svg"}
+                  alt={profile?.nombre || "Perfil"}
+                  fallback={profile?.nombre?.slice(0, 2).toUpperCase() || "JU"}
                   size="md"
                 />
                 <div className="flex flex-col pl-1">
-                  <p className="font-bold text-md ">John Doe</p>
-                  <p className="font-semibold text-xs ">Consultor destacado</p>
+                  <p className="font-bold text-md ">{profile?.nombre || "Mi perfil"}</p>
+                  <p className="font-semibold text-xs ">{profile?.rol || "Distribuidor"}</p>
                 </div>
               </Link>
             </SidebarMenuButton>

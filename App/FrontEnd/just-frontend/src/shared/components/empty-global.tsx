@@ -13,8 +13,8 @@ interface EmptyGlobalProps {
     icon: React.ReactNode;
     title: string;
     description: string;
-    buttonText: string;
-    onButtonClick: () => void;
+    buttonText?: string;
+    onButtonClick?: () => void;
     className?: string;
 }
 
@@ -31,11 +31,13 @@ export function EmptyGlobal({ icon, title, description, buttonText, onButtonClic
           {description}
         </EmptyDescription>
       </EmptyHeader>
-      <EmptyContent>
-        <Button variant="outline" size="sm" onClick={onButtonClick}>
-          {buttonText}
-        </Button>
-      </EmptyContent>
+      {buttonText && onButtonClick ? (
+        <EmptyContent>
+          <Button variant="outline" size="sm" onClick={onButtonClick}>
+            {buttonText}
+          </Button>
+        </EmptyContent>
+      ) : null}
     </Empty>
   )
 }

@@ -1,4 +1,5 @@
 import { ClientRepository } from '../repositories/client.repository.js';
+import { resolveDistributorIdByUserId } from '../utils/distributor-context.js';
 
 function normalizeOptionalText(value) {
   if (value === undefined || value === null || value === '') {
@@ -37,8 +38,8 @@ function validateClientPayload(data) {
   }
 }
 
-async function validateUniqueDocument(cedula, currentClientId = null) {
-  const existingClient = await ClientRepository.findByDocument(cedula);
+async function validateUniqueDocument(cedula, distributorId, currentClientId = null) {
+  const existingClient = await ClientRepository.findByDocumentAndDistributor(cedula, distributorId);
 
   if (!existingClient) return;
   if (currentClientId && existingClient.id_cliente === currentClientId) return;
@@ -47,12 +48,17 @@ async function validateUniqueDocument(cedula, currentClientId = null) {
 }
 
 export const ClientService = {
-  getClients: async () => {
-    return await ClientRepository.findAll({ estado: 'Activo' });
+  getClients: async (userId) => {
+    const distributorId = await resolveDistributorIdByUserId(userId);
+    return await ClientRepository.findAll({
+      estado: 'Activo',
+      id_distribuidor: distributorId
+    });
   },
 
-  getClientById: async (id) => {
-    const client = await ClientRepository.findById(id);
+  getClientById: async (id, userId) => {
+    const distributorId = await resolveDistributorIdByUserId(userId);
+    const client = await ClientRepository.findByIdAndDistributor(id, distributorId);
 
     if (!client) {
       throw new Error('Cliente no encontrado');
@@ -61,20 +67,28 @@ export const ClientService = {
     return client;
   },
 
-  createClient: async (data) => {
+  createClient: async (data, userId) => {
+    const distributorId = await resolveDistributorIdByUserId(userId);
     const normalizedData = normalizeClientPayload(data);
     validateClientPayload(normalizedData);
-    await validateUniqueDocument(normalizedData.cedula);
+    await validateUniqueDocument(normalizedData.cedula, distributorId);
 
-    return await ClientRepository.create(normalizedData);
+    return await ClientRepository.create({
+      ...normalizedData,
+      id_distribuidor: distributorId
+    });
   },
 
-  updateClient: async (id, data) => {
+  updateClient: async (id, data, userId) => {
+    const distributorId = await resolveDistributorIdByUserId(userId);
     const normalizedData = normalizeClientPayload(data);
     validateClientPayload(normalizedData);
-    await validateUniqueDocument(normalizedData.cedula, id);
+    await validateUniqueDocument(normalizedData.cedula, distributorId, id);
 
-    const client = await ClientRepository.update(id, normalizedData);
+    const client = await ClientRepository.updateByDistributor(id, distributorId, {
+      ...normalizedData,
+      id_distribuidor: distributorId
+    });
 
     if (!client) {
       throw new Error('Cliente no encontrado');
@@ -83,14 +97,15 @@ export const ClientService = {
     return client;
   },
 
-  deleteClient: async (id) => {
-    const linkedSales = await ClientRepository.countSalesByClient(id);
+  deleteClient: async (id, userId) => {
+    const distributorId = await resolveDistributorIdByUserId(userId);
+    const linkedSales = await ClientRepository.countSalesByClient(id, distributorId);
 
     if (linkedSales > 0) {
       throw new Error('No se puede eliminar un cliente con ventas asociadas');
     }
 
-    const client = await ClientRepository.softDelete(id);
+    const client = await ClientRepository.softDeleteByDistributor(id, distributorId);
 
     if (!client) {
       throw new Error('Cliente no encontrado');

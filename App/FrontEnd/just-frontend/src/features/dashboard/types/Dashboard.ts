@@ -40,6 +40,21 @@ export interface DashboardLowStockItem {
   lotes_activos: number;
   costo_promedio_compra: number;
   proximas_fechas_vencimiento: string[];
+  alertas: {
+    stock_bajo: {
+      activa: boolean;
+      umbral: number;
+      stock_total: number;
+    };
+    vencimiento: {
+      activa: boolean;
+      estado: "sin_alerta" | "por_vencer" | "vencido";
+      dias_para_vencer: number | null;
+      fecha_mas_cercana: string | null;
+      lotes_en_alerta: number;
+      umbral_dias: number;
+    };
+  };
 }
 
 export interface DashboardRecentSale {
@@ -71,6 +86,7 @@ export interface DashboardSummary {
     totalUnits: number;
     estimatedValue: number;
     lowStock: DashboardLowStockItem[];
+    expiringOrExpired: DashboardLowStockItem[];
   };
   recentSales: DashboardRecentSale[];
 }

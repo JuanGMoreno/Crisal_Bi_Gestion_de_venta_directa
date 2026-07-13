@@ -167,6 +167,13 @@ export async function up({ queryInterface, Sequelize }) {
       defaultValue: Sequelize.UUIDV4,
       primaryKey: true
     },
+    id_distribuidor: {
+      type: Sequelize.UUID,
+      allowNull: false,
+      references: { model: 'distribuidores', key: 'id_distribuidor' },
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE'
+    },
     nombre: {
       type: Sequelize.STRING(120),
       allowNull: false
@@ -177,8 +184,7 @@ export async function up({ queryInterface, Sequelize }) {
     },
     cedula: {
       type: Sequelize.STRING(30),
-      allowNull: false,
-      unique: true
+      allowNull: false
     },
     edad: {
       type: Sequelize.INTEGER,
@@ -404,7 +410,10 @@ export async function up({ queryInterface, Sequelize }) {
   await addIndexSafe(queryInterface, 'productos', ['nombre']);
   await addIndexSafe(queryInterface, 'productos', ['estado']);
   await addIndexSafe(queryInterface, 'productos', ['categoria']);
-  await addIndexSafe(queryInterface, 'clientes', ['cedula'], { unique: true });
+  await addIndexSafe(queryInterface, 'clientes', ['id_distribuidor']);
+  await addIndexSafe(queryInterface, 'clientes', ['id_distribuidor', 'cedula'], {
+    unique: true
+  });
   await addIndexSafe(queryInterface, 'clientes', ['nombre']);
   await addIndexSafe(queryInterface, 'clientes', ['estado']);
   await addIndexSafe(queryInterface, 'ingresos_inventario', ['id_distribuidor']);

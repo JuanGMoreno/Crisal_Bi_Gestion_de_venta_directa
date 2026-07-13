@@ -1,4 +1,6 @@
 import { ClientService } from '../services/client.service.js';
+import { createApiError, withStatus } from '../utils/api-error.js';
+import { asyncHandler } from '../utils/async-handler.js';
 
 function assignUploadedImageToBody(req) {
   const uploadedImageUrl = req.file
@@ -20,62 +22,52 @@ function assignUploadedImageToBody(req) {
   }
 }
 
-export const getClients = async (_req, res) => {
-  try {
-    const clients = await ClientService.getClients();
+export const getClients = asyncHandler(async (req, res) => {
+  const clients = await ClientService.getClients(req.user.id);
 
-    if (clients.length === 0) {
-      return res.status(404).json({ message: 'No se encontraron clientes' });
-    }
-
-    return res.status(200).json(clients);
-  } catch (error) {
-    return res.status(500).json({
-      message: 'Error al obtener clientes',
-      error: error.message
-    });
+  if (clients.length === 0) {
+    throw createApiError('No se encontraron clientes', 404);
   }
-};
 
-export const getClient = async (req, res) => {
+  return res.status(200).json(clients);
+});
+
+export const getClient = asyncHandler(async (req, res) => {
   try {
-    const client = await ClientService.getClientById(req.params.id);
+    const client = await ClientService.getClientById(req.params.id, req.user.id);
     return res.status(200).json(client);
   } catch (error) {
-    const statusCode = error.message === 'Cliente no encontrado' ? 404 : 500;
-    return res.status(statusCode).json({ message: error.message });
+    throw withStatus(error, error.message === 'Cliente no encontrado' ? 404 : 500);
   }
-};
+});
 
-export const createClient = async (req, res) => {
+export const createClient = asyncHandler(async (req, res) => {
   assignUploadedImageToBody(req);
 
   try {
-    const client = await ClientService.createClient(req.body);
+    const client = await ClientService.createClient(req.body, req.user.id);
     return res.status(201).json(client);
   } catch (error) {
-    return res.status(400).json({ message: error.message });
+    throw withStatus(error, 400);
   }
-};
+});
 
-export const updateClient = async (req, res) => {
+export const updateClient = asyncHandler(async (req, res) => {
   assignUploadedImageToBody(req);
 
   try {
-    const client = await ClientService.updateClient(req.params.id, req.body);
+    const client = await ClientService.updateClient(req.params.id, req.body, req.user.id);
     return res.status(200).json(client);
   } catch (error) {
-    const statusCode = error.message === 'Cliente no encontrado' ? 404 : 400;
-    return res.status(statusCode).json({ message: error.message });
+    throw withStatus(error, error.message === 'Cliente no encontrado' ? 404 : 400);
   }
-};
+});
 
-export const deleteClient = async (req, res) => {
+export const deleteClient = asyncHandler(async (req, res) => {
   try {
-    const result = await ClientService.deleteClient(req.params.id);
+    const result = await ClientService.deleteClient(req.params.id, req.user.id);
     return res.status(200).json(result);
   } catch (error) {
-    const statusCode = error.message === 'Cliente no encontrado' ? 404 : 400;
-    return res.status(statusCode).json({ message: error.message });
+    throw withStatus(error, error.message === 'Cliente no encontrado' ? 404 : 400);
   }
-};
+});

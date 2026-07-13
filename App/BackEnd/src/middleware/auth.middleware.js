@@ -1,6 +1,7 @@
+import { createApiError } from "../utils/api-error.js";
 import { verifyAccessToken } from "../utils/jwt.js";
 
-export function authMiddleware(req, res, next) {
+export function authMiddleware(req, _res, next) {
   try {
     const authHeader = req.headers.authorization;
     const cookieToken = req.cookies?.access_token;
@@ -15,9 +16,7 @@ export function authMiddleware(req, res, next) {
     }
 
     if (!token) {
-      return res.status(401).json({
-        message: "No autenticado",
-      });
+      throw createApiError("No autenticado", 401);
     }
 
     const payload = verifyAccessToken(token);
@@ -28,10 +27,11 @@ export function authMiddleware(req, res, next) {
     };
 
     next();
-    
   } catch (error) {
-    return res.status(401).json({
-      message: "Token inválido o expirado",
-    });
+    if (error.status === 401) {
+      return next(error);
+    }
+
+    return next(createApiError("Token inválido o expirado", 401));
   }
 }

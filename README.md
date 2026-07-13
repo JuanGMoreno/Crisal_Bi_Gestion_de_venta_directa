@@ -186,12 +186,16 @@ http://localhost:3000
 ### Backend
 
 ```bash
+npm test
 npm run db:migrate
 npm run db:migrate:status
 npm run db:migrate:undo
 npm run dev
 npm start
 ```
+
+La estrategia de pruebas unitarias del backend, su cobertura actual y ejemplos para
+agregar nuevos casos estan documentados en [`App/BackEnd/TESTING.md`](App/BackEnd/TESTING.md).
 
 ### Frontend
 

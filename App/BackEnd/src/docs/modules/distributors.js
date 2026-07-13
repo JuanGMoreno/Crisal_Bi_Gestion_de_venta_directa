@@ -1,5 +1,5 @@
 export const distributorsDocs = {
-  tags: [{ name: 'Distributors', description: 'Gestion de distribuidores' }],
+  tags: [{ name: 'Distributors', description: 'Gestion de distribuidores; las rutas globales quedan reservadas para futura autorizacion admin-only' }],
   paths: {
     '/distributors': {
       get: {
@@ -77,7 +77,9 @@ export const distributorsDocs = {
           },
           404: { description: 'Distribuidor no encontrado' }
         }
-      },
+      }
+    },
+    '/distributors/me/referral-code': {
       post: {
         tags: ['Distributors'],
         summary: 'Solicitar un nuevo codigo de referido cuando el actual haya vencido',
@@ -92,6 +94,54 @@ export const distributorsDocs = {
             }
           },
           400: { description: 'El codigo actual aun se encuentra vigente' },
+          404: { description: 'Distribuidor no encontrado' }
+        }
+      }
+    },
+    '/distributors/me/link-referral': {
+      post: {
+        tags: ['Distributors'],
+        summary: 'Vincular el distribuidor autenticado a una jerarquia mediante codigo de referido',
+        security: [{ bearerAuth: [] }, { cookieAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: { $ref: '#/components/schemas/LinkReferralCodeRequest' }
+            }
+          }
+        },
+        responses: {
+          200: {
+            description: 'Distribuidor vinculado correctamente',
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/LinkReferralCodeResponse' }
+              }
+            }
+          },
+          400: { description: 'Codigo invalido, vencido o jerarquia no permitida' },
+          404: { description: 'Distribuidor no encontrado' }
+        }
+      }
+    },
+    '/distributors/me/children': {
+      get: {
+        tags: ['Distributors'],
+        summary: 'Listar hijos directos activos del distribuidor autenticado',
+        security: [{ bearerAuth: [] }, { cookieAuth: [] }],
+        responses: {
+          200: {
+            description: 'Listado de hijos directos',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'array',
+                  items: { $ref: '#/components/schemas/DistributorChild' }
+                }
+              }
+            }
+          },
           404: { description: 'Distribuidor no encontrado' }
         }
       }

@@ -16,6 +16,7 @@ import {
   ArrowUpRight,
   BadgeDollarSign,
   Boxes,
+  CalendarClock,
   CircleDollarSign,
   PackageCheck,
   ReceiptText,
@@ -371,10 +372,16 @@ export default function DashboardPage() {
             <div>
               <h2 className="text-lg font-semibold">Alertas de inventario</h2>
               <p className="text-sm text-muted-foreground">
-                {formatNumber(dashboard.inventory.productsInStock)} productos con existencia
+                {formatNumber(
+                  dashboard.inventory.lowStock.length + dashboard.inventory.expiringOrExpired.length
+                )} alertas activas
               </p>
             </div>
             <AlertTriangle className="h-5 w-5 text-amber-600" />
+          </div>
+          <div className="mb-3 flex items-center gap-2 text-sm font-medium">
+            <Boxes className="h-4 w-4 text-rose-600" />
+            Stock bajo
           </div>
           <div className="space-y-3">
             {dashboard.inventory.lowStock.length > 0 ? (
@@ -400,6 +407,53 @@ export default function DashboardPage() {
             ) : (
               <p className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
                 No hay productos en stock bajo.
+              </p>
+            )}
+          </div>
+          <div className="mb-3 mt-5 flex items-center gap-2 text-sm font-medium">
+            <CalendarClock className="h-4 w-4 text-amber-600" />
+            Vencimientos
+          </div>
+          <div className="space-y-3">
+            {dashboard.inventory.expiringOrExpired.length > 0 ? (
+              dashboard.inventory.expiringOrExpired.map((item) => {
+                const isExpired = item.alertas.vencimiento.estado === "vencido";
+                const days = item.alertas.vencimiento.dias_para_vencer;
+                const label = isExpired
+                  ? `Vencido hace ${Math.abs(days ?? 0)} dias`
+                  : days === 0
+                    ? "Vence hoy"
+                    : `Vence en ${days} dias`;
+
+                return (
+                  <div
+                    key={item.id_producto}
+                    className="flex items-center justify-between gap-3 rounded-lg border p-3"
+                  >
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="truncate font-medium">{item.nombre}</p>
+                        <Badge variant="outline">{item.codigo}</Badge>
+                      </div>
+                      <p className="mt-1 text-sm text-muted-foreground">
+                        {item.alertas.vencimiento.lotes_en_alerta} lotes en alerta
+                      </p>
+                    </div>
+                    <Badge
+                      className={`shrink-0 text-white ${
+                        isExpired
+                          ? "bg-rose-600 hover:bg-rose-600"
+                          : "bg-amber-600 hover:bg-amber-600"
+                      }`}
+                    >
+                      {label}
+                    </Badge>
+                  </div>
+                );
+              })
+            ) : (
+              <p className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
+                No hay productos vencidos ni proximos a vencer.
               </p>
             )}
           </div>

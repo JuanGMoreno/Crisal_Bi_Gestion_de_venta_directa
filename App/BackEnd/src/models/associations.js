@@ -9,6 +9,7 @@ import Client from './Client.js';
 import Sale from './Sale.js';
 import SaleDetail from './SaleDetail.js';
 import SaleDetailConsumption from './SaleDetailConsumption.js';
+import InventoryAlertDelivery from './InventoryAlertDelivery.js';
 
 // --------------------
 // User <-> Distributor (1:1)
@@ -111,9 +112,24 @@ Product.hasMany(EntryDetail, {
 });
 
 // --------------------
+// Distributor <-> Client (1:N)
 // Client <-> Sale (1:N)
 // Distributor <-> Sale (1:N)
 // --------------------
+Client.belongsTo(Distributor, {
+  as: 'distribuidor',
+  foreignKey: {
+    name: 'id_distribuidor',
+    allowNull: false
+  },
+  onUpdate: 'CASCADE',
+  onDelete: 'CASCADE'
+});
+Distributor.hasMany(Client, {
+  as: 'clientes',
+  foreignKey: 'id_distribuidor'
+});
+
 Sale.belongsTo(Client, {
   as: 'cliente',
   foreignKey: {
@@ -214,6 +230,37 @@ SaleDetailConsumption.belongsTo(EntryDetail, {
 EntryDetail.hasMany(SaleDetailConsumption, {
   as: 'consumos_venta',
   foreignKey: 'id_detalle_ingreso'
+});
+
+// --------------------
+// Distributor/Product <-> InventoryAlertDelivery (1:N)
+// --------------------
+InventoryAlertDelivery.belongsTo(Distributor, {
+  as: 'distribuidor',
+  foreignKey: {
+    name: 'id_distribuidor',
+    allowNull: false
+  },
+  onUpdate: 'CASCADE',
+  onDelete: 'CASCADE'
+});
+Distributor.hasMany(InventoryAlertDelivery, {
+  as: 'envios_alertas_inventario',
+  foreignKey: 'id_distribuidor'
+});
+
+InventoryAlertDelivery.belongsTo(Product, {
+  as: 'producto',
+  foreignKey: {
+    name: 'id_producto',
+    allowNull: false
+  },
+  onUpdate: 'CASCADE',
+  onDelete: 'CASCADE'
+});
+Product.hasMany(InventoryAlertDelivery, {
+  as: 'envios_alertas_inventario',
+  foreignKey: 'id_producto'
 });
 
 // No exporta nada: basta con importar este archivo para registrar asociaciones.

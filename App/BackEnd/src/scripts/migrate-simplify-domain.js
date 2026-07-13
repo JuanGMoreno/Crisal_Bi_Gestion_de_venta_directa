@@ -63,16 +63,6 @@ async function columnExists(tableName, columnName) {
   return rows.length > 0;
 }
 
-async function dropClientDistributorColumn() {
-  const queryInterface = sequelize.getQueryInterface();
-  const hasDistributorColumn = await columnExists('clientes', 'id_distribuidor');
-
-  if (!hasDistributorColumn) return;
-
-  await queryInterface.removeColumn('clientes', 'id_distribuidor');
-  console.log('- Columna eliminada: clientes.id_distribuidor');
-}
-
 async function migrateSaleConsumptionsTable() {
   await renameTableIfNeeded('detalle_venta_ingresos', 'consumos_detalle_venta');
   await renameColumnIfNeeded(
@@ -134,7 +124,6 @@ async function main() {
     await sequelize.authenticate();
     console.log('Conectado a base de datos');
 
-    await dropClientDistributorColumn();
     await migrateSaleConsumptionsTable();
     await migrateInventoryIncomeToDistributor();
     await dropObsoleteTables();

@@ -48,6 +48,23 @@ export const DistributorRepository = {
     });
   },
 
+  findChildrenWithUserByParent: async (idDistribuidorPadre, filters = {}) => {
+    return await Distributor.findAll({
+      where: {
+        id_distribuidor_padre: idDistribuidorPadre,
+        ...filters
+      },
+      include: [
+        {
+          model: User,
+          as: 'usuario',
+          attributes: ['id_usuario', 'correo', 'estado', 'createdAt', 'updatedAt']
+        }
+      ],
+      order: [['createdAt', 'DESC']]
+    });
+  },
+
   /**
    * Buscar distribuidor por código
    */
@@ -70,10 +87,11 @@ export const DistributorRepository = {
   /**
    * Actualizar distribuidor existente
    */
-  update: async (id, data) => {
-    const distributor = await Distributor.findByPk(id);
+  update: async (id, data, options = {}) => {
+    const { transaction } = options;
+    const distributor = await Distributor.findByPk(id, { transaction });
     if (!distributor) return null;
-    return await distributor.update(data);
+    return await distributor.update(data, { transaction });
   },
 
   /**
@@ -104,9 +122,22 @@ export const DistributorRepository = {
     });
   },
 
-  countByParent: async (idDistribuidorPadre) => {
+  countByParent: async (idDistribuidorPadre, filters = {}) => {
     return await Distributor.count({
-      where: { id_distribuidor_padre: idDistribuidorPadre }
+      where: {
+        id_distribuidor_padre: idDistribuidorPadre,
+        ...filters
+      }
+    });
+  },
+
+  findChildrenByParent: async (idDistribuidorPadre, filters = {}) => {
+    return await Distributor.findAll({
+      where: {
+        id_distribuidor_padre: idDistribuidorPadre,
+        ...filters
+      },
+      order: [['createdAt', 'DESC']]
     });
   }
 };

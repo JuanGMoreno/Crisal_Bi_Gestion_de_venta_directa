@@ -25,8 +25,8 @@ export default function LoginPage() {
           width={320}
           height={320}
           loading="eager"
-          src="/Logo_Just.svg"
-          alt="Logo Just"
+          src="/CrisalBi_logo_vertical_color.png"
+          alt="Logo Crisal"
           className="w-64 h-auto max-w-xs drop-shadow-2xl "
         />
       </div>
