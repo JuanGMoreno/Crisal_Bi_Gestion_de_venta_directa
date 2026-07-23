@@ -1,5 +1,5 @@
 import { ClientService } from '../services/client.service.js';
-import { createApiError, withStatus } from '../utils/api-error.js';
+import { withStatus } from '../utils/api-error.js';
 import { asyncHandler } from '../utils/async-handler.js';
 
 function assignUploadedImageToBody(req) {
@@ -24,11 +24,6 @@ function assignUploadedImageToBody(req) {
 
 export const getClients = asyncHandler(async (req, res) => {
   const clients = await ClientService.getClients(req.user.id);
-
-  if (clients.length === 0) {
-    throw createApiError('No se encontraron clientes', 404);
-  }
-
   return res.status(200).json(clients);
 });
 

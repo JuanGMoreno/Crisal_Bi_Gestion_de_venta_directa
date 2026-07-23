@@ -231,8 +231,6 @@ export function SaleForm({
                 const selectedClient = availableClients.find(
                   (client) => client.id_cliente === field.value
                 );
-                console.log(availableClients);
-                console.log(selectedClient, "selected client");
                 return (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel>Cliente</FieldLabel>

@@ -1,7 +1,7 @@
 
 import { useCallback } from "react";
 import { http } from "@/shared/api/http";
-import { getApiErrorMessage, getApiErrorStatus } from "@/shared/api/error";
+import { getApiErrorMessage } from "@/shared/api/error";
 import Product from "../types/Product";
 
 export default function useProductServices() {
@@ -10,11 +10,6 @@ export default function useProductServices() {
       const response = await http.get("/products");
       return response.data;
     } catch (error: unknown) {
-      // El backend responde 404 cuando no hay productos activos.
-      if (getApiErrorStatus(error) === 404) {
-        return [];
-      }
-
       console.error("Error en getProducts:", error);
       throw new Error(getApiErrorMessage(error, "Error al obtener los productos."));
     }

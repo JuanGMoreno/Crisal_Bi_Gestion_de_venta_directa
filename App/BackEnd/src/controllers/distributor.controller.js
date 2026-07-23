@@ -1,5 +1,5 @@
 import { DistributorService } from '../services/distributor.service.js';
-import { createApiError, withStatus } from '../utils/api-error.js';
+import { withStatus } from '../utils/api-error.js';
 import { asyncHandler } from '../utils/async-handler.js';
 
 function assignUploadedImageToBody(req) {
@@ -24,11 +24,6 @@ function assignUploadedImageToBody(req) {
 
 export const getDistributors = asyncHandler(async (_req, res) => {
   const distributors = await DistributorService.getDistributors();
-
-  if (distributors.length === 0) {
-    throw createApiError('No se encontraron distribuidores', 404);
-  }
-
   return res.status(200).json(distributors);
 });
 

@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { getApiErrorMessage, getApiErrorStatus } from "@/shared/api/error";
+import { getApiErrorMessage } from "@/shared/api/error";
 import { http } from "@/shared/api/http";
 import { InventoryEntry, InventorySummaryItem } from "../types/Inventory";
 import { InventoryEntryFormData } from "../validations/InventoryEntrySchema";
@@ -14,10 +14,6 @@ export default function useInventoryServices() {
       const response = await http.get("/inventory");
       return response.data;
     } catch (error: unknown) {
-      if (getApiErrorStatus(error) === 404) {
-        return [];
-      }
-
       console.error("Error en getInventorySummary:", error);
       throw new Error(getApiErrorMessage(error, "Error al obtener el resumen de inventario."));
     }
@@ -28,10 +24,6 @@ export default function useInventoryServices() {
       const response = await http.get("/inventory/entries");
       return response.data;
     } catch (error: unknown) {
-      if (getApiErrorStatus(error) === 404) {
-        return [];
-      }
-
       console.error("Error en getInventoryEntries:", error);
       throw new Error(getApiErrorMessage(error, "Error al obtener los ingresos de inventario."));
     }

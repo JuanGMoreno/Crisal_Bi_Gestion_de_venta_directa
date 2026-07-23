@@ -107,13 +107,12 @@ export default function ProductForm({
 
             try {
                 // mutateAsync permite usar el flujo async/await sin perder React Query.
-                const response = await toast.promise(updateProductMutation.mutateAsync({ id: productId, data: formData }), {
+                await toast.promise(updateProductMutation.mutateAsync({ id: productId, data: formData }), {
                     loading: "Actualizando producto...",
                     success: "Producto actualizado correctamente",
                     error: (error) => (error instanceof Error ? error.message : "Error al actualizar producto"),
                     position: "top-right",
                 });
-                console.log("Producto actualizado:", response);
                 form.reset();
                 closeDialog();
             } catch (error) {
@@ -123,13 +122,12 @@ export default function ProductForm({
         } else {
             try {
                 // mutateAsync permite usar el flujo async/await sin perder React Query.
-                const response = await toast.promise(createProductMutation.mutateAsync(formData), {
+                await toast.promise(createProductMutation.mutateAsync(formData), {
                     loading: "Creando producto...",
                     success: "Producto creado correctamente",
                     error: (error) => (error instanceof Error ? error.message : "Error al crear producto"),
                     position: "top-right",
                 });
-                console.log("Producto creado:", response);
                 form.reset();
                 closeDialog();
             } catch (error) {

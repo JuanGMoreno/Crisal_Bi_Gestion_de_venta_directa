@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { getApiErrorMessage, getApiErrorStatus } from "@/shared/api/error";
+import { getApiErrorMessage } from "@/shared/api/error";
 import { http } from "@/shared/api/http";
 import { Sale, SaleClient } from "../types/Sale";
 import { SaleFormData } from "../validations/SaleSchema";
@@ -35,10 +35,6 @@ export default function useSaleServices() {
       const response = await http.get("/sales");
       return response.data;
     } catch (error: unknown) {
-      if (getApiErrorStatus(error) === 404) {
-        return [];
-      }
-
       throw new Error(getApiErrorMessage(error, "Error al obtener las ventas."));
     }
   }, []);
@@ -98,10 +94,6 @@ export default function useSaleServices() {
         ? response.data.filter((client) => client.estado === "Activo")
         : [];
     } catch (error: unknown) {
-      if (getApiErrorStatus(error) === 404) {
-        return [];
-      }
-
       throw new Error(getApiErrorMessage(error, "Error al obtener los clientes."));
     }
   }, []);
