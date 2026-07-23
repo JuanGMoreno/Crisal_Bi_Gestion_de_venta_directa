@@ -11,8 +11,9 @@ import {
 } from "@/shared/components/ui/dialog"
 import { useDialogStore } from "@/store/use-dialog-store"
 import { useProductByIdQuery } from "../../hooks/useProductByIdQuery"
+import { BRAND } from "@/shared/config/brand"
 
-const DEFAULT_PRODUCT_IMAGE = "/Logo_Just.svg"
+const DEFAULT_PRODUCT_IMAGE = BRAND.logo
 
 function formatCurrency(value: string | number | null | undefined) {
     if (value === null || value === undefined || value === "") return "$0"

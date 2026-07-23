@@ -25,6 +25,7 @@ import {
 } from "@/shared/components/ui/field";
 import { Input } from "@/shared/components/ui/input";
 import { useUpdateProfileMutation } from "../../hooks/useUpdateProfileMutation";
+import { BRAND } from "@/shared/config/brand";
 
 interface EditProfileDialogProps {
   open: boolean;
@@ -32,13 +33,13 @@ interface EditProfileDialogProps {
   profile: DistributorProfile;
 }
 
-const DEFAULT_PROFILE_PREVIEW = "/Logo_Just.svg";
+const DEFAULT_PROFILE_PREVIEW = BRAND.logo;
 
 function getProfileInitials(name?: string) {
-  if (!name) return "JU";
+  if (!name) return "CR";
 
   const parts = name.trim().split(/\s+/).slice(0, 2);
-  return parts.map((part) => part[0]?.toUpperCase() || "").join("") || "JU";
+  return parts.map((part) => part[0]?.toUpperCase() || "").join("") || "CR";
 }
 
 function getDefaultValues(profile: DistributorProfile): ProfileFormInput {

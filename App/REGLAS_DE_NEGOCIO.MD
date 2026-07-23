@@ -1,5 +1,5 @@
 # Reglas de Negocio 
-sistema de roles de Just :
+sistema de roles de Crisal :
 
 1. ***Consultora:** :rol inicial que se encarga del a venta directa 
 

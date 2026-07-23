@@ -17,6 +17,7 @@ import AllUrls from "@/urls"
 import { PackageSearch, Archive, Users, BadgeDollarSign, ChartSpline, Network } from "lucide-react"
 import { useDistributorChildrenQuery } from "@/features/profile/hooks/useDistributorChildrenQuery"
 import { useProfileQuery } from "@/features/profile/hooks/useProfileQuery"
+import { BRAND } from "@/shared/config/brand"
 
 function canManageTeam(role?: string) {
   return role === "Lider" || role === "Lider de Grupo"
@@ -37,15 +38,15 @@ export function AppSidebar() {
             <SidebarMenuButton asChild size={"lg"}>
               <Link href={AllUrls['system:index']}>
                 <Image
-                  src="/Logo_Just.svg"
-                  alt="Just Logo"
+                  src={BRAND.logo}
+                  alt={`${BRAND.productName} logo`}
                   width={62}
                   height={62}
                   className="rounded-full"
                 />
                 <div className="flex flex-col">
-                  <span className="text-md font-bold ">Distribuidores Just</span>
-                  <span className="text-sm font-light ">Panel de control</span>
+                  <span className="text-md font-bold ">{BRAND.productName}</span>
+                  <span className="text-sm font-light ">Gestion comercial</span>
                 </div>
               </Link>
             </SidebarMenuButton>
@@ -115,9 +116,9 @@ export function AppSidebar() {
             <SidebarMenuButton asChild size="lg" isActive={pathname === AllUrls['system:profile']}>
               <Link href={AllUrls['system:profile']}>
                 <AvatarSidebar
-                  src={profile?.foto_avatar?.trim() || "/Logo_Just.svg"}
+                  src={profile?.foto_avatar?.trim() || BRAND.logo}
                   alt={profile?.nombre || "Perfil"}
-                  fallback={profile?.nombre?.slice(0, 2).toUpperCase() || "JU"}
+                  fallback={profile?.nombre?.slice(0, 2).toUpperCase() || "CR"}
                   size="md"
                 />
                 <div className="flex flex-col pl-1">
