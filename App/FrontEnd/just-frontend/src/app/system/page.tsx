@@ -2,13 +2,14 @@ import Image from "next/image";
 import Link from "next/link";
 import SystemUrls from "@/app/system/urls";
 import { Button } from "@/shared/components/ui/button";
+import { BRAND } from "@/shared/config/brand";
 
 export default function SystemPage() {
   return (
     <section className="animate-hero-fade relative flex h-[calc(100svh-6rem)] max-h-[calc(100svh-6rem)] min-h-0 w-full items-center justify-center overflow-hidden rounded-3xl border border-white/20 motion-reduce:animate-none">
       <Image
-        src="/just-hero.webp"
-        alt="Paisaje natural para bienvenida"
+        src={BRAND.heroImage}
+        alt="Crisal con mariposa morfo y visuales de gestion comercial"
         fill
         priority
         sizes="100vw"
@@ -20,15 +21,15 @@ export default function SystemPage() {
 
       <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col items-start gap-4 px-5 py-6 text-white md:gap-6 md:px-10 md:py-8 lg:gap-7 lg:px-12">
         <div className="animate-hero-rise inline-flex items-center rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-xs font-semibold tracking-[0.2em] uppercase backdrop-blur-md [animation-delay:220ms] motion-reduce:animate-none">
-          BIENVENIDA
+          {BRAND.productName}
         </div>
 
         <h1 className="animate-hero-rise max-w-2xl text-3xl font-semibold leading-tight tracking-tight text-balance drop-shadow-[0_4px_18px_rgba(0,0,0,0.35)] [animation-delay:320ms] motion-reduce:animate-none md:text-5xl lg:text-6xl">
-          Hola de nuevo
+          Controla tu operacion comercial
         </h1>
 
         <p className="animate-hero-rise max-w-3xl text-sm leading-relaxed text-white/90 drop-shadow-[0_2px_12px_rgba(0,0,0,0.3)] [animation-delay:420ms] motion-reduce:animate-none md:text-lg lg:text-xl">
-          El exito comienza aqui, gestiona tu negocio con la esencia de la naturaleza y lleva bienestar a los hogares.
+          Gestiona productos, inventario, clientes y ventas desde un panel claro, con trazabilidad y datos listos para decidir.
         </p>
 
         <div className="animate-hero-rise mt-2 flex w-full flex-col gap-3 [animation-delay:520ms] motion-reduce:animate-none sm:w-auto sm:flex-row">

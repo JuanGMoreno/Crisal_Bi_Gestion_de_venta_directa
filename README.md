@@ -1,30 +1,30 @@
-# Sistema de Gestión de Información Just
+# Crisal | Sistema de Gestion Comercial
 
-Sistema web full stack desarrollado para gestionar productos, clientes, inventario y ventas de una distribuidora. La aplicación centraliza procesos operativos clave, permite trabajar con usuarios autenticados y mantiene sincronización entre ventas e inventario.
+Crisal es una aplicacion web full stack para gestionar productos, clientes, inventario y ventas desde una operacion comercial autenticada. Centraliza procesos clave, mantiene sincronizacion entre ventas e inventario y ofrece trazabilidad para trabajar con datos claros.
 
-El proyecto fue construido como una solución real para cliente, con frontend moderno, API REST, base de datos relacional, autenticación JWT, carga de imágenes y documentación de endpoints.
+El proyecto fue construido como una solucion real para cliente, con frontend moderno, API REST, base de datos relacional, autenticacion JWT, carga de imagenes y documentacion de endpoints.
 
 ---
 
 ## Funcionalidades principales
 
-- Autenticación de usuarios con JWT.
-- Protección de rutas privadas en backend.
-- Gestión de productos por distribuidor autenticado.
-- Carga de imágenes de productos con Cloudinary.
-- Gestión de clientes.
+- Autenticacion de usuarios con JWT.
+- Proteccion de rutas privadas en backend.
+- Gestion de productos por distribuidor autenticado.
+- Carga de imagenes de productos con Cloudinary.
+- Gestion de clientes.
 - Registro y consulta de entradas de inventario.
-- Visualización de stock disponible por producto.
-- Registro de ventas con múltiples productos.
-- Validación de stock antes de cerrar una venta.
-- Descuento automático de inventario al cerrar ventas.
+- Visualizacion de stock disponible por producto.
+- Registro de ventas con multiples productos.
+- Validacion de stock antes de cerrar una venta.
+- Descuento automatico de inventario al cerrar ventas.
 - Restablecimiento de stock al anular ventas.
-- Tablas dinámicas, formularios validados y estados de carga/error.
-- Documentación de API con OpenAPI/Swagger.
+- Tablas dinamicas, formularios validados y estados de carga/error.
+- Documentacion de API con OpenAPI/Swagger.
 
 ---
 
-## Stack tecnológico
+## Stack tecnologico
 
 ### Frontend
 
@@ -41,7 +41,7 @@ El proyecto fue construido como una solución real para cliente, con frontend mo
 - Radix UI
 - Sonner
 - Jest
-- Selenium WebDriver
+- Playwright
 
 ### Backend
 
@@ -76,23 +76,23 @@ App/
 │       └── utils/
 │
 └── FrontEnd/
-    └── just-frontend/
+    └── <frontend-app>/
         └── src/
             ├── app/
             ├── features/
             └── shared/
 ```
 
-El backend está separado por capas: rutas, controladores, servicios, repositorios y modelos.  
-El frontend está organizado por módulos funcionales usando una estructura basada en `features`.
+El backend esta separado por capas: rutas, controladores, servicios, repositorios y modelos.
+El frontend esta organizado por modulos funcionales usando una estructura basada en `features`.
 
 ---
 
-## Módulos del sistema
+## Modulos del sistema
 
 ### Productos
 
-Permite crear, listar, actualizar y eliminar productos asociados al distribuidor autenticado. Incluye carga de imágenes mediante Cloudinary.
+Permite crear, listar, actualizar y eliminar productos asociados al distribuidor autenticado. Incluye carga de imagenes mediante Cloudinary.
 
 ### Inventario
 
@@ -100,55 +100,38 @@ Permite registrar entradas de inventario, consultar historial y visualizar stock
 
 ### Ventas
 
-Permite registrar ventas con múltiples productos, calcular totales, validar stock y actualizar automáticamente el inventario según el estado de la venta.
+Permite registrar ventas con multiples productos, calcular totales, validar stock y actualizar automaticamente el inventario segun el estado de la venta.
 
 ### Clientes
 
 Permite gestionar clientes y asociarlos opcionalmente a ventas.
 
-### Autenticación
+### Autenticacion
 
-Incluye registro, inicio de sesión, cierre de sesión y consulta del usuario autenticado.
+Incluye registro, inicio de sesion, cierre de sesion y consulta del usuario autenticado.
 
 ---
 
-## Instalación y ejecución local
+## Instalacion y ejecucion local
 
 ### 1. Clonar el repositorio
 
 ```bash
-git clone https://github.com/JuanGMoreno/Sistema-de-gestion-de-Informacion-Just.git
-cd Sistema-de-gestion-de-Informacion-Just
+git clone <url-del-repositorio>
+cd <carpeta-del-repositorio>
 ```
-
----
 
 ### 2. Configurar backend
 
 ```bash
 cd App/BackEnd
 npm install
-```
-
-Crear un archivo `.env` a partir de la plantilla versionada:
-
-```bash
 cp .env.example .env
+npm run db:migrate
+npm run dev
 ```
 
 Luego ajustar los valores locales de PostgreSQL, JWT y Cloudinary en `.env`.
-
-Aplicar migraciones de base de datos:
-
-```bash
-npm run db:migrate
-```
-
-Ejecutar backend:
-
-```bash
-npm run dev
-```
 
 API disponible en:
 
@@ -156,24 +139,23 @@ API disponible en:
 http://localhost:4001/api
 ```
 
----
-
 ### 3. Configurar frontend
 
 ```bash
-cd App/FrontEnd/just-frontend
+cd App/FrontEnd/<frontend-app>
 npm install
 cp .env.example .env.local
 npm run dev
 ```
 
-La variable principal del frontend es:
+Variables principales del frontend:
 
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:4001/api
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
-Aplicación disponible en:
+Aplicacion disponible en:
 
 ```bash
 http://localhost:3000
@@ -194,8 +176,7 @@ npm run dev
 npm start
 ```
 
-La estrategia de pruebas unitarias del backend, su cobertura actual y ejemplos para
-agregar nuevos casos estan documentados en [`App/BackEnd/TESTING.md`](App/BackEnd/TESTING.md).
+La estrategia de pruebas unitarias del backend, su cobertura actual y ejemplos para agregar nuevos casos estan documentados en [`App/BackEnd/TESTING.md`](App/BackEnd/TESTING.md).
 
 ### Frontend
 
@@ -210,9 +191,9 @@ npm run test:e2e
 
 ---
 
-## Documentación de API
+## Documentacion de API
 
-Con el backend en ejecución, la documentación está disponible en:
+Con el backend en ejecucion, la documentacion esta disponible en:
 
 ```bash
 http://localhost:4001/api/docs
@@ -226,21 +207,31 @@ http://localhost:4001/api/docs/openapi.json
 
 ---
 
-## Aprendizajes y valor técnico
+## SEO e identidad
 
-Este proyecto permitió trabajar habilidades clave de desarrollo full stack:
+- Marca publica: Crisal.
+- Logo principal: mariposa morfo en `public/CrisalBi_logo_vertical_color.svg`.
+- Hero publico del sistema: `public/crisal-hero.png`.
+- Metadata global, Open Graph, Twitter Cards, manifest, robots y sitemap se gestionan desde `src/app`.
+- Las rutas privadas bajo `/system/` quedan excluidas de indexacion.
 
-- Diseño de API REST con Express.
+---
+
+## Aprendizajes y valor tecnico
+
+Este proyecto permitio trabajar habilidades clave de desarrollo full stack:
+
+- Diseno de API REST con Express.
 - Modelado relacional con PostgreSQL y Sequelize.
-- Autenticación con JWT y cookies.
+- Autenticacion con JWT y cookies.
 - Manejo de datos aislados por usuario/distribuidor.
-- Integración con Cloudinary para imágenes.
+- Integracion con Cloudinary para imagenes.
 - Formularios complejos con React Hook Form y Zod.
-- Estado asíncrono con TanStack React Query.
+- Estado asincrono con TanStack React Query.
 - Tablas reutilizables con TanStack Table.
-- Sincronización entre lógica comercial e inventario.
-- Manejo de estados de carga, error y vacío en UI.
-- Documentación de endpoints con OpenAPI/Swagger.
+- Sincronizacion entre logica comercial e inventario.
+- Manejo de estados de carga, error y vacio en UI.
+- Documentacion de endpoints con OpenAPI/Swagger.
 
 ---
 
@@ -249,23 +240,20 @@ Este proyecto permitió trabajar habilidades clave de desarrollo full stack:
 - Agregar Docker Compose para backend, frontend y PostgreSQL.
 - Implementar CI/CD con GitHub Actions.
 - Aumentar cobertura de pruebas.
-- Agregar roles y permisos.
-- Mejorar dashboard con métricas comerciales.
+- Ampliar roles y permisos.
+- Mejorar dashboard con metricas comerciales.
 - Incorporar reportes exportables.
-- Mover configuración del frontend a variables de entorno.
+- Mover configuracion del frontend a variables de entorno.
 
 ---
 
 ## Autor
 
-**Juan Guillermo Moreno Gálvez**  
+**Juan Guillermo Moreno Galvez**  
 Desarrollador Full Stack
-
-- GitHub: [JuanGMoreno](https://github.com/JuanGMoreno)
-- Repositorio: [Sistema de Gestión de Información Just](https://github.com/JuanGMoreno/Sistema-de-gestion-de-Informacion-Just)
 
 ---
 
 ## Estado del proyecto
 
-Proyecto en desarrollo activo para una cliente real, enfocado en la gestión de productos, clientes, inventario y ventas.
+Proyecto en desarrollo activo para una cliente real, enfocado en la gestion de productos, clientes, inventario y ventas.

@@ -16,6 +16,7 @@ import { Input } from "@/shared/components/ui/input";
 import { useCreateClientMutation, useUpdateClientMutation } from "../../hooks/useClientMutations";
 import { Client } from "../../types/Client";
 import { ClientFormData, ClientFormInput, clientSchema } from "../../validations/ClientSchema";
+import { BRAND } from "@/shared/config/brand";
 
 interface ClientFormProps {
   mode?: "create" | "edit";
@@ -24,7 +25,7 @@ interface ClientFormProps {
   onSuccess?: () => void;
 }
 
-const DEFAULT_CLIENT_PREVIEW = "/Logo_Just.svg";
+const DEFAULT_CLIENT_PREVIEW = BRAND.logo;
 
 function getDefaultClientValues(): ClientFormInput {
   return {

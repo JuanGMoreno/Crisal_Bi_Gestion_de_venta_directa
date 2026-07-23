@@ -31,10 +31,10 @@ function mergePaths(modules) {
 export const openApiDocument = {
   openapi: '3.0.3',
   info: {
-    title: 'Just Manager Backend API',
+    title: 'Crisal Backend API',
     version: '1.0.0',
     description:
-      'API para gestion de autenticacion, distribuidores, productos, inventario, clientes y ventas del sistema Just Manager.'
+      'API para gestion de autenticacion, distribuidores, productos, inventario, clientes y ventas del sistema Crisal.'
   },
   servers: [
     {
@@ -67,7 +67,7 @@ export function getSwaggerUiHtml(specUrl) {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Just Manager API Docs</title>
+    <title>Crisal API Docs</title>
     <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css" />
     <style>
       body { margin: 0; background: #f5f7fb; }
