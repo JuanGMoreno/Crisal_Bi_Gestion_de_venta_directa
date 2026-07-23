@@ -221,6 +221,30 @@ export const schemas = {
       proximas_fechas_vencimiento: {
         type: 'array',
         items: { type: 'string', format: 'date-time' }
+      },
+      alertas: {
+        type: 'object',
+        properties: {
+          stock_bajo: {
+            type: 'object',
+            properties: {
+              activa: { type: 'boolean' },
+              umbral: { type: 'integer' },
+              stock_total: { type: 'integer' }
+            }
+          },
+          vencimiento: {
+            type: 'object',
+            properties: {
+              activa: { type: 'boolean' },
+              estado: { type: 'string', enum: ['sin_alerta', 'por_vencer', 'vencido'] },
+              dias_para_vencer: { type: 'integer', nullable: true },
+              fecha_mas_cercana: { type: 'string', format: 'date-time', nullable: true },
+              lotes_en_alerta: { type: 'integer' },
+              umbral_dias: { type: 'integer' }
+            }
+          }
+        }
       }
     }
   },

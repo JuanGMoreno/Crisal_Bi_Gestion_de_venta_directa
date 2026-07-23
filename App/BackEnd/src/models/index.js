@@ -8,6 +8,7 @@ import Client from './Client.js';
 import Sale from './Sale.js';
 import SaleDetail from './SaleDetail.js';
 import SaleDetailConsumption from './SaleDetailConsumption.js';
+import InventoryAlertDelivery from './InventoryAlertDelivery.js';
 
 // Importar las asociaciones
 import './associations.js';
@@ -22,5 +23,6 @@ export {
   Client,
   Sale,
   SaleDetail,
-  SaleDetailConsumption
+  SaleDetailConsumption,
+  InventoryAlertDelivery
 };
