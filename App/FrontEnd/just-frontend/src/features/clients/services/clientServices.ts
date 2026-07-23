@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { getApiErrorMessage, getApiErrorStatus } from "@/shared/api/error";
+import { getApiErrorMessage } from "@/shared/api/error";
 import { http } from "@/shared/api/http";
 import { Client } from "../types/Client";
 
@@ -14,10 +14,6 @@ export default function useClientServices() {
       const response = await http.get("/clients");
       return response.data;
     } catch (error: unknown) {
-      if (getApiErrorStatus(error) === 404) {
-        return [];
-      }
-
       throw new Error(getApiErrorMessage(error, "Error al obtener los clientes."));
     }
   }, []);
