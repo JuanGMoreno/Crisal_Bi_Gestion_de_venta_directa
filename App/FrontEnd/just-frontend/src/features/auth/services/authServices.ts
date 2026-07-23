@@ -9,7 +9,6 @@ export default function useAuthServices() {
   const Signin = useCallback( async ({ correo, contraseña }: signinParams) => {
     try {
         const response = await http.post("/auth/signin", { correo : correo, contraseña: contraseña });
-      console.log("user data signin:", response.data);
         return response.data;
     }catch (error : unknown) {
         console.error("Error en signin:", error);

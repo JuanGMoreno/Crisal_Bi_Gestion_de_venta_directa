@@ -1,24 +1,14 @@
 import { InventoryService } from '../services/inventory.service.js';
-import { createApiError, withStatus } from '../utils/api-error.js';
+import { withStatus } from '../utils/api-error.js';
 import { asyncHandler } from '../utils/async-handler.js';
 
 export const getInventory = asyncHandler(async (req, res) => {
-  const summary = await InventoryService.getInventorySummary(req.user.id, { notifyAlerts: true });
-
-  if (summary.length === 0) {
-    throw createApiError('No se encontraron existencias de inventario', 404);
-  }
-
+  const summary = await InventoryService.getInventorySummary(req.user.id);
   return res.status(200).json(summary);
 });
 
 export const getInventoryEntries = asyncHandler(async (req, res) => {
   const entries = await InventoryService.getInventoryEntries(req.user.id);
-
-  if (entries.length === 0) {
-    throw createApiError('No se encontraron ingresos de inventario', 404);
-  }
-
   return res.status(200).json(entries);
 });
 

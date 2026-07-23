@@ -1,5 +1,5 @@
 import { ProductService } from '../services/product.service.js';
-import { createApiError, withStatus } from '../utils/api-error.js';
+import { withStatus } from '../utils/api-error.js';
 import { asyncHandler } from '../utils/async-handler.js';
 
 function assignUploadedImageToBody(req) {
@@ -24,11 +24,6 @@ function assignUploadedImageToBody(req) {
 
 export const getProducts = asyncHandler(async (req, res) => {
   const products = await ProductService.getActiveProducts(req.user.id);
-
-  if (products.length === 0) {
-    throw createApiError('No se encontraron productos activos', 404);
-  }
-
   return res.status(200).json(products);
 });
 

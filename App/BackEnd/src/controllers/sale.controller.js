@@ -1,14 +1,9 @@
 import { SaleService } from '../services/sale.service.js';
-import { createApiError, withStatus } from '../utils/api-error.js';
+import { withStatus } from '../utils/api-error.js';
 import { asyncHandler } from '../utils/async-handler.js';
 
 export const getSales = asyncHandler(async (req, res) => {
   const sales = await SaleService.getSales(req.user.id);
-
-  if (sales.length === 0) {
-    throw createApiError('No se encontraron ventas', 404);
-  }
-
   return res.status(200).json(sales);
 });
 

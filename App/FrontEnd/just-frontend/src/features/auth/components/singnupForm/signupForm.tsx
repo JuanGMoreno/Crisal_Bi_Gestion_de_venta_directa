@@ -52,13 +52,12 @@ export default function SignupForm() {
         };
 
         try {
-            const response = await toast.promise(authSrv.Signup(payload), {
+            await toast.promise(authSrv.Signup(payload), {
                 loading: "Creando cuenta...",
                 success: "Cuenta creada correctamente",
                 error: (error) => (error instanceof Error ? error.message : "Error al registrarse"),
                 position: "top-right",
             });
-            console.log("Usuario creado:", response);
             form.reset({
                 nombre: "",
                 correo: "",

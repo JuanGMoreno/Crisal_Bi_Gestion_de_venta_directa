@@ -57,7 +57,6 @@ const CellDeleteProduct = ({ row }: { row: { original: Product } }) => {
             className={destructiveMenuItemClass}
             onClick={() => {
               openDialog("deleteProduct", { id: product.id_producto });
-              console.log("Eliminar producto:", product);
             }}
           >
             <TrashIcon />
