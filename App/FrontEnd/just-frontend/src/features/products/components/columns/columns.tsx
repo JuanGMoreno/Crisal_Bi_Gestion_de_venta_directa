@@ -19,8 +19,9 @@ import {
   getStateIndicatorClass,
 } from "@/shared/lib/status-indicators"
 import { cn } from "@/shared/lib/utils"
+import { BRAND } from "@/shared/config/brand"
 
-const DEFAULT_PRODUCT_IMAGE = "/Logo_Just.svg"
+const DEFAULT_PRODUCT_IMAGE = BRAND.logo
 
 const CellDeleteProduct = ({ row }: { row: { original: Product } }) => {
   const product = row.original;

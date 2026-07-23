@@ -27,6 +27,7 @@ import { ProductFormData } from "../../validations/ProductSchema";
 import { useDialogStore } from "@/store/use-dialog-store";
 import { useCreateProductMutation } from "../../hooks/useProductMutations";
 import { useUpdateProductMutation } from "../../hooks/useProductMutations";
+import { BRAND } from "@/shared/config/brand";
 
 type ProductFormProps = {
     initialData?: Partial<ProductFormData>;
@@ -34,7 +35,7 @@ type ProductFormProps = {
     productId?: string;
 };
 
-const DEFAULT_PREVIEW_IMAGE = "/Logo_Just.svg";
+const DEFAULT_PREVIEW_IMAGE = BRAND.logo;
 const DESCRIPTION_MAX_LENGTH = 1000;
 
 export default function ProductForm({
