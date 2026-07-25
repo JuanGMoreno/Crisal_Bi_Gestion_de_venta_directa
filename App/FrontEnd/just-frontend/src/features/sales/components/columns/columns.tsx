@@ -62,7 +62,7 @@ export function createSalesColumns({
         <div>
           <p className="font-medium">{row.original.cliente?.nombre || "Venta sin cliente"}</p>
           <p className="text-xs text-muted-foreground">
-            {row.original.cliente?.cedula || "Sin cedula asociada"}
+            {row.original.cliente?.cedula || "Sin cédula asociada"}
           </p>
         </div>
       ),

@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { getApiErrorMessage } from "@/shared/api/error";
+import { getApiErrorMessage, getApiErrorStatus } from "@/shared/api/error";
 import { http } from "@/shared/api/http";
 import { InventoryEntry, InventorySummaryItem } from "../types/Inventory";
 import { InventoryEntryFormData } from "../validations/InventoryEntrySchema";
@@ -14,7 +14,10 @@ export default function useInventoryServices() {
       const response = await http.get("/inventory");
       return response.data;
     } catch (error: unknown) {
-      console.error("Error en getInventorySummary:", error);
+      if (getApiErrorStatus(error) === 404) {
+        return [];
+      }
+
       throw new Error(getApiErrorMessage(error, "Error al obtener el resumen de inventario."));
     }
   }, []);
@@ -24,7 +27,10 @@ export default function useInventoryServices() {
       const response = await http.get("/inventory/entries");
       return response.data;
     } catch (error: unknown) {
-      console.error("Error en getInventoryEntries:", error);
+      if (getApiErrorStatus(error) === 404) {
+        return [];
+      }
+
       throw new Error(getApiErrorMessage(error, "Error al obtener los ingresos de inventario."));
     }
   }, []);
@@ -55,7 +61,6 @@ export default function useInventoryServices() {
         const response = await http.post("/inventory/entries", payload);
         return response.data;
       } catch (error: unknown) {
-        console.error("Error en createInventoryEntry:", error);
         throw new Error(getApiErrorMessage(error, "Error al registrar el ingreso de inventario."));
       }
     },
@@ -91,7 +96,6 @@ export default function useInventoryServices() {
         const response = await http.delete(`/inventory/entries/${id}`);
         return response.data;
       } catch (error: unknown) {
-        console.error("Error en deleteInventoryEntry:", error);
         throw new Error(getApiErrorMessage(error, "Error al eliminar el ingreso de inventario."));
       }
     },

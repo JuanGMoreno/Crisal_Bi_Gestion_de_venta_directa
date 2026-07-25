@@ -2,6 +2,7 @@ import { sequelize } from '../src/config/database.js';
 import { DistributorRepository } from '../src/repositories/distributor.repository.js';
 import { InventoryRepository } from '../src/repositories/inventory.repository.js';
 import { InventoryAlertDeliveryRepository } from '../src/repositories/inventory-alert-delivery.repository.js';
+import { InventoryAlertDelivery } from '../src/models/index.js';
 import { ProductRepository } from '../src/repositories/product.repository.js';
 import { EmailService } from '../src/services/email.service.js';
 import {
@@ -237,5 +238,39 @@ describe('InventoryService', () => {
     expect(createdDeliveries).toHaveLength(4);
     expect(createdDeliveries.filter((delivery) => delivery.alert_date === '2026-07-03')).toHaveLength(2);
     expect(createdDeliveries.filter((delivery) => delivery.alert_date === '2026-07-04')).toHaveLength(2);
+  });
+
+  test('trata como idempotente el registro duplicado de una alerta diaria', async () => {
+    const existingDelivery = {
+      id_alerta_inventario_envio: 'delivery-existing'
+    };
+
+    mocks.replace(InventoryAlertDelivery, 'create', async () => {
+      const error = new Error('duplicate key');
+      error.name = 'SequelizeUniqueConstraintError';
+      error.parent = {
+        constraint: 'inventory_alert_daily_unique'
+      };
+      throw error;
+    });
+    mocks.replace(InventoryAlertDelivery, 'findOne', async ({ where }) => ({
+      ...existingDelivery,
+      ...where
+    }));
+
+    const result = await InventoryAlertDeliveryRepository.create({
+      id_distribuidor: 'distributor-1',
+      id_producto: 'product-1',
+      alert_type: 'LOW_STOCK',
+      alert_date: '2026-07-25'
+    });
+
+    expect(result).toMatchObject({
+      id_alerta_inventario_envio: 'delivery-existing',
+      id_distribuidor: 'distributor-1',
+      id_producto: 'product-1',
+      alert_type: 'LOW_STOCK',
+      alert_date: '2026-07-25'
+    });
   });
 });

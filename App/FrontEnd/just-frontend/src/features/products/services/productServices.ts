@@ -1,7 +1,7 @@
 
 import { useCallback } from "react";
 import { http } from "@/shared/api/http";
-import { getApiErrorMessage } from "@/shared/api/error";
+import { getApiErrorMessage, getApiErrorStatus } from "@/shared/api/error";
 import Product from "../types/Product";
 
 export default function useProductServices() {
@@ -10,7 +10,10 @@ export default function useProductServices() {
       const response = await http.get("/products");
       return response.data;
     } catch (error: unknown) {
-      console.error("Error en getProducts:", error);
+      if (getApiErrorStatus(error) === 404) {
+        return [];
+      }
+
       throw new Error(getApiErrorMessage(error, "Error al obtener los productos."));
     }
   }, []);
@@ -20,7 +23,6 @@ export default function useProductServices() {
       const response = await http.get(`/products/${id}`);
       return response.data;
     } catch (error: unknown) {
-      console.error("Error en getProductById:", error);
       throw new Error(getApiErrorMessage(error, "Error al obtener el producto."));
     }
   }, []);
@@ -30,7 +32,6 @@ export default function useProductServices() {
       const response = await http.post("/products", data);
       return response.data;
     } catch (error: unknown) {
-      console.error("Error en createProduct:", error);
       throw new Error(getApiErrorMessage(error, "Error al crear el producto."));
     }
   }, []);
@@ -40,7 +41,6 @@ export default function useProductServices() {
       const response = await http.put(`/products/${id}`, data);
       return response.data;
     } catch (error: unknown) {
-      console.error("Error en updateProduct:", error);
       throw new Error(getApiErrorMessage(error, "Error al actualizar el producto."));
     }
   }, []);
@@ -50,7 +50,6 @@ export default function useProductServices() {
       const response = await http.delete(`/products/${id}`);
       return response.data;
     } catch (error: unknown) {
-      console.error("Error en deleteProduct:", error);
       throw new Error(getApiErrorMessage(error, "Error al eliminar el producto."));
     }
   }, []);

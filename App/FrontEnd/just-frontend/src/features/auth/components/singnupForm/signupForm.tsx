@@ -66,8 +66,8 @@ export default function SignupForm() {
                 rol: "Consultora",
             });
             router.push("/auth/signin");
-        } catch (error) {
-            console.error("Error al crear usuario:", error);
+        } catch {
+            // El toast.promise ya muestra el error.
         }
     }
 
@@ -169,7 +169,7 @@ export default function SignupForm() {
                 className="w-full h-11 font-semibold rounded-lg shadow-md hover:scale-105 hover:cursor-pointer active:scale-95 transition duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
                 form="form-signin"
             >
-                {form.formState.isSubmitting ? "Creando cuenta..." : "Crear Cuenta"}
+                {form.formState.isSubmitting ? "Creando cuenta..." : "Crear cuenta"}
             </Button>
         </form>
     )

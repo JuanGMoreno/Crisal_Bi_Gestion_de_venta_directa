@@ -102,7 +102,7 @@ export default function ProductForm({
 
         if (type === "editProduct") {
             if (!productId) {
-                toast.error("No se encontro el id del producto para editar", { position: "top-right" });
+                toast.error("No se encontró el id del producto para editar", { position: "top-right" });
                 return;
             }
 
@@ -116,8 +116,8 @@ export default function ProductForm({
                 });
                 form.reset();
                 closeDialog();
-            } catch (error) {
-                console.error("Error al actualizar producto:", error);
+            } catch {
+                // El toast.promise ya muestra el error.
             }
 
         } else {
@@ -131,8 +131,8 @@ export default function ProductForm({
                 });
                 form.reset();
                 closeDialog();
-            } catch (error) {
-                console.error("Error al crear producto:", error);
+            } catch {
+                // El toast.promise ya muestra el error.
             }
         }
     };
@@ -177,7 +177,7 @@ export default function ProductForm({
                             control={form.control}
                             render={({ field, fieldState }) => (
                                 <Field data-invalid={fieldState.invalid}>
-                                    <FieldLabel htmlFor="baseSalePrice">Precio Base de Venta</FieldLabel>
+                                    <FieldLabel htmlFor="baseSalePrice">Precio base de venta</FieldLabel>
                                     <Input
                                         id="baseSalePrice"
                                         type="number"
@@ -188,7 +188,7 @@ export default function ProductForm({
                                         onChange={(e) => field.onChange(e.target.value)}
                                         onBlur={field.onBlur}
                                         aria-invalid={fieldState.invalid}
-                                        placeholder="Precio Base de Venta"
+                                        placeholder="Precio base de venta"
                                         className="w-full h-9"
                                     />
                                     {fieldState.invalid && (
@@ -253,7 +253,7 @@ export default function ProductForm({
                         control={form.control}
                         render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
-                                <FieldLabel htmlFor="avatarImage">Foto de Perfil</FieldLabel>
+                                <FieldLabel htmlFor="avatarImage">Foto del producto</FieldLabel>
                                 <Input
                                     name={field.name}
                                     ref={field.ref}

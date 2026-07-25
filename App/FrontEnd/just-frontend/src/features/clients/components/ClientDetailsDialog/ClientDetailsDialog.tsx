@@ -54,7 +54,7 @@ export function ClientDetailsDialog({ client, onClose }: ClientDetailsDialogProp
         <DialogHeader>
           <DialogTitle>Detalle del cliente</DialogTitle>
           <DialogDescription>
-            Consulta la informacion principal del cliente y su identificacion.
+            Consulta la información principal del cliente y su identificación.
           </DialogDescription>
         </DialogHeader>
 

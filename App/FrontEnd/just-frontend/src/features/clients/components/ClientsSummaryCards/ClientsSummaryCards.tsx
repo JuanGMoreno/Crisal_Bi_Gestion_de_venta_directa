@@ -43,7 +43,7 @@ export function ClientsSummaryCards({ clients }: { clients: Client[] }) {
         icon={<UsersRound className="h-5 w-5" />}
       />
       <SummaryCard
-        title="Con telefono"
+        title="Con teléfono"
         value={clientsWithPhone.toLocaleString("es-CO")}
         description="Clientes con un numero de contacto listo para seguimiento."
         icon={<Phone className="h-5 w-5" />}

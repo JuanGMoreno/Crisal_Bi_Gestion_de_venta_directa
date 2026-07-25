@@ -58,7 +58,7 @@ export default function TeamPage() {
         <EmptyGlobal
           icon={<Network className="h-12 w-12" />}
           title="Equipo no disponible"
-          description="Esta vista esta disponible para Lideres y Lideres de Grupo con personas vinculadas."
+          description="Esta vista está disponible para Líderes y Líderes de Grupo con personas vinculadas."
           className="border border-dashed"
         />
       </div>
@@ -71,7 +71,7 @@ export default function TeamPage() {
         <EmptyGlobal
           icon={<UsersRound className="h-12 w-12" />}
           title="No pudimos cargar tu equipo"
-          description={error instanceof Error ? error.message : "Ocurrio un error inesperado."}
+          description={error instanceof Error ? error.message : "Ocurrió un error inesperado."}
           buttonText="Reintentar"
           onButtonClick={() => {
             void refetch();
@@ -103,8 +103,8 @@ export default function TeamPage() {
       {children.length === 0 ? (
         <EmptyGlobal
           icon={<UsersRound className="h-12 w-12" />}
-          title="Aun no tienes personas vinculadas"
-          description="Cuando una distribuidora use tu codigo de referido vigente, aparecera en esta vista."
+          title="Aún no tienes personas vinculadas"
+          description="Cuando una distribuidora use tu código de referido vigente, aparecerá en esta vista."
           className="border border-dashed"
         />
       ) : (

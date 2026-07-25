@@ -23,7 +23,7 @@ export default function DashboardLayout({
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center text-sm text-muted-foreground">
-        Validando sesion...
+        Validando sesión...
       </div>
     );
   }
@@ -31,7 +31,7 @@ export default function DashboardLayout({
   if (isError || !user) {
     return (
       <div className="flex min-h-screen items-center justify-center text-sm text-muted-foreground">
-        Redirigiendo al inicio de sesion...
+        Redirigiendo al inicio de sesión...
       </div>
     );
   }

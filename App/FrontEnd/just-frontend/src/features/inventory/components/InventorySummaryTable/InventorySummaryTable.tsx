@@ -221,7 +221,7 @@ export function InventorySummaryTable({ data }: InventorySummaryTableProps) {
         <div className="relative w-full">
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Buscar por producto, codigo o categoria..."
+            placeholder="Buscar por producto, código o categoría..."
             value={globalFilter ?? ""}
             onChange={(event) => table.setGlobalFilter(event.target.value)}
             className="max-w-sm pl-10"

@@ -40,7 +40,7 @@ export function ReferralLinkCard({ profile }: ReferralLinkCardProps) {
     try {
       await toast.promise(linkReferralCodeMutation.mutateAsync(data.codigo_referido.trim()), {
         loading: "Vinculando perfil...",
-        success: "Relacion jerarquica registrada correctamente",
+        success: "Relación jerárquica registrada correctamente",
         error: (error) =>
           error instanceof Error ? error.message : "No se pudo vincular tu perfil",
         position: "top-right",
@@ -56,11 +56,11 @@ export function ReferralLinkCard({ profile }: ReferralLinkCardProps) {
     <div className="mt-5 rounded-2xl border p-4">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h3 className="font-semibold">Vinculacion por codigo</h3>
+          <h3 className="font-semibold">Vinculación por código</h3>
           <p className="mt-1 text-sm text-muted-foreground">
             {hasParent
               ? "Tu perfil ya pertenece a una jerarquia."
-              : "Ingresa el codigo vigente del distribuidor padre para asociarte a su jerarquia."}
+              : "Ingresa el código vigente del distribuidor padre para asociarte a su jerarquía."}
           </p>
         </div>
         <GitBranchPlus className="h-5 w-5 text-muted-foreground" />

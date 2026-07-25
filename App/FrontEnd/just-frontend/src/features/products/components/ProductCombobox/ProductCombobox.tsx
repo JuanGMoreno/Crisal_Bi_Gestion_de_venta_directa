@@ -70,7 +70,7 @@ export function ProductCombobox({
 
       <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
         <Command>
-          <CommandInput placeholder="Buscar por nombre, codigo o categoria" />
+          <CommandInput placeholder="Buscar por nombre, código o categoría" />
           <CommandList>
             <CommandEmpty>{emptyMessage}</CommandEmpty>
             <CommandGroup>

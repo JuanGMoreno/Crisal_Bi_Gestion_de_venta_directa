@@ -26,7 +26,7 @@ export function InventoryEntryDialog({
         <DialogHeader>
           <DialogTitle>Registrar ingreso de inventario</DialogTitle>
           <DialogDescription>
-            Usa tu catalogo de productos como referencia y registra las cantidades,
+            Usa tu catálogo de productos como referencia y registra las cantidades,
             costos y vencimientos del ingreso.
           </DialogDescription>
         </DialogHeader>
