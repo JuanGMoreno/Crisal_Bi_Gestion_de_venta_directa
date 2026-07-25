@@ -21,8 +21,8 @@ export const referralCodeSchema = z.object({
   codigo_referido: z
     .string()
     .trim()
-    .min(3, "Ingresa un codigo de referido valido")
-    .max(40, "El codigo de referido no puede superar 40 caracteres"),
+    .min(3, "Ingresa un código de referido válido")
+    .max(40, "El código de referido no puede superar 40 caracteres"),
 });
 
 export type ReferralCodeFormInput = z.input<typeof referralCodeSchema>;

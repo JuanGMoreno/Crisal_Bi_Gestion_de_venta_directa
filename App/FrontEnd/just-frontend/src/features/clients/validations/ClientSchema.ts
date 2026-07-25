@@ -9,8 +9,8 @@ export const clientSchema = z.object({
   cedula: z
     .string()
     .trim()
-    .min(4, "La cedula debe tener al menos 4 caracteres")
-    .max(30, "La cedula no puede superar 30 caracteres"),
+    .min(4, "La cédula debe tener al menos 4 caracteres")
+    .max(30, "La cédula no puede superar 30 caracteres"),
   direccion: z
     .string()
     .trim()
@@ -24,7 +24,7 @@ export const clientSchema = z.object({
   numero_telefono: z
     .string()
     .trim()
-    .max(30, "El numero de telefono no puede superar 30 caracteres")
+    .max(30, "El número de teléfono no puede superar 30 caracteres")
     .optional()
     .or(z.literal("")),
   foto_avatar: z

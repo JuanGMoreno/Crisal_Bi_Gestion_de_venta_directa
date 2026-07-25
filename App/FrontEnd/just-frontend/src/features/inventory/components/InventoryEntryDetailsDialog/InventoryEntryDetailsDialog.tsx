@@ -65,7 +65,7 @@ export function InventoryEntryDetailsDialog({
                 </Badge>
               </div>
               <div className="rounded-xl border bg-muted/20 p-4">
-                <p className="text-sm text-muted-foreground">Observacion</p>
+                <p className="text-sm text-muted-foreground">Observación</p>
                 <p className="mt-2 text-sm">
                   {entry.observacion?.trim() || "Sin observaciones registradas"}
                 </p>
@@ -81,7 +81,7 @@ export function InventoryEntryDetailsDialog({
                         {detail.producto?.nombre || "Producto"}
                       </h4>
                       <p className="text-sm text-muted-foreground">
-                        {detail.producto?.categoria || "Sin categoria"}
+                        {detail.producto?.categoria || "Sin categoría"}
                       </p>
                     </div>
                     <Badge variant="outline" className="font-medium">

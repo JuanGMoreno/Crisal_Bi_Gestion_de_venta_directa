@@ -89,7 +89,7 @@ export default function PageProfile() {
         <EmptyGlobal
           icon={<UsersRound className="h-12 w-12" />}
           title="No pudimos cargar tu perfil"
-          description={error instanceof Error ? error.message : "Ocurrio un error inesperado."}
+          description={error instanceof Error ? error.message : "Ocurrió un error inesperado."}
           buttonText="Reintentar"
           onButtonClick={() => {
             void refetch();
@@ -106,12 +106,12 @@ export default function PageProfile() {
   const handleRenewReferralCode = async () => {
     try {
       await toast.promise(renewReferralCodeMutation.mutateAsync(), {
-        loading: "Solicitando nuevo codigo...",
-        success: "Nuevo codigo de referido generado correctamente",
+        loading: "Solicitando nuevo código...",
+        success: "Nuevo código de referido generado correctamente",
         error: (renewError) =>
           renewError instanceof Error
             ? renewError.message
-            : "No se pudo solicitar un nuevo codigo de referido",
+            : "No se pudo solicitar un nuevo código de referido",
         position: "top-right",
       });
     } catch {
@@ -122,10 +122,10 @@ export default function PageProfile() {
   const handleSignout = async () => {
     try {
       await toast.promise(Signout(), {
-        loading: "Cerrando sesion...",
-        success: "Sesion cerrada correctamente",
+        loading: "Cerrando sesión...",
+        success: "Sesión cerrada correctamente",
         error: (signoutError) =>
-          signoutError instanceof Error ? signoutError.message : "No se pudo cerrar sesion",
+          signoutError instanceof Error ? signoutError.message : "No se pudo cerrar sesión",
         position: "top-right",
       });
 
@@ -158,7 +158,7 @@ export default function PageProfile() {
                 </p>
                 <h1 className="text-3xl font-bold tracking-tight">{profile.nombre}</h1>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Gestiona tu informacion principal, tu codigo de referido y tu relacion jerarquica
+                  Gestiona tu información principal, tu código de referido y tu relación jerárquica
                   dentro del sistema.
                 </p>
               </div>
@@ -190,7 +190,7 @@ export default function PageProfile() {
             </Button>
             <Button type="button" variant="outline" onClick={() => void handleSignout()} className={`${getIndicatorClass("bad")} hover:text-rose600`}>
               <LogOut className="mr-2 h-4 w-4" />
-              Cerrar sesion
+              Cerrar sesión
             </Button>
           </div>
         </div>
@@ -206,9 +206,9 @@ export default function PageProfile() {
       <section className="rounded-[28px] border bg-background p-5 shadow-sm">
         <div className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
           <div className="min-w-0 flex-1">
-            <h2 className="text-xl font-semibold tracking-tight">Informacion general</h2>
+            <h2 className="text-xl font-semibold tracking-tight">Información general</h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              Los datos basicos de tu perfil y el estado actual de tu cuenta.
+              Los datos básicos de tu perfil y el estado actual de tu cuenta.
             </p>
 
             <div className="mt-5 grid gap-4 md:grid-cols-2">
@@ -225,7 +225,7 @@ export default function PageProfile() {
                 <p className="mt-1 font-medium">{formatDate(profile.usuario.createdAt)}</p>
               </div>
               <div>
-                <p className="text-xs uppercase tracking-wide text-muted-foreground">Ultima actualizacion</p>
+                <p className="text-xs uppercase tracking-wide text-muted-foreground">Última actualización</p>
                 <p className="mt-1 font-medium">{formatDateTime(profile.updatedAt)}</p>
               </div>
             </div>
@@ -235,14 +235,14 @@ export default function PageProfile() {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-xs uppercase tracking-wide text-muted-foreground">
-                  Codigo de referido
+                  Código de referido
                 </p>
                 <p className="mt-2 text-lg font-semibold">
-                  {profile.codigo_referido || "Sin codigo asignado"}
+                  {profile.codigo_referido || "Sin código asignado"}
                 </p>
                 <p className="mt-1 text-sm text-muted-foreground">
                   {referralCodeExpired
-                    ? "Tu codigo actual ya vencio."
+                    ? "Tu código actual ya venció."
                     : `Vigente hasta ${formatDate(profile.fecha_vencimiento_codigo)}`}
                 </p>
               </div>
@@ -270,8 +270,8 @@ export default function PageProfile() {
             >
               <GitBranchPlus className="mr-2 h-4 w-4" />
               {renewReferralCodeMutation.isPending
-                ? "Solicitando codigo..."
-                : "Solicitar nuevo codigo"}
+                ? "Solicitando código..."
+                : "Solicitar nuevo código"}
             </Button>
           </div>
         </div>
@@ -280,7 +280,7 @@ export default function PageProfile() {
       <section className="rounded-[28px] border bg-background p-5 shadow-sm">
         <h2 className="text-xl font-semibold tracking-tight">Distribuidor padre</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          La referencia jerarquica asociada a tu cuenta y el codigo vinculado a esa relacion.
+          La referencia jerárquica asociada a tu cuenta y el código vinculado a esa relación.
         </p>
 
         <div className="mt-5 grid gap-4 md:grid-cols-3">
@@ -300,17 +300,17 @@ export default function PageProfile() {
           </div>
           <div>
             <p className="text-xs uppercase tracking-wide text-muted-foreground">
-              Codigo del distribuidor padre
+              Código del distribuidor padre
             </p>
             <p className="mt-1 font-medium">
-              {profile.padre?.codigo_referido || "Sin codigo registrado"}
+              {profile.padre?.codigo_referido || "Sin código registrado"}
             </p>
           </div>
         </div>
 
         {!profile.padre ? (
           <p className="mt-4 text-sm text-muted-foreground">
-            Tu cuenta no tiene una relacion jerarquica registrada actualmente.
+            Tu cuenta no tiene una relación jerárquica registrada actualmente.
           </p>
         ) : null}
 

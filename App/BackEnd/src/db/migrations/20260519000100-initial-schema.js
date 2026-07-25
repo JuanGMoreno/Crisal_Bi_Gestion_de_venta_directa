@@ -152,8 +152,8 @@ export async function up({ queryInterface, Sequelize }) {
       type: Sequelize.ENUM(
         'Aromaterapia',
         'Bienestar emocional y mental',
-        'Bienestar fÃ­sico',
-        'Bienestar dermo-comÃ©tico'
+        'Bienestar físico',
+        'Bienestar dermo-comético'
       ),
       allowNull: false,
       defaultValue: 'Aromaterapia'

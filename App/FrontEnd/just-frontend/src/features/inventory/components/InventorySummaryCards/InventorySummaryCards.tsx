@@ -60,13 +60,13 @@ export function InventorySummaryCards({ items }: InventorySummaryCardsProps) {
     {
       title: "Valor del Inventario",
       value: formatCurrency(totalInventoryValue),
-      description: "Estimacion del capital invertido segun el stock actual",
+      description: "Estimación del capital invertido según el stock actual",
       icon: WalletCards,
     },
     {
-      title: "Proximo Vencimiento",
+      title: "Próximo Vencimiento",
       value: formatDateLabel(nextExpiry),
-      description: "Fecha mas cercana registrada en el inventario",
+      description: "Fecha más cercana registrada en el inventario",
       icon: CalendarClock,
     },
   ];
@@ -94,11 +94,11 @@ export function InventorySummaryCards({ items }: InventorySummaryCardsProps) {
                         getIndicatorClass(productsWithAlerts > 0 ? "warning" : "good")
                       )}
                     >
-                      {productsWithAlerts > 0 ? "Requiere revision" : "Sin alertas"}
+                      {productsWithAlerts > 0 ? "Requiere revisión" : "Sin alertas"}
                     </Badge>
                   </div>
                 ) : null}
-                {card.title === "Proximo Vencimiento" ? (
+                {card.title === "Próximo Vencimiento" ? (
                   <div className="mt-3">
                     <Badge
                       variant="outline"

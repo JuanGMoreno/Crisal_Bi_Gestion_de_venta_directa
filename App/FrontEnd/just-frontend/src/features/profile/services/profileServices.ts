@@ -19,7 +19,7 @@ export default function useProfileServices() {
       return response.data.profile;
     } catch (error: unknown) {
       throw new Error(
-        getApiErrorMessage(error, "No se pudo solicitar un nuevo codigo de referido.")
+        getApiErrorMessage(error, "No se pudo solicitar un nuevo código de referido.")
       );
     }
   }, []);
@@ -32,7 +32,7 @@ export default function useProfileServices() {
       return response.data.profile;
     } catch (error: unknown) {
       throw new Error(
-        getApiErrorMessage(error, "No se pudo vincular tu perfil con ese codigo.")
+        getApiErrorMessage(error, "No se pudo vincular tu perfil con ese código.")
       );
     }
   }, []);

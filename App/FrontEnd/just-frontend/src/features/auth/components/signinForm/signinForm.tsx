@@ -45,23 +45,23 @@ export default function SigninForm() {
         try {
             const response = (await toast.promise(authSrv.Signin(data), {
                 loading: "Validando credenciales...",
-                success: "Inicio de sesion correcto",
-                error: (error) => (error instanceof Error ? error.message : "Error al iniciar sesion"),
+                success: "Inicio de sesión correcto",
+                error: (error) => (error instanceof Error ? error.message : "Error al iniciar sesión"),
                 position: "top-right",
             })) as unknown as SigninResponse;
 
             if (response?.user) {
                 queryClient.setQueryData(["auth", "me"], {
-                    message: "Sesion iniciada",
+                    message: "Sesión iniciada",
                     user: response.user,
                 });
             }
 
-            // Fuerza refresco de sesion para que el layout protegido lea el estado mas reciente.
+            // Fuerza refresco de sesión para que el layout protegido lea el estado más reciente.
             await queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
             router.replace("/system");
-        } catch (error) {
-            console.error("Error al iniciar sesión:", error);
+        } catch {
+            // El toast.promise ya muestra el error.
         }
     }
 
@@ -103,7 +103,7 @@ export default function SigninForm() {
                 className="w-full h-11 font-semibold rounded-lg shadow-md hover:scale-105 hover:cursor-pointer active:scale-95 transition duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
                 form="form-signin"
             >
-                {form.formState.isSubmitting ? "Ingresando..." : "Iniciar Sesión"}
+                {form.formState.isSubmitting ? "Ingresando..." : "Iniciar sesión"}
             </Button>
         </form>
     )

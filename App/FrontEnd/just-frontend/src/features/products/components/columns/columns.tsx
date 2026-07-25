@@ -102,7 +102,7 @@ export const columns: ColumnDef<Product>[] = [
   },
   {
     accessorKey: "categoria",
-    header: () => <div className="text-center">Categoria</div>,
+    header: () => <div className="text-center">Categoría</div>,
     cell: ({ row }) => {
       const categoria: string = row.getValue("categoria")
 
@@ -122,7 +122,7 @@ export const columns: ColumnDef<Product>[] = [
   },
   {
     accessorKey: "codigo",
-    header: () => <div className="text-center">Codigo</div>,
+    header: () => <div className="text-center">Código</div>,
     cell: ({ row }) => {
       const codigo: string = row.getValue("codigo")
       return (
@@ -136,7 +136,7 @@ export const columns: ColumnDef<Product>[] = [
   },
   {
     accessorKey: "precio_base_venta",
-    header: () => <div className="text-center">Precio Base de Venta</div>,
+    header: () => <div className="text-center">Precio base de venta</div>,
     cell: ({ row }) => {
       const precio = parseFloat(row.getValue("precio_base_venta"))
       const formatted = new Intl.NumberFormat("es-CO", {

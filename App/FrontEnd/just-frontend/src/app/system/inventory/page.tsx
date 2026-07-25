@@ -123,7 +123,7 @@ export default function PageInventory() {
         ? summaryError.message
         : entriesError instanceof Error
           ? entriesError.message
-          : "Ocurrio un error inesperado al cargar el inventario.";
+          : "Ocurrió un error inesperado al cargar el inventario.";
 
     return (
       <div>
@@ -167,7 +167,7 @@ export default function PageInventory() {
         <InventorySummaryCards items={inventorySummary} />
       ) : (
         <div className="m-4 rounded-2xl border border-dashed p-6 text-sm text-muted-foreground">
-          Aun no hay stock disponible para mostrar el resumen del inventario.
+          Aún no hay stock disponible para mostrar el resumen del inventario.
         </div>
       )}
 
@@ -206,7 +206,7 @@ export default function PageInventory() {
           <EmptyGlobal
             icon={<Boxes className="h-12 w-12" />}
             title="No hay stock disponible"
-            description="Cuando registres ingresos, aqui podras consultar cuanto te queda de cada producto."
+            description="Cuando registres ingresos, aquí podrás consultar cuánto te queda de cada producto."
             buttonText="Registrar ingreso"
             onButtonClick={() => setIsCreateDialogOpen(true)}
             className="border border-dashed"
@@ -217,7 +217,7 @@ export default function PageInventory() {
           <EmptyGlobal
             icon={<PackageSearch className="h-12 w-12" />}
             title="No se han registrado ingresos"
-            description="Cuando registres tu primer ingreso, aqui podras revisar cantidades, costos y vencimientos."
+            description="Cuando registres tu primer ingreso, aquí podrás revisar cantidades, costos y vencimientos."
             buttonText="Registrar ingreso"
             onButtonClick={() => setIsCreateDialogOpen(true)}
             className="border border-dashed"

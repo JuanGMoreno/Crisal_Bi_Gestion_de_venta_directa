@@ -95,7 +95,7 @@ export default function PageClients() {
           <EmptyGlobal
             icon={<UsersRound className="h-12 w-12" />}
             title="No se pudieron cargar los clientes"
-            description={error instanceof Error ? error.message : "Ocurrio un error inesperado."}
+            description={error instanceof Error ? error.message : "Ocurrió un error inesperado."}
             buttonText="Reintentar"
             onButtonClick={() => {
               void refetch();
@@ -135,7 +135,7 @@ export default function PageClients() {
               <div>
                 <h3 className="text-base font-semibold">Directorio de clientes</h3>
                 <p className="text-sm text-muted-foreground">
-                  Encuentra rapido a tus clientes, revisa su informacion y manten actualizada su
+                  Encuentra rápido a tus clientes, revisa su información y mantén actualizada su
                   ficha.
                 </p>
               </div>
@@ -144,7 +144,7 @@ export default function PageClients() {
                 <Input
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
-                  placeholder="Buscar por nombre, cedula o telefono"
+                  placeholder="Buscar por nombre, cédula o teléfono"
                   className="border-background bg-background pl-9"
                 />
               </div>
@@ -156,7 +156,7 @@ export default function PageClients() {
           <EmptyGlobal
             icon={<UsersRound className="h-12 w-12" />}
             title="No se han registrado clientes"
-            description="Cuando registres tu primer cliente, aqui podras consultarlo y gestionarlo por tarjetas."
+            description="Cuando registres tu primer cliente, aquí podrás consultarlo y gestionarlo por tarjetas."
             buttonText="Registrar cliente"
             onButtonClick={() => setIsCreateDialogOpen(true)}
             className="border border-dashed"
@@ -165,8 +165,8 @@ export default function PageClients() {
           <EmptyGlobal
             icon={<Search className="h-12 w-12" />}
             title="No encontramos coincidencias"
-            description="Prueba con otro nombre, cedula o telefono para ubicar al cliente."
-            buttonText="Limpiar busqueda"
+            description="Prueba con otro nombre, cédula o teléfono para ubicar al cliente."
+            buttonText="Limpiar búsqueda"
             onButtonClick={() => setSearch("")}
             className="border border-dashed"
           />
