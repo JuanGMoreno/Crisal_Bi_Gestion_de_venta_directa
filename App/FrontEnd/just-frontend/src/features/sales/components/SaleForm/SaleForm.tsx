@@ -339,7 +339,7 @@ export function SaleForm({
                         <p className="text-sm text-muted-foreground">
                           {selectedProduct
                             ? `Stock disponible: ${stock.toLocaleString("es-CO")} unidades`
-                            : "Selecciona un producto del catalogo"}
+                            : "Selecciona un producto del catálogo"}
                         </p>
                       </div>
                       <Button
@@ -482,10 +482,10 @@ export function SaleForm({
               </div>
               <p className="text-sm text-muted-foreground">
                 {currentStatus === "Cerrada"
-                  ? "La venta impactara el inventario al guardarse."
+                  ? "La venta impactará el inventario al guardarse."
                   : mode === "edit"
-                    ? "La venta seguira abierta hasta que decidas cerrarla."
-                    : "La venta se guardara abierta y podra cerrarse despues."}
+                    ? "La venta seguirá abierta hasta que decidas cerrarla."
+                    : "La venta se guardará abierta y podrá cerrarse después."}
               </p>
             </div>
           </div>

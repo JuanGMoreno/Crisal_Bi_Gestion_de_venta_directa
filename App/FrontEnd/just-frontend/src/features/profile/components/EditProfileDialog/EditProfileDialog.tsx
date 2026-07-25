@@ -115,7 +115,7 @@ export function EditProfileDialog({
         <DialogHeader>
           <DialogTitle>Editar perfil</DialogTitle>
           <DialogDescription>
-            Actualiza la informacion visible de tu perfil como distribuidor.
+            Actualiza la información visible de tu perfil como distribuidor.
           </DialogDescription>
         </DialogHeader>
 

@@ -5,7 +5,7 @@ type ApiErrorPayload = {
   error?: string;
 };
 
-export function getApiErrorMessage(error: unknown, fallback = "Ocurrio un error inesperado") {
+export function getApiErrorMessage(error: unknown, fallback = "Ocurrió un error inesperado") {
   if (axios.isAxiosError<ApiErrorPayload>(error)) {
     const data = error.response?.data;
 
@@ -22,4 +22,12 @@ export function getApiErrorMessage(error: unknown, fallback = "Ocurrio un error 
   }
 
   return fallback;
+}
+
+export function getApiErrorStatus(error: unknown): number | undefined {
+  if (axios.isAxiosError(error)) {
+    return error.response?.status;
+  }
+
+  return undefined;
 }

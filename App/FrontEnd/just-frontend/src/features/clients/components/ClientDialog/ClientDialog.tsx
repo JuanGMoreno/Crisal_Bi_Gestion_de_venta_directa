@@ -34,7 +34,7 @@ export function ClientDialog({
           <DialogTitle>{isEditMode ? "Editar cliente" : "Registrar cliente"}</DialogTitle>
           <DialogDescription>
             {isEditMode
-              ? "Actualiza los datos del cliente para mantener su informacion al dia."
+              ? "Actualiza los datos del cliente para mantener su información al día."
               : "Registra un nuevo cliente para usarlo luego en tus ventas y seguimiento."}
           </DialogDescription>
         </DialogHeader>

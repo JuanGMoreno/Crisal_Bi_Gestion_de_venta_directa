@@ -68,8 +68,8 @@ export default function PageProducts() {
                     <EmptyGlobal
                         icon={<Package2 className="h-12 w-12" />}
                         title="No se encontraron productos"
-                        description="No tienes ningún producto aún."
-                        buttonText="Agregar Producto"
+                        description="No tienes ningún producto aún. Registra el primero para comenzar a vender e inventariar."
+                        buttonText="Agregar producto"
                         onButtonClick={() => onOpenDialog("createProduct")}
                         className="border border-dashed"
                     />

@@ -97,7 +97,7 @@ export function ClientCard({ client, onView, onEdit, onDelete }: ClientCardProps
       </div>
 
       <div className="space-y-3 p-5">
-        <MetaRow icon={<Phone className="h-4 w-4" />} value={client.numero_telefono || "Sin telefono"} />
+        <MetaRow icon={<Phone className="h-4 w-4" />} value={client.numero_telefono || "Sin teléfono"} />
         <MetaRow icon={<MapPin className="h-4 w-4" />} value={client.direccion || "Sin direccion registrada"} />
         <div className="rounded-2xl border border-sky-100/80 bg-background/90 p-3 dark:border-sky-900/40">
           <p className="text-xs uppercase tracking-wide text-muted-foreground">Edad</p>

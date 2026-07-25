@@ -89,7 +89,7 @@ export default function PageSales() {
           <EmptyGlobal
             icon={<ReceiptText className="h-12 w-12" />}
             title="No se pudieron cargar las ventas"
-            description={error instanceof Error ? error.message : "Ocurrio un error inesperado."}
+            description={error instanceof Error ? error.message : "Ocurrió un error inesperado."}
             buttonText="Reintentar"
             onButtonClick={() => {
               void refetch();
@@ -122,7 +122,7 @@ export default function PageSales() {
         <SalesSummaryCards sales={sales} />
       ) : (
         <div className="m-4 rounded-2xl border border-dashed p-6 text-sm text-muted-foreground">
-          Aun no hay ventas registradas para mostrar el resumen.
+          Aún no hay ventas registradas para mostrar el resumen.
         </div>
       )}
 
@@ -138,7 +138,7 @@ export default function PageSales() {
           <EmptyGlobal
             icon={<ReceiptText className="h-12 w-12" />}
             title="No se han registrado ventas"
-            description="Cuando registres tu primera venta, aqui podras consultar productos, clientes y estados."
+            description="Cuando registres tu primera venta, aquí podrás consultar productos, clientes y estados."
             buttonText="Registrar venta"
             onButtonClick={() => setIsCreateDialogOpen(true)}
             className="border border-dashed"

@@ -11,8 +11,7 @@ export default function useAuthServices() {
         const response = await http.post("/auth/signin", { correo : correo, contraseña: contraseña });
         return response.data;
     }catch (error : unknown) {
-        console.error("Error en signin:", error);
-        throw new Error(getApiErrorMessage(error, "Error al iniciar sesion. Por favor, verifica tus credenciales."));
+        throw new Error(getApiErrorMessage(error, "Error al iniciar sesión. Por favor, verifica tus credenciales."));
     }
   }, []);
 
@@ -21,7 +20,6 @@ export default function useAuthServices() {
       const response = await http.post("/auth/signup", data);
       return response.data; //Devuelve la info del usuario registrado
     } catch (error : unknown) {
-      console.error("Error en signup:", error);
       throw new Error(getApiErrorMessage(error, "Error al registrarse. Por favor, intenta nuevamente."));
     }
   }, []);
@@ -31,7 +29,7 @@ export default function useAuthServices() {
       const response = await http.post("/auth/signout");
       return response.data;
     } catch (error: unknown) {
-      throw new Error(getApiErrorMessage(error, "Error al cerrar sesion."));
+      throw new Error(getApiErrorMessage(error, "Error al cerrar sesión."));
     }
   }, []);
 

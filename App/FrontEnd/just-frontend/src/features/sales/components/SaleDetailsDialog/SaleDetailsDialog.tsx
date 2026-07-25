@@ -80,7 +80,7 @@ export function SaleDetailsDialog({ sale, onClose }: SaleDetailsDialogProps) {
                         {detail.producto?.nombre || "Producto"}
                       </h4>
                       <p className="text-sm text-muted-foreground">
-                        {detail.producto?.categoria || "Sin categoria"}
+                        {detail.producto?.categoria || "Sin categoría"}
                       </p>
                     </div>
                     <Badge variant="outline">Cantidad: {detail.cantidad}</Badge>
