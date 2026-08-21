@@ -34,7 +34,7 @@ describe('ProductService', () => {
     expect(products).toHaveLength(1);
   });
 
-  test('crea producto aislado por distribuidor con categoria por defecto', async () => {
+  test('crea producto aislado por distribuidor sin exigir categoria', async () => {
     let createdPayload;
 
     mocks.replace(ProductRepository, 'findByCodeAndDistributor', async () => null);
@@ -50,8 +50,38 @@ describe('ProductService', () => {
     }, 'user-1');
 
     expect(createdPayload.id_distribuidor).toBe('distributor-1');
-    expect(createdPayload.categoria).toBe('Aromaterapia');
+    expect(createdPayload).not.toHaveProperty('categoria');
     expect(product.nombre).toBe('Aceite esencial');
+  });
+
+  test('acepta y normaliza una categoria personalizada', async () => {
+    let createdPayload;
+    mocks.replace(ProductRepository, 'findByCodeAndDistributor', async () => null);
+    mocks.replace(ProductRepository, 'create', async (payload) => {
+      createdPayload = payload;
+      return payload;
+    });
+
+    await ProductService.createProduct({
+      nombre: 'Bolso artesanal',
+      codigo: 'B001',
+      precio_base_venta: 25,
+      categoria: '  Accesorios artesanales  '
+    }, 'user-1');
+
+    expect(createdPayload.categoria).toBe('Accesorios artesanales');
+  });
+
+  test('permite limpiar la categoria al actualizar', async () => {
+    let updatePayload;
+    mocks.replace(ProductRepository, 'updateByDistributor', async (_id, _distributorId, payload) => {
+      updatePayload = payload;
+      return payload;
+    });
+
+    await ProductService.updateProduct('product-1', { categoria: '   ' }, 'user-1');
+
+    expect(updatePayload.categoria).toBeNull();
   });
 
   test('rechaza crear un producto con codigo duplicado dentro del distribuidor', async () => {
@@ -64,6 +94,29 @@ describe('ProductService', () => {
         codigo: 'A001',
         precio_base_venta: 10
       }, 'user-1')).rejects.toThrow(/Ya existe un producto con ese/);
+  });
+
+  test('traduce el conflicto de unicidad de la base de datos al crear', async () => {
+    mocks.replace(ProductRepository, 'findByCodeAndDistributor', async () => null);
+    mocks.replace(ProductRepository, 'create', async () => {
+      const error = new Error(
+        'llave duplicada viola restricción de unicidad «productos_codigo_key48»'
+      );
+      error.name = 'SequelizeUniqueConstraintError';
+      error.original = {
+        code: '23505',
+        constraint: 'productos_codigo_key48'
+      };
+      throw error;
+    });
+
+    await expect(ProductService.createProduct({
+      nombre: 'Aceite esencial',
+      codigo: 'A001',
+      precio_base_venta: 10
+    }, 'user-1')).rejects.toThrow(
+      'Ya existe un producto con ese código en tu negocio. Usa un código diferente.'
+    );
   });
 
   test('actualiza producto aplicando aislamiento por distribuidor', async () => {

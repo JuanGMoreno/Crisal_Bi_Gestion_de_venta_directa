@@ -1,25 +1,41 @@
 import { ProductRepository } from '../repositories/product.repository.js';
 import { resolveDistributorIdByUserId } from '../utils/distributor-context.js';
 
-const PRODUCT_CATEGORIES = [
-  'Aromaterapia',
-  'Bienestar emocional y mental',
-  'Bienestar físico',
-  'Bienestar dermo-comético'
-];
+const MAX_CATEGORY_LENGTH = 80;
+const DUPLICATE_PRODUCT_CODE_MESSAGE =
+  'Ya existe un producto con ese código en tu negocio. Usa un código diferente.';
 
-function normalizeCategoryText(value) {
-  return String(value)
-    .trim()
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '');
+function isProductCodeUniqueConstraintError(error) {
+  const isUniqueConstraintError =
+    error?.name === 'SequelizeUniqueConstraintError' ||
+    error?.original?.code === '23505' ||
+    error?.parent?.code === '23505';
+
+  if (!isUniqueConstraintError) return false;
+
+  const constraintName = String(
+    error?.original?.constraint || error?.parent?.constraint || ''
+  ).toLowerCase();
+  const fields = error?.fields || {};
+
+  return (
+    Object.prototype.hasOwnProperty.call(fields, 'codigo') ||
+    constraintName.includes('codigo') ||
+    String(error?.message || '').toLowerCase().includes('codigo')
+  );
 }
 
-const CATEGORY_BY_NORMALIZED_VALUE = PRODUCT_CATEGORIES.reduce((acc, category) => {
-  acc[normalizeCategoryText(category)] = category;
-  return acc;
-}, {});
+async function translateProductCodeConflict(operation) {
+  try {
+    return await operation();
+  } catch (error) {
+    if (isProductCodeUniqueConstraintError(error)) {
+      throw new Error(DUPLICATE_PRODUCT_CODE_MESSAGE);
+    }
+
+    throw error;
+  }
+}
 
 function validateBaseSalePrice(data) {
   if (data.precio_base_venta === undefined || data.precio_base_venta === null || data.precio_base_venta === '') {
@@ -32,131 +48,90 @@ function validateBaseSalePrice(data) {
   }
 }
 
-function resolveCategoryOrThrow(category, { required = false } = {}) {
-  if (category === undefined || category === null || category === '') {
-    if (required) {
-      return PRODUCT_CATEGORIES[0];
-    }
-    return undefined;
+function normalizeCategory(category) {
+  if (category === undefined) return undefined;
+  if (category === null || String(category).trim() === '') return null;
+
+  const normalizedCategory = String(category).trim();
+  if (normalizedCategory.length > MAX_CATEGORY_LENGTH) {
+    throw new Error(`La categoría no puede superar ${MAX_CATEGORY_LENGTH} caracteres`);
   }
 
-  const normalizedInput = normalizeCategoryText(category);
-  const resolvedCategory = CATEGORY_BY_NORMALIZED_VALUE[normalizedInput];
-
-  if (!resolvedCategory) {
-    throw new Error(`Categoría inválida. Valores permitidos: ${PRODUCT_CATEGORIES.join(', ')}`);
-  }
-
-  return resolvedCategory;
+  return normalizedCategory;
 }
 
 export const ProductService = {
-  /**
-   * Obtener todos los productos activos
-   */
   getActiveProducts: async (userId) => {
     const distributorId = await resolveDistributorIdByUserId(userId);
-    const products = await ProductRepository.findAll({
+    return await ProductRepository.findAll({
       estado: 'Activo',
       id_distribuidor: distributorId
     });
-    return products;
   },
 
-  /**
-   * Obtener todos los productos (activos e inactivos)
-   */
   getAllProducts: async () => {
     return await ProductRepository.findAll();
   },
 
-  /**
-   * Obtener producto por ID con validaciones
-   */
   getProductById: async (id, userId) => {
     const distributorId = await resolveDistributorIdByUserId(userId);
     const product = await ProductRepository.findByIdAndDistributor(id, distributorId);
-    
-    if (!product) {
-      throw new Error('Producto no encontrado');
-    }
-    
+    if (!product) throw new Error('Producto no encontrado');
     return product;
   },
 
-  /**
-   * Crear producto con validaciones de negocio
-   */
   createProduct: async (data, userId) => {
     const distributorId = await resolveDistributorIdByUserId(userId);
     validateBaseSalePrice(data);
-    const categoria = resolveCategoryOrThrow(data.categoria, { required: true });
+    const categoria = normalizeCategory(data.categoria);
 
-    // Validar que el código no exista
     if (data.codigo) {
       const existingProduct = await ProductRepository.findByCodeAndDistributor(data.codigo, distributorId);
-      if (existingProduct) {
-        throw new Error('Ya existe un producto con ese código');
-      }
+      if (existingProduct) throw new Error(DUPLICATE_PRODUCT_CODE_MESSAGE);
     }
 
-    return await ProductRepository.create({
-      ...data,
-      categoria,
-      id_distribuidor: distributorId
-    });
+    return await translateProductCodeConflict(() =>
+      ProductRepository.create({
+        ...data,
+        ...(categoria !== undefined ? { categoria } : {}),
+        id_distribuidor: distributorId
+      })
+    );
   },
 
-  /**
-   * Actualizar producto con validaciones
-   */
   updateProduct: async (id, data, userId) => {
     const distributorId = await resolveDistributorIdByUserId(userId);
     validateBaseSalePrice(data);
-    const categoria = resolveCategoryOrThrow(data.categoria);
+    const categoria = normalizeCategory(data.categoria);
 
-    // Si se está actualizando el código, validar que no exista
     if (data.codigo) {
       const existingProduct = await ProductRepository.findByCodeAndDistributor(data.codigo, distributorId);
       if (existingProduct && existingProduct.id_producto !== id) {
-        throw new Error('Ya existe un producto con ese código');
+        throw new Error(DUPLICATE_PRODUCT_CODE_MESSAGE);
       }
     }
 
-    const product = await ProductRepository.updateByDistributor(id, distributorId, {
-      ...data,
-      ...(categoria ? { categoria } : {}),
-      id_distribuidor: distributorId
-    });
-    
-    if (!product) {
-      throw new Error('Producto no encontrado');
-    }
-    
+    const product = await translateProductCodeConflict(() =>
+      ProductRepository.updateByDistributor(id, distributorId, {
+        ...data,
+        ...(categoria !== undefined ? { categoria } : {}),
+        id_distribuidor: distributorId
+      })
+    );
+    if (!product) throw new Error('Producto no encontrado');
     return product;
   },
 
-  /**
-   * Eliminar producto (soft delete)
-   */
   deleteProduct: async (id, userId) => {
     const distributorId = await resolveDistributorIdByUserId(userId);
     const product = await ProductRepository.softDeleteByDistributor(id, distributorId);
-    
-    if (!product) {
-      throw new Error('Producto no encontrado');
-    }
-    
+    if (!product) throw new Error('Producto no encontrado');
     return { message: 'Producto eliminado correctamente', product };
   },
 
-  /**
-   * Obtener estadísticas de productos
-   */
   getProductStats: async () => {
     const activeCount = await ProductRepository.countByStatus('Activo');
     const inactiveCount = await ProductRepository.countByStatus('Inactivo');
-    
     return {
       total: activeCount + inactiveCount,
       activos: activeCount,

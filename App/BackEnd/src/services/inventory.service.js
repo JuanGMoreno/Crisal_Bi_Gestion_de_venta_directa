@@ -118,7 +118,7 @@ function buildStockSummary(details, referenceDate = new Date()) {
         })
       };
     })
-    .sort((a, b) => a.categoria.localeCompare(b.categoria));
+    .sort((a, b) => (a.categoria || '').localeCompare(b.categoria || ''));
 }
 
 function entryHasConsumedStock(entry) {

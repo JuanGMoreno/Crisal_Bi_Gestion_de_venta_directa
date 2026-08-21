@@ -1,10 +1,10 @@
 export const productsDocs = {
-  tags: [{ name: 'Products', description: 'Catalogo de productos del distribuidor autenticado' }],
+  tags: [{ name: 'Products', description: 'Catalogo generico de productos del negocio autenticado' }],
   paths: {
     '/products': {
       get: {
         tags: ['Products'],
-        summary: 'Listar productos activos del distribuidor',
+        summary: 'Listar productos activos del negocio',
         security: [{ bearerAuth: [] }, { cookieAuth: [] }],
         responses: {
           200: {
@@ -30,13 +30,13 @@ export const productsDocs = {
             'multipart/form-data': {
               schema: {
                 type: 'object',
-                required: ['nombre', 'codigo', 'precio_base_venta', 'categoria'],
+                required: ['nombre', 'codigo', 'precio_base_venta'],
                 properties: {
                   nombre: { type: 'string' },
                   descripcion: { type: 'string' },
                   codigo: { type: 'string' },
                   precio_base_venta: { type: 'number' },
-                  categoria: { type: 'string' },
+                  categoria: { type: 'string', maxLength: 80, nullable: true },
                   estado: { type: 'string' },
                   foto_avatar: { type: 'string', format: 'binary' }
                 }

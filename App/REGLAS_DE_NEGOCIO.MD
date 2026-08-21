@@ -1,27 +1,26 @@
-# Reglas de Negocio 
-sistema de roles de Crisal :
+# Reglas de negocio de Crisal
 
-1. ***Consultora:** :rol inicial que se encarga del a venta directa 
+Crisal es un sistema genérico para personas y pequeños negocios de venta directa. No depende del catálogo, la jerarquía ni el plan comercial de una empresa específica.
 
-2. **Lider de grupo:**   personal con mayor experiencia que ya tiene un grupo de venta se encargade capacitar y de sus propias ventas 
+## Cuentas
 
-3. **Lider:** Mayor jerarquia se encarga de gestionar varios grupos 
+- Las cuentas se crean públicamente desde el formulario de registro.
+- Cada usuario tiene un único perfil de negocio asociado.
+- La creación del usuario y su perfil ocurre en una misma transacción: si una operación falla, no se persiste ninguna.
+- Los datos de productos, clientes, inventario y ventas están aislados por negocio.
+- La primera versión no incluye roles comerciales, líderes, descendencia ni códigos de referido.
 
-## Creacion de cuentas y permisos 
+## Productos
 
--  las cuentas se pueden crear de forma publica desde el formulario de registro
-- no se permite definir le rol desde el registro para evitar roles superiores sera por defecto "consultora"
-- La consultora con un rol superior a "consultora"  pueden tener un numero limitado  tecnico de 15 hijos 
-- el consultora se crea inicialmente sin padre (id_distribuidor_padre=null)
-- se asignaran consultora padre por un codigo de invitacion por ejemplo "JUAN-7XL"
-- el codigo tendra una fecha de vencimiento de 3 dias ,cuando se quiera vincular a una jerarquia se valida si el codigo no ha expirado , ademas es reutilizable 
--la renovacion del codigo invalida el anterior ya que se comprueba con el actual en la base de datos , mientras este activo tiene usos ilimitados 
-- el codigo de invitacion solo puede generarlo el distribuidor dueño del mismo desde el panel de perfil 
-- solo es posible vincularse a una jerarquia sera editando el distribuidor de forma privada ,haciendo una peticion usando el codigo de inivitacion ,no desde el signup 
-- el cambio en la gerarquia sera editando el distribuidor ya de forma privada , es necesario validar que el cambio que se realizara no es un rol menor que al de los hijos (consultora < lider de grupo < Lider )
-- validar en cada vinculacion a una gerarquia si el usuario a vincular tiene menor rol que el padre en caso contrario denegar (consultora < lider de grupo < Lider )
-- validar los roles para evitar ciclos por ejemplo 
-(lider - lider de grupo - Lider ) y evitar la autoasignacion si ya tienes un padre con un rol superior 
-- validar que no se ingrese el mismo codigo de invitacino del usuario para evitar autoasignacion y validar que un nodo no puede tener como padre a uno de sus descendientes
-- si el padre esta inactivo no es posible asociar mas hijos al mismo hasta que cambie su estado 
-- Cuando se crea un usuario nuevo es necesario relaizar una transaccion atomica creando distribuidor y inventario a su vez si algo falla se cancela todo 
+- Cada código de producto es único dentro de un negocio, pero puede repetirse en negocios diferentes.
+- La categoría es opcional y admite cualquier texto de hasta 80 caracteres.
+- No existen categorías predeterminadas ni vinculadas a una marca.
+- Los productos se eliminan de forma lógica para preservar el historial comercial.
+
+## Inventario y ventas
+
+- El inventario se controla por entradas y lotes.
+- Las ventas cerradas consumen existencias con estrategia FEFO: primero vence, primero sale.
+- Una venta no puede cerrarse si no hay existencias suficientes.
+- Al anular una venta cerrada, las unidades vuelven a los lotes originales.
+- Las entradas con movimientos posteriores no pueden editarse ni eliminarse.

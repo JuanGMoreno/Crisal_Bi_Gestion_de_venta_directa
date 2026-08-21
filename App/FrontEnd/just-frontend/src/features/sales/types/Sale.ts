@@ -15,7 +15,7 @@ export interface SaleProduct {
   nombre: string;
   codigo: string;
   precio_base_venta: number;
-  categoria: string;
+  categoria?: string | null;
   estado: string;
 }
 

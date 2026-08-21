@@ -44,14 +44,8 @@ const Product = sequelize.define('Product', {
         defaultValue: 'Activo'
     },
     categoria: {
-        type: DataTypes.ENUM(
-            'Aromaterapia',
-            'Bienestar emocional y mental',
-            'Bienestar físico',
-            'Bienestar dermo-comético'
-        ),
-        allowNull: false,
-        defaultValue: 'Aromaterapia'
+        type: DataTypes.STRING(80),
+        allowNull: true
     }
 }, {
     timestamps: true,
@@ -59,7 +53,11 @@ const Product = sequelize.define('Product', {
     freezeTableName: true,
     indexes: [
         { fields: ['id_distribuidor'] },
-        { unique: true, fields: ['id_distribuidor', 'codigo'] },
+        {
+            name: 'productos_id_distribuidor_codigo_unique',
+            unique: true,
+            fields: ['id_distribuidor', 'codigo']
+        },
         { fields: ['nombre'] },
         { fields: ['estado'] },
         { fields: ['categoria'] },

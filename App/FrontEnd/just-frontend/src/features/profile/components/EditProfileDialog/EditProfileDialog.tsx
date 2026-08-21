@@ -115,7 +115,7 @@ export function EditProfileDialog({
         <DialogHeader>
           <DialogTitle>Editar perfil</DialogTitle>
           <DialogDescription>
-            Actualiza la información visible de tu perfil como distribuidor.
+            Actualiza la información visible de tu negocio.
           </DialogDescription>
         </DialogHeader>
 
@@ -195,7 +195,7 @@ export function EditProfileDialog({
                       {...field}
                       id="profile-name"
                       className="h-9"
-                      placeholder="Nombre del distribuidor"
+                      placeholder="Nombre del negocio"
                       aria-invalid={fieldState.invalid}
                     />
                     {fieldState.invalid ? <FieldError errors={[fieldState.error]} /> : null}
@@ -203,27 +203,15 @@ export function EditProfileDialog({
                 )}
               />
 
-              <div className="grid gap-4 md:grid-cols-2">
-                <Field>
-                  <FieldLabel htmlFor="profile-email">Correo</FieldLabel>
-                  <Input
-                    id="profile-email"
-                    value={profile.usuario.correo}
-                    className="h-9"
-                    disabled
-                  />
-                </Field>
-
-                <Field>
-                  <FieldLabel htmlFor="profile-role">Rol</FieldLabel>
-                  <Input
-                    id="profile-role"
-                    value={profile.rol}
-                    className="h-9"
-                    disabled
-                  />
-                </Field>
-              </div>
+              <Field>
+                <FieldLabel htmlFor="profile-email">Correo</FieldLabel>
+                <Input
+                  id="profile-email"
+                  value={profile.usuario.correo}
+                  className="h-9"
+                  disabled
+                />
+              </Field>
             </FieldGroup>
           </FieldSet>
         </form>

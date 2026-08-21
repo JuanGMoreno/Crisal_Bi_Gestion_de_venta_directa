@@ -7,12 +7,7 @@ export const ProductSchema = z.object({
     precio_base_venta: z.coerce.number().positive('El precio base de venta debe ser un número positivo'),
     foto_avatar: z.string().trim().optional(),
     estado: z.enum(['Activo', 'Inactivo']).default('Activo'),
-    categoria: z.enum([
-        'Aromaterapia',
-        'Bienestar emocional y mental',
-        'Bienestar físico',
-        'Bienestar dermo-comético',
-    ]).default('Aromaterapia'),
+    categoria: z.string().trim().max(80, 'La categoría no puede superar 80 caracteres').optional(),
 });
     
 

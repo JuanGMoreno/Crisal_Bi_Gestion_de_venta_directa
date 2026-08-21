@@ -18,7 +18,7 @@ export interface DashboardTopProduct {
   id_producto: string;
   nombre: string;
   codigo: string;
-  categoria: string;
+  categoria?: string | null;
   quantity: number;
   revenue: number;
   profit: number;
@@ -35,7 +35,7 @@ export interface DashboardLowStockItem {
   id_producto: string;
   nombre: string;
   codigo: string;
-  categoria: string;
+  categoria?: string | null;
   stock_total: number;
   lotes_activos: number;
   costo_promedio_compra: number;

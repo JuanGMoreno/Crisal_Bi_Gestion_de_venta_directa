@@ -32,6 +32,7 @@ export default function useProductServices() {
       const response = await http.post("/products", data);
       return response.data;
     } catch (error: unknown) {
+      console.log(error);
       throw new Error(getApiErrorMessage(error, "Error al crear el producto."));
     }
   }, []);

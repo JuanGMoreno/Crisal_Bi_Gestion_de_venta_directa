@@ -80,7 +80,8 @@ tests/
 ### Productos
 
 - Listado aislado por distribuidor.
-- Creacion con categoria por defecto.
+- Creacion sin categoria y con categorias personalizadas.
+- Normalizacion y validacion de la categoria opcional.
 - Rechazo de codigo duplicado.
 - Actualizacion y soft delete limitados al distribuidor autenticado.
 
@@ -98,12 +99,11 @@ tests/
 - Rechazo por stock insuficiente.
 - Restauracion de stock al anular venta.
 
-### Jerarquia
+### Perfil del negocio
 
-- Vinculacion mediante codigo vigente.
-- Rechazo de codigo vencido.
-- Rechazo de jerarquias invalidas.
-- Bloqueo de cambios de rol incompatibles con hijos existentes.
+- Consulta del perfil autenticado sin datos jerarquicos.
+- Actualizacion limitada a nombre y foto.
+- Rechazo de campos ajenos al perfil operativo.
 
 ## Como agregar una prueba
 

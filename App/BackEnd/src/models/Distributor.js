@@ -13,30 +13,13 @@ const Distributor = sequelize.define('Distributor', {
     allowNull: false,
     unique: true
   },
-  id_distribuidor_padre: {
-    type: DataTypes.UUID,
-    allowNull: true,
-  },
   nombre: {
     type: DataTypes.STRING,
     allowNull: false,
     validate: { notEmpty: true }
   },
-  rol: {
-    type: DataTypes.ENUM('Consultora', 'Lider de Grupo', 'Lider'),
-    defaultValue: 'Consultora'
-  },
   foto_avatar: {
     type: DataTypes.STRING,
-    allowNull: true
-  },
-  codigo_referido: {
-    type: DataTypes.STRING,
-    allowNull: true,
-    unique: true
-  },
-  fecha_vencimiento_codigo: {
-    type: DataTypes.DATE,
     allowNull: true
   },
   estado: {
@@ -49,7 +32,6 @@ const Distributor = sequelize.define('Distributor', {
   freezeTableName: true,
   indexes: [
     { fields: ['id_usuario'] },
-    { fields: ['id_distribuidor_padre'] },
     { fields: ['estado'] }
   ]
 });

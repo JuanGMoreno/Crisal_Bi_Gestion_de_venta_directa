@@ -1,12 +1,13 @@
-import { IndicatorTone, indicatorStyles } from "@/shared/lib/status-indicators";
+import { IndicatorTone, indicatorStyles } from '@/shared/lib/status-indicators';
 
-const categoryToToneMap: Record<string, IndicatorTone> = {
-  Aromaterapia: "accent",
-  "Bienestar emocional y mental": "info",
-  "Bienestar físico": "good",
-  "Bienestar dermo-comético": "warning",
-};
+const categoryTones: IndicatorTone[] = ['accent', 'info', 'good', 'warning', 'neutral'];
 
 export function getCategoryIndicatorClass(category?: string | null) {
-  return indicatorStyles[categoryToToneMap[category || ""] || "neutral"];
+  if (!category) return indicatorStyles.neutral;
+
+  const toneIndex = Array.from(category).reduce((sum, character) => {
+    return sum + character.codePointAt(0)!;
+  }, 0) % categoryTones.length;
+
+  return indicatorStyles[categoryTones[toneIndex]];
 }

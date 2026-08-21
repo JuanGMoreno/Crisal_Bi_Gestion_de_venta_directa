@@ -15,13 +15,6 @@ import {
     FieldLabel,
     FieldSet,
 } from "@/shared/components/ui/field"
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/shared/components/ui/select"
 import { ProductSchema } from "../../validations/ProductSchema";
 import { ProductFormData } from "../../validations/ProductSchema";
 import { useDialogStore } from "@/store/use-dialog-store";
@@ -61,7 +54,7 @@ export default function ProductForm({
             precio_base_venta: initialData?.precio_base_venta || 0,
             foto_avatar: "",
             estado: initialData?.estado || "Activo",
-            categoria: initialData?.categoria || "Aromaterapia",
+            categoria: initialData?.categoria || "",
         },
     });
 
@@ -73,7 +66,7 @@ export default function ProductForm({
             precio_base_venta: initialData?.precio_base_venta || 0,
             foto_avatar: initialData?.foto_avatar || "",
             estado: initialData?.estado || "Activo",
-            categoria: initialData?.categoria || "Aromaterapia",
+            categoria: initialData?.categoria || "",
         });
     }, [initialData, form]);
 
@@ -92,7 +85,7 @@ export default function ProductForm({
         formData.append("codigo", data.codigo);
         formData.append("precio_base_venta", String(data.precio_base_venta));
         formData.append("estado", data.estado);
-        formData.append("categoria", data.categoria);
+        formData.append("categoria", data.categoria || "");
 
         if (selectedPhotoFile) {
             formData.append("foto_avatar", selectedPhotoFile);
@@ -202,21 +195,17 @@ export default function ProductForm({
                             control={form.control}
                             render={({ field, fieldState }) => (
                                 <Field data-invalid={fieldState.invalid}>
-                                    <FieldLabel htmlFor="category">Categoría</FieldLabel>
-                                    <Select
-                                        value={field.value}
-                                        onValueChange={field.onChange}
-                                    >
-                                        <SelectTrigger id="category" className="w-full h-9" aria-invalid={fieldState.invalid}>
-                                            <SelectValue placeholder="Selecciona una categoría" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="Aromaterapia">Aromaterapia</SelectItem>
-                                            <SelectItem value="Bienestar emocional y mental">Bienestar emocional y mental</SelectItem>
-                                            <SelectItem value="Bienestar físico">Bienestar físico</SelectItem>
-                                            <SelectItem value="Bienestar dermo-comético">Bienestar dermo-comético</SelectItem>
-                                        </SelectContent>
-                                    </Select>
+                                    <FieldLabel htmlFor="category">Categoría (opcional)</FieldLabel>
+                                    <Input
+                                        {...field}
+                                        value={field.value || ""}
+                                        id="category"
+                                        type="text"
+                                        maxLength={80}
+                                        aria-invalid={fieldState.invalid}
+                                        placeholder="Ej. Accesorios, Hogar o Cosmética"
+                                        className="w-full h-9"
+                                    />
                                     {fieldState.invalid && (
                                         <FieldError errors={[fieldState.error]} />
                                     )}

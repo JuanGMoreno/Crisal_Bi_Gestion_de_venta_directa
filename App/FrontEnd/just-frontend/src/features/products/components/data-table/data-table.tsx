@@ -15,7 +15,7 @@ import {
   useReactTable,
   getPaginationRowModel,
 } from "@tanstack/react-table"
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import {
   Table,
   TableBody,
@@ -37,6 +37,13 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [globalFilter, setGlobalFilter] = useState("")
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const categories = useMemo(() => {
+    return Array.from(new Set(
+      data
+        .map((item) => (item as { categoria?: string | null }).categoria?.trim())
+        .filter((category): category is string => Boolean(category))
+    )).sort((left, right) => left.localeCompare(right))
+  }, [data])
   // TanStack Table expone funciones que React Compiler no memoiza de forma segura.
   // Este warning es esperado para useReactTable.
   // eslint-disable-next-line react-hooks/incompatible-library
@@ -96,10 +103,9 @@ export function DataTable<TData, TValue>({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todas las categorías</SelectItem>
-                <SelectItem value="Aromaterapia">Aromaterapia</SelectItem>
-                <SelectItem value="Bienestar emocional y mental">Bienestar emocional y mental</SelectItem>
-                <SelectItem value="Bienestar físico">Bienestar físico</SelectItem>
-                <SelectItem value="Bienestar dermo-comético">Bienestar dermo-comético</SelectItem>
+                {categories.map((category) => (
+                  <SelectItem key={category} value={category}>{category}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
           )}
