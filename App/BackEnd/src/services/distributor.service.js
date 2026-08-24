@@ -30,30 +30,7 @@ function validateEditableProfilePayload(data) {
   }
 }
 
-function sanitizeDistributorPayload(data) {
-  const allowedFields = ['id_usuario', 'nombre', 'foto_avatar', 'estado'];
-  return Object.fromEntries(
-    allowedFields
-      .filter((field) => data[field] !== undefined)
-      .map((field) => [field, data[field]])
-  );
-}
-
 export const DistributorService = {
-  getDistributors: async () => {
-    return await DistributorRepository.findAll({ estado: 'Activo' });
-  },
-
-  getAllDistributors: async () => {
-    return await DistributorRepository.findAll();
-  },
-
-  getDistributorById: async (id) => {
-    const distributor = await DistributorRepository.findById(id);
-    if (!distributor) throw new Error('Distribuidor no encontrado');
-    return distributor;
-  },
-
   getCurrentDistributorProfile: async (userId) => {
     const distributor = await DistributorRepository.findProfileByUserId(userId);
     if (!distributor) throw new Error('Distribuidor no encontrado');
@@ -76,21 +53,5 @@ export const DistributorService = {
       ...updatedDistributor.dataValues,
       usuario: distributor.usuario
     });
-  },
-
-  createDistributor: async (data) => {
-    return await DistributorRepository.create(sanitizeDistributorPayload(data));
-  },
-
-  updateDistributor: async (id, data) => {
-    const distributor = await DistributorRepository.update(id, sanitizeDistributorPayload(data));
-    if (!distributor) throw new Error('Distribuidor no encontrado');
-    return distributor;
-  },
-
-  deleteDistributor: async (id) => {
-    const distributor = await DistributorRepository.softDelete(id);
-    if (!distributor) throw new Error('Distribuidor no encontrado');
-    return { message: 'Distribuidor eliminado correctamente', distributor };
   }
 };

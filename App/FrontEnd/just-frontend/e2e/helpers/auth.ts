@@ -25,5 +25,7 @@ export async function signIn(page: Page) {
   await page.getByRole("button", { name: /Iniciar Sesi/i }).click();
 
   await expect(page).toHaveURL(/\/system$/);
-  await expect(page.getByRole("heading", { name: "Hola de nuevo" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Controla tu operacion comercial" })
+  ).toBeVisible();
 }

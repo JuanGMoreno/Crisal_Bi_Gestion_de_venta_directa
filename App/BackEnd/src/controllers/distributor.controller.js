@@ -22,20 +22,6 @@ function assignUploadedImageToBody(req) {
   }
 }
 
-export const getDistributors = asyncHandler(async (_req, res) => {
-  const distributors = await DistributorService.getDistributors();
-  return res.status(200).json(distributors);
-});
-
-export const getDistributor = asyncHandler(async (req, res) => {
-  try {
-    const distributor = await DistributorService.getDistributorById(req.params.id);
-    return res.status(200).json(distributor);
-  } catch (error) {
-    throw withStatus(error, error.message === 'Distribuidor no encontrado' ? 404 : 500);
-  }
-});
-
 export const getCurrentDistributorProfile = asyncHandler(async (req, res) => {
   try {
     const profile = await DistributorService.getCurrentDistributorProfile(req.user.id);
@@ -53,32 +39,5 @@ export const updateCurrentDistributorProfile = asyncHandler(async (req, res) => 
     return res.status(200).json(profile);
   } catch (error) {
     throw withStatus(error, error.message === 'Distribuidor no encontrado' ? 404 : 400);
-  }
-});
-
-export const createDistributor = asyncHandler(async (req, res) => {
-  try {
-    const distributor = await DistributorService.createDistributor(req.body);
-    return res.status(201).json(distributor);
-  } catch (error) {
-    throw withStatus(error, 400);
-  }
-});
-
-export const updateDistributor = asyncHandler(async (req, res) => {
-  try {
-    const distributor = await DistributorService.updateDistributor(req.params.id, req.body);
-    return res.status(200).json(distributor);
-  } catch (error) {
-    throw withStatus(error, error.message === 'Distribuidor no encontrado' ? 404 : 400);
-  }
-});
-
-export const deleteDistributor = asyncHandler(async (req, res) => {
-  try {
-    const result = await DistributorService.deleteDistributor(req.params.id);
-    return res.status(200).json(result);
-  } catch (error) {
-    throw withStatus(error, error.message === 'Distribuidor no encontrado' ? 404 : 500);
   }
 });

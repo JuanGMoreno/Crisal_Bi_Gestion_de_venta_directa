@@ -76,16 +76,6 @@ export const schemas = {
       foto_avatar: { type: 'string', nullable: true }
     }
   },
-  CreateDistributorRequest: {
-    type: 'object',
-    required: ['id_usuario', 'nombre'],
-    properties: {
-      id_usuario: { type: 'string', format: 'uuid' },
-      nombre: { type: 'string' },
-      foto_avatar: { type: 'string', nullable: true },
-      estado: { type: 'string', enum: ['Activo', 'Inactivo'] }
-    }
-  },
   Product: {
     type: 'object',
     properties: {

@@ -63,14 +63,7 @@ function normalizeCategory(category) {
 export const ProductService = {
   getActiveProducts: async (userId) => {
     const distributorId = await resolveDistributorIdByUserId(userId);
-    return await ProductRepository.findAll({
-      estado: 'Activo',
-      id_distribuidor: distributorId
-    });
-  },
-
-  getAllProducts: async () => {
-    return await ProductRepository.findAll();
+    return await ProductRepository.findActiveByDistributor(distributorId);
   },
 
   getProductById: async (id, userId) => {
@@ -127,15 +120,5 @@ export const ProductService = {
     const product = await ProductRepository.softDeleteByDistributor(id, distributorId);
     if (!product) throw new Error('Producto no encontrado');
     return { message: 'Producto eliminado correctamente', product };
-  },
-
-  getProductStats: async () => {
-    const activeCount = await ProductRepository.countByStatus('Activo');
-    const inactiveCount = await ProductRepository.countByStatus('Inactivo');
-    return {
-      total: activeCount + inactiveCount,
-      activos: activeCount,
-      inactivos: inactiveCount
-    };
   }
 };

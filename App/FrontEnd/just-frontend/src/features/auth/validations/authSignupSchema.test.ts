@@ -12,4 +12,15 @@ describe('authSignupSchema', () => {
     expect(result).not.toHaveProperty('rol');
     expect(result).not.toHaveProperty('id_distribuidor_padre');
   });
+
+  test('rechaza contraseñas de menos de 8 caracteres', () => {
+    const result = authSignupSchema.safeParse({
+      nombre: 'Tienda Ana',
+      correo: 'ana@example.com',
+      contraseña: 'corta',
+      confirmarContrasena: 'corta',
+    });
+
+    expect(result.success).toBe(false);
+  });
 });

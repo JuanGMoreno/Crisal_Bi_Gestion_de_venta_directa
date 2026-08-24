@@ -58,22 +58,4 @@ describe('DistributorService business profile', () => {
     });
     expect(profile.nombre).toBe('Mi negocio');
   });
-
-  test('filtra campos jerarquicos al crear un negocio', async () => {
-    let createPayload;
-    mocks.replace(DistributorRepository, 'create', async (payload) => {
-      createPayload = payload;
-      return payload;
-    });
-
-    await DistributorService.createDistributor({
-      id_usuario: 'user-2',
-      nombre: 'Negocio libre',
-      rol: 'Lider',
-      codigo_referido: 'CODIGO',
-      id_distribuidor_padre: 'parent-1'
-    });
-
-    expect(createPayload).toEqual({ id_usuario: 'user-2', nombre: 'Negocio libre' });
-  });
 });

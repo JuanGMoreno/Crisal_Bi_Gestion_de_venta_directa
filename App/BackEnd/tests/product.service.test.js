@@ -20,17 +20,14 @@ describe('ProductService', () => {
   test('lista solamente productos activos del distribuidor autenticado', async () => {
     let receivedFilters;
 
-    mocks.replace(ProductRepository, 'findAll', async (filters) => {
-      receivedFilters = filters;
+    mocks.replace(ProductRepository, 'findActiveByDistributor', async (distributorId) => {
+      receivedFilters = distributorId;
       return [{ id_producto: 'product-1' }];
     });
 
     const products = await ProductService.getActiveProducts('user-1');
 
-    expect(receivedFilters).toEqual({
-      estado: 'Activo',
-      id_distribuidor: 'distributor-1'
-    });
+    expect(receivedFilters).toBe('distributor-1');
     expect(products).toHaveLength(1);
   });
 

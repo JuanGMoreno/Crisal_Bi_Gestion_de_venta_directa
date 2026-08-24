@@ -179,6 +179,8 @@ npm start
 
 La estrategia de pruebas unitarias del backend, su cobertura actual y ejemplos para agregar nuevos casos estan documentados en [`App/BackEnd/TESTING.md`](App/BackEnd/TESTING.md).
 
+La preparación operativa, seguridad, copias de respaldo y validaciones necesarias para publicar el MVP están documentadas en [`docs/MVP_RELEASE_CHECKLIST.md`](docs/MVP_RELEASE_CHECKLIST.md).
+
 ### Frontend
 
 ```bash

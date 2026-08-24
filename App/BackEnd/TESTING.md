@@ -11,6 +11,15 @@ Ejecutar todas las pruebas:
 npm test
 ```
 
+Ejecutar el flujo integral con una base PostgreSQL exclusiva de pruebas:
+
+```bash
+npm run test:integration
+```
+
+Este comando exige que `DB_NAME` contenga la palabra `test`. La suite aplica las
+migraciones y limpia únicamente los modelos de esa base aislada.
+
 ## Metodologia usada
 
 Las pruebas actuales son **unitarias de servicios**. Cada caso ejecuta una pieza de
@@ -130,9 +139,6 @@ await expect(Service.method()).rejects.toThrow(/Texto esperado del error/);
 
 ## Siguiente nivel de pruebas
 
-Estas pruebas no reemplazan pruebas de integracion. Como evolucion futura conviene:
-
-1. Preparar una base PostgreSQL exclusiva para testing.
-2. Ejecutar migraciones antes de la suite.
-3. Probar endpoints HTTP completos con una herramienta como Supertest.
-4. Mantener las pruebas unitarias actuales porque son rapidas y localizan fallos con claridad.
+Las pruebas unitarias se complementan con `tests/integration`, que usa PostgreSQL y
+Supertest para comprobar el recorrido autenticado de producto, cliente, inventario y
+venta. Las pruebas E2E de Playwright validan los recorridos principales del navegador.

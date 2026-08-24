@@ -34,7 +34,8 @@ export function AppSidebar() {
                   alt={`${BRAND.productName} logo`}
                   width={62}
                   height={62}
-                  className="rounded-full"
+                  loading="eager"
+                  className="h-auto w-auto rounded-full"
                 />
                 <div className="flex flex-col">
                   <span className="text-md font-bold ">{BRAND.productName}</span>

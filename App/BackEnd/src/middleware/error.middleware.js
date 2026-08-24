@@ -32,6 +32,14 @@ function getMessageFromKnownError(error) {
     return 'Ya existe un registro con esos datos.';
   }
 
+  if (error?.name === 'MulterError') {
+    if (error.code === 'LIMIT_FILE_SIZE') {
+      return 'La imagen supera el tamaño máximo permitido de 5 MB.';
+    }
+
+    return 'La imagen enviada no cumple los límites permitidos.';
+  }
+
   return undefined;
 }
 
