@@ -2,7 +2,7 @@ export interface InventoryProductOption {
   id_producto: string;
   nombre: string;
   codigo: string;
-  categoria: string;
+  categoria?: string | null;
 }
 
 export interface InventoryEntryDetail {
@@ -30,7 +30,7 @@ export interface InventorySummaryItem {
   id_producto: string;
   nombre: string;
   codigo: string;
-  categoria: string;
+  categoria?: string | null;
   stock_total: number;
   lotes_activos: number;
   costo_promedio_compra: number;

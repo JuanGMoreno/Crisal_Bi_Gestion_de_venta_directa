@@ -4,7 +4,7 @@ import { asyncHandler } from "../utils/async-handler.js";
 import { signAccessToken } from "../utils/jwt.js";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const MIN_PASSWORD_LENGTH = 6;
+const MIN_PASSWORD_LENGTH = 8;
 const MIN_NAME_LENGTH = 2;
 const AUTH_COOKIE_NAME = "access_token";
 

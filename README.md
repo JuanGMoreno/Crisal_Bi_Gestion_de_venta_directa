@@ -10,7 +10,8 @@ El proyecto fue construido como una solucion real para cliente, con frontend mod
 
 - Autenticacion de usuarios con JWT.
 - Proteccion de rutas privadas en backend.
-- Gestion de productos por distribuidor autenticado.
+- Gestion de productos por negocio autenticado.
+- Categorias opcionales y personalizables para cualquier tipo de producto.
 - Carga de imagenes de productos con Cloudinary.
 - Gestion de clientes.
 - Registro y consulta de entradas de inventario.
@@ -92,7 +93,7 @@ El frontend esta organizado por modulos funcionales usando una estructura basada
 
 ### Productos
 
-Permite crear, listar, actualizar y eliminar productos asociados al distribuidor autenticado. Incluye carga de imagenes mediante Cloudinary.
+Permite crear, listar, actualizar y eliminar productos asociados al negocio autenticado. Las categorias son opcionales y personalizables, sin depender del catalogo de una empresa. Incluye carga de imagenes mediante Cloudinary.
 
 ### Inventario
 
@@ -178,6 +179,8 @@ npm start
 
 La estrategia de pruebas unitarias del backend, su cobertura actual y ejemplos para agregar nuevos casos estan documentados en [`App/BackEnd/TESTING.md`](App/BackEnd/TESTING.md).
 
+La preparación operativa, seguridad, copias de respaldo y validaciones necesarias para publicar el MVP están documentadas en [`docs/MVP_RELEASE_CHECKLIST.md`](docs/MVP_RELEASE_CHECKLIST.md).
+
 ### Frontend
 
 ```bash
@@ -224,7 +227,7 @@ Este proyecto permitio trabajar habilidades clave de desarrollo full stack:
 - Diseno de API REST con Express.
 - Modelado relacional con PostgreSQL y Sequelize.
 - Autenticacion con JWT y cookies.
-- Manejo de datos aislados por usuario/distribuidor.
+- Manejo de datos aislados por usuario y negocio.
 - Integracion con Cloudinary para imagenes.
 - Formularios complejos con React Hook Form y Zod.
 - Estado asincrono con TanStack React Query.
@@ -240,7 +243,7 @@ Este proyecto permitio trabajar habilidades clave de desarrollo full stack:
 - Agregar Docker Compose para backend, frontend y PostgreSQL.
 - Implementar CI/CD con GitHub Actions.
 - Aumentar cobertura de pruebas.
-- Ampliar roles y permisos.
+- Incorporar permisos operativos solo cuando exista una necesidad multiusuario validada.
 - Mejorar dashboard con metricas comerciales.
 - Incorporar reportes exportables.
 - Mover configuracion del frontend a variables de entorno.

@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     "control de inventario",
     "gestion de clientes",
     "dashboard comercial",
-    "sistema para distribuidores",
+    "sistema para vendedores independientes",
   ],
   authors: [{ name: "Juan Guillermo Moreno Galvez" }],
   creator: "Juan Guillermo Moreno Galvez",

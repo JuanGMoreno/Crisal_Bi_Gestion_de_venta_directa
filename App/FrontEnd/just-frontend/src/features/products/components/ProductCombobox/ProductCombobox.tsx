@@ -81,7 +81,7 @@ export function ProductCombobox({
                   <CommandItem
                     key={product.id_producto}
                     value={product.nombre}
-                    keywords={[product.codigo, product.categoria]}
+                    keywords={[product.codigo, product.categoria || ""]}
                     onSelect={() => {
                       onChange(product.id_producto);
                       setOpen(false);
@@ -91,7 +91,7 @@ export function ProductCombobox({
                     <div className="min-w-0 flex-1">
                       <p className="truncate font-medium">{product.nombre}</p>
                       <p className="truncate text-xs text-muted-foreground">
-                        {product.codigo} · {product.categoria}
+                        {product.codigo} · {product.categoria || "Sin categoría"}
                       </p>
                     </div>
                     <Check

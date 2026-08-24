@@ -348,7 +348,7 @@ export default function DashboardPage() {
                       <Badge variant="secondary">{product.codigo}</Badge>
                     </div>
                     <p className="mt-1 text-sm text-muted-foreground">
-                      {formatNumber(product.quantity)} unidades · {product.categoria}
+                      {formatNumber(product.quantity)} unidades · {product.categoria || "Sin categoría"}
                     </p>
                   </div>
                   <div className="text-left sm:text-right">

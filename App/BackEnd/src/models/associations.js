@@ -29,25 +29,6 @@ User.hasOne(Distributor, {
 });
 
 // --------------------
-// Distributor jerárquico (padre/hijos)
-// --------------------
-Distributor.belongsTo(Distributor, {
-  as: 'padre',
-  foreignKey: {
-    name: 'id_distribuidor_padre',
-    allowNull: true
-  },
-  onUpdate: 'CASCADE',
-  onDelete: 'SET NULL',
-  constraints: true
-});
-Distributor.hasMany(Distributor, {
-  as: 'hijos',
-  foreignKey: 'id_distribuidor_padre',
-  constraints: true
-});
-
-// --------------------
 // Distributor <-> Product (1:N)
 // --------------------
 Product.belongsTo(Distributor, {

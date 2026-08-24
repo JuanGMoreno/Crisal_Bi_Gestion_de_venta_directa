@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [develop, main]
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: App/BackEnd
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: crisal_ci_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d crisal_ci_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      NODE_ENV: test
+      FRONTEND_URL: http://localhost:3000
+      JWT_SECRET: ci-only-secret
+      JWT_EXPIRES_IN: 15m
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_NAME: crisal_ci_test
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_DIALECT: postgres
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: App/BackEnd/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - run: npm run test:integration
+      - run: npm audit --omit=dev --audit-level=critical
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: App/FrontEnd/just-frontend
+    env:
+      NEXT_PUBLIC_API_URL: http://localhost:4001/api
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: App/FrontEnd/just-frontend/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test -- --runInBand
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: cp .env.e2e.example .env.e2e
+      - run: npm run test:e2e:public

@@ -104,7 +104,7 @@ export const columns: ColumnDef<Product>[] = [
     accessorKey: "categoria",
     header: () => <div className="text-center">Categoría</div>,
     cell: ({ row }) => {
-      const categoria: string = row.getValue("categoria")
+      const categoria = row.original.categoria
 
       return (
         <div className="flex justify-center">
@@ -114,7 +114,7 @@ export const columns: ColumnDef<Product>[] = [
               getCategoryIndicatorClass(categoria)
             )}
           >
-            {categoria}
+            {categoria || "Sin categoría"}
           </span>
         </div>
       )

@@ -4,7 +4,7 @@ export const salesDocs = {
     '/sales': {
       get: {
         tags: ['Sales'],
-        summary: 'Listar ventas del distribuidor autenticado',
+        summary: 'Listar ventas del negocio autenticado',
         security: [{ bearerAuth: [] }, { cookieAuth: [] }],
         responses: {
           200: {

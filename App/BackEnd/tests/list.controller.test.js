@@ -1,10 +1,8 @@
 import { getClients } from '../src/controllers/client.controller.js';
-import { getDistributors } from '../src/controllers/distributor.controller.js';
 import { getInventory, getInventoryEntries } from '../src/controllers/inventory.controller.js';
 import { getProducts } from '../src/controllers/product.controller.js';
 import { getSales } from '../src/controllers/sale.controller.js';
 import { ClientService } from '../src/services/client.service.js';
-import { DistributorService } from '../src/services/distributor.service.js';
 import { InventoryService } from '../src/services/inventory.service.js';
 import { ProductService } from '../src/services/product.service.js';
 import { SaleService } from '../src/services/sale.service.js';
@@ -42,8 +40,7 @@ describe('List controllers', () => {
     ['clientes', ClientService, 'getClients', getClients],
     ['ventas', SaleService, 'getSales', getSales],
     ['resumen de inventario', InventoryService, 'getInventorySummary', getInventory],
-    ['ingresos de inventario', InventoryService, 'getInventoryEntries', getInventoryEntries],
-    ['distribuidores', DistributorService, 'getDistributors', getDistributors]
+    ['ingresos de inventario', InventoryService, 'getInventoryEntries', getInventoryEntries]
   ])('%s responde 200 con arreglo vacio cuando no hay registros', async (_name, service, method, controller) => {
     mocks.replace(service, method, async () => []);
 

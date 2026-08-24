@@ -27,12 +27,28 @@ function getDetailsFromKnownError(error) {
   return error.details;
 }
 
+function getMessageFromKnownError(error) {
+  if (error?.name === 'SequelizeUniqueConstraintError') {
+    return 'Ya existe un registro con esos datos.';
+  }
+
+  if (error?.name === 'MulterError') {
+    if (error.code === 'LIMIT_FILE_SIZE') {
+      return 'La imagen supera el tamaño máximo permitido de 5 MB.';
+    }
+
+    return 'La imagen enviada no cumple los límites permitidos.';
+  }
+
+  return undefined;
+}
+
 export function errorMiddleware(error, _req, res, _next) {
   const status = getErrorStatus(error, getStatusFromKnownError(error) || 500);
   const message =
     status >= 500 && !(error instanceof ApiError)
       ? 'Error interno del servidor'
-      : error.message || 'Error interno del servidor';
+      : getMessageFromKnownError(error) || error.message || 'Error interno del servidor';
 
   if (status >= 500) {
     console.error(error);

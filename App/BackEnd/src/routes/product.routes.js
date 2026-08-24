@@ -7,11 +7,11 @@ import {
   deleteProduct 
 } from '../controllers/product.controller.js';
 import { authMiddleware } from '../middleware/auth.middleware.js';
-import multer from 'multer';
 import storage from '../config/cloudinary.js';
+import { createImageUpload } from '../config/upload.js';
 
 const router = express.Router();
-const upload = multer({ storage });
+const upload = createImageUpload(storage);
 
 router.get("/products", authMiddleware, getProducts);
 router.get("/products/:id", authMiddleware, getProduct);

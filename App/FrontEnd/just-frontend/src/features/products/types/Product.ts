@@ -6,7 +6,7 @@ interface Product {
     precio_base_venta: number,
     foto_avatar?: string | null,
     estado: string,
-    categoria: string
+    categoria?: string | null
 }
 
 export default Product;

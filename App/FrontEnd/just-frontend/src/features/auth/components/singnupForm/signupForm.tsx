@@ -39,7 +39,6 @@ export default function SignupForm() {
             correo: "",
             contraseña: "",
             confirmarContrasena: "",
-            rol: "Consultora",
         },
     });
 
@@ -48,7 +47,6 @@ export default function SignupForm() {
             nombre: data.nombre,
             correo: data.correo,
             contraseña: data.contraseña,
-            rol: data.rol,
         };
 
         try {
@@ -63,7 +61,6 @@ export default function SignupForm() {
                 correo: "",
                 contraseña: "",
                 confirmarContrasena: "",
-                rol: "Consultora",
             });
             router.push("/auth/signin");
         } catch {

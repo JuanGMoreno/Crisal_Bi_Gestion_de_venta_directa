@@ -13,92 +13,56 @@ describe('AuthService', () => {
     mocks.replace(sequelize, 'transaction', async (callback) => callback({ id: 'transaction' }));
   });
 
-  afterEach(() => {
-    mocks.restoreAll();
-  });
+  afterEach(() => mocks.restoreAll());
 
-  test('registra usuario y distribuidor dentro de una transaccion', async () => {
+  test('registra usuario y negocio dentro de una transaccion', async () => {
     let createdUser;
     let createdDistributor;
 
     mocks.replace(UserRepository, 'findByEmail', async () => null);
     mocks.replace(UserRepository, 'create', async (payload) => {
       createdUser = payload;
-      return {
-        id_usuario: 'user-1',
-        correo: payload.correo
-      };
+      return { id_usuario: 'user-1', correo: payload.correo };
     });
-    mocks.replace(DistributorRepository, 'findByCode', async () => null);
     mocks.replace(DistributorRepository, 'create', async (payload) => {
       createdDistributor = payload;
-      return {
-        id_distribuidor: 'distributor-1',
-        ...payload,
-        rol: 'Consultora'
-      };
+      return { id_distribuidor: 'business-1', ...payload };
     });
 
     const result = await registerUser({
-      email: '  TEST@correo.com ',
-      password: 'secreto123',
-      name: ' Ana Perez '
+      email: '  TEST@correo.com ', password: 'secreto123', name: ' Ana Perez '
     });
 
     expect(createdUser.correo).toBe('test@correo.com');
     expect(await argon2.verify(createdUser.contrasena, 'secreto123')).toBe(true);
-    expect(createdDistributor.id_usuario).toBe('user-1');
-    expect(createdDistributor.codigo_referido).toMatch(/^ANAPEREZ-[A-Z0-9]{4}$/);
-    expect(result.distributor.rol).toBe('Consultora');
+    expect(createdDistributor).toEqual({ nombre: 'Ana Perez', id_usuario: 'user-1' });
+    expect(result.distributor).toEqual({ id: 'business-1', nombre: 'Ana Perez' });
   });
 
   test('rechaza registro cuando el correo ya existe', async () => {
     mocks.replace(UserRepository, 'findByEmail', async () => ({ id_usuario: 'existing-user' }));
-
     await expect(registerUser({
-        email: 'existente@correo.com',
-        password: 'secreto123',
-        name: 'Ana'
-      })).rejects.toMatchObject({
-        message: 'El usuario ya existe',
-        status: 409
-      });
+      email: 'existente@correo.com', password: 'secreto123', name: 'Ana'
+    })).rejects.toMatchObject({ message: 'El usuario ya existe', status: 409 });
   });
 
   test('valida credenciales correctas', async () => {
     const passwordHash = await argon2.hash('secreto123');
-
     mocks.replace(UserRepository, 'findByEmail', async () => ({
-      id_usuario: 'user-1',
-      correo: 'ana@correo.com',
-      contrasena: passwordHash
+      id_usuario: 'user-1', correo: 'ana@correo.com', contrasena: passwordHash
     }));
-
-    const result = await validateUserCredentials({
-      email: 'ana@correo.com',
-      password: 'secreto123'
-    });
-
-    expect(result).toEqual({
-      id: 'user-1',
-      email: 'ana@correo.com'
-    });
+    await expect(validateUserCredentials({
+      email: 'ana@correo.com', password: 'secreto123'
+    })).resolves.toEqual({ id: 'user-1', email: 'ana@correo.com' });
   });
 
   test('rechaza credenciales incorrectas sin revelar la causa', async () => {
     const passwordHash = await argon2.hash('secreto123');
-
     mocks.replace(UserRepository, 'findByEmail', async () => ({
-      id_usuario: 'user-1',
-      correo: 'ana@correo.com',
-      contrasena: passwordHash
+      id_usuario: 'user-1', correo: 'ana@correo.com', contrasena: passwordHash
     }));
-
-    const result = await validateUserCredentials({
-      email: 'ana@correo.com',
-      password: 'incorrecta'
-    });
-
-    expect(result).toBeNull();
+    await expect(validateUserCredentials({
+      email: 'ana@correo.com', password: 'incorrecta'
+    })).resolves.toBeNull();
   });
 });
