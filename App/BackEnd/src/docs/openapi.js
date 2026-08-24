@@ -34,7 +34,7 @@ export const openApiDocument = {
     title: 'Crisal Backend API',
     version: '1.0.0',
     description:
-      'API para gestion de autenticacion, distribuidores, productos, inventario, clientes y ventas del sistema Crisal.'
+      'API para gestion de autenticacion, negocios, productos, inventario, clientes y ventas del sistema Crisal.'
   },
   servers: [
     {

@@ -16,14 +16,3 @@ export const profileSchema = z.object({
 
 export type ProfileFormInput = z.input<typeof profileSchema>;
 export type ProfileFormData = z.output<typeof profileSchema>;
-
-export const referralCodeSchema = z.object({
-  codigo_referido: z
-    .string()
-    .trim()
-    .min(3, "Ingresa un código de referido válido")
-    .max(40, "El código de referido no puede superar 40 caracteres"),
-});
-
-export type ReferralCodeFormInput = z.input<typeof referralCodeSchema>;
-export type ReferralCodeFormData = z.output<typeof referralCodeSchema>;

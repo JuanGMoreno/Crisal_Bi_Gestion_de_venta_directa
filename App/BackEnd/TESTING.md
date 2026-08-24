@@ -11,6 +11,15 @@ Ejecutar todas las pruebas:
 npm test
 ```
 
+Ejecutar el flujo integral con una base PostgreSQL exclusiva de pruebas:
+
+```bash
+npm run test:integration
+```
+
+Este comando exige que `DB_NAME` contenga la palabra `test`. La suite aplica las
+migraciones y limpia únicamente los modelos de esa base aislada.
+
 ## Metodologia usada
 
 Las pruebas actuales son **unitarias de servicios**. Cada caso ejecuta una pieza de
@@ -80,7 +89,8 @@ tests/
 ### Productos
 
 - Listado aislado por distribuidor.
-- Creacion con categoria por defecto.
+- Creacion sin categoria y con categorias personalizadas.
+- Normalizacion y validacion de la categoria opcional.
 - Rechazo de codigo duplicado.
 - Actualizacion y soft delete limitados al distribuidor autenticado.
 
@@ -98,12 +108,11 @@ tests/
 - Rechazo por stock insuficiente.
 - Restauracion de stock al anular venta.
 
-### Jerarquia
+### Perfil del negocio
 
-- Vinculacion mediante codigo vigente.
-- Rechazo de codigo vencido.
-- Rechazo de jerarquias invalidas.
-- Bloqueo de cambios de rol incompatibles con hijos existentes.
+- Consulta del perfil autenticado sin datos jerarquicos.
+- Actualizacion limitada a nombre y foto.
+- Rechazo de campos ajenos al perfil operativo.
 
 ## Como agregar una prueba
 
@@ -130,9 +139,6 @@ await expect(Service.method()).rejects.toThrow(/Texto esperado del error/);
 
 ## Siguiente nivel de pruebas
 
-Estas pruebas no reemplazan pruebas de integracion. Como evolucion futura conviene:
-
-1. Preparar una base PostgreSQL exclusiva para testing.
-2. Ejecutar migraciones antes de la suite.
-3. Probar endpoints HTTP completos con una herramienta como Supertest.
-4. Mantener las pruebas unitarias actuales porque son rapidas y localizan fallos con claridad.
+Las pruebas unitarias se complementan con `tests/integration`, que usa PostgreSQL y
+Supertest para comprobar el recorrido autenticado de producto, cliente, inventario y
+venta. Las pruebas E2E de Playwright validan los recorridos principales del navegador.

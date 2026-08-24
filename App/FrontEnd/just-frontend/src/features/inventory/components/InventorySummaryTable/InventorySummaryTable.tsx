@@ -139,7 +139,7 @@ const columns: ColumnDef<InventorySummaryItem>[] = [
           variant="outline"
           className={cn("border font-medium", getCategoryIndicatorClass(row.original.categoria))}
         >
-          {row.original.categoria}
+          {row.original.categoria || "Sin categoría"}
         </Badge>
       </div>
     ),

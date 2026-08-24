@@ -20,17 +20,14 @@ describe('ClientService', () => {
   test('lista solamente clientes activos del distribuidor autenticado', async () => {
     let receivedFilters;
 
-    mocks.replace(ClientRepository, 'findAll', async (filters) => {
-      receivedFilters = filters;
+    mocks.replace(ClientRepository, 'findActiveByDistributor', async (distributorId) => {
+      receivedFilters = distributorId;
       return [{ id_cliente: 'client-1' }];
     });
 
     const clients = await ClientService.getClients('user-1');
 
-    expect(receivedFilters).toEqual({
-      estado: 'Activo',
-      id_distribuidor: 'distributor-1'
-    });
+    expect(receivedFilters).toBe('distributor-1');
     expect(clients).toHaveLength(1);
   });
 

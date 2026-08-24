@@ -1,5 +1,4 @@
 import express from 'express';
-import multer from 'multer';
 import { authMiddleware } from '../middleware/auth.middleware.js';
 import {
   getClients,
@@ -9,9 +8,10 @@ import {
   deleteClient
 } from '../controllers/client.controller.js';
 import { createCloudinaryStorage } from '../config/cloudinary.js';
+import { createImageUpload } from '../config/upload.js';
 
 const router = express.Router();
-const upload = multer({ storage: createCloudinaryStorage('fotos clientes') });
+const upload = createImageUpload(createCloudinaryStorage('fotos clientes'));
 
 router.get('/clients', authMiddleware, getClients);
 router.get('/clients/:id', authMiddleware, getClient);

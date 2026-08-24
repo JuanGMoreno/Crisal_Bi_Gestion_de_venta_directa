@@ -1,10 +1,10 @@
 export const clientsDocs = {
-  tags: [{ name: 'Clients', description: 'Cartera de clientes del distribuidor autenticado' }],
+  tags: [{ name: 'Clients', description: 'Cartera de clientes del negocio autenticado' }],
   paths: {
     '/clients': {
       get: {
         tags: ['Clients'],
-        summary: 'Listar clientes activos del distribuidor autenticado',
+        summary: 'Listar clientes activos del negocio autenticado',
         security: [{ bearerAuth: [] }, { cookieAuth: [] }],
         responses: {
           200: {
@@ -22,7 +22,7 @@ export const clientsDocs = {
       },
       post: {
         tags: ['Clients'],
-        summary: 'Crear cliente para el distribuidor autenticado',
+        summary: 'Crear cliente para el negocio autenticado',
         security: [{ bearerAuth: [] }, { cookieAuth: [] }],
         requestBody: {
           required: true,

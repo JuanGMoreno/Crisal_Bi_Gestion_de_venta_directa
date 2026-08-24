@@ -14,21 +14,13 @@ import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import AllUrls from "@/urls"
-import { PackageSearch, Archive, Users, BadgeDollarSign, ChartSpline, Network } from "lucide-react"
-import { useDistributorChildrenQuery } from "@/features/profile/hooks/useDistributorChildrenQuery"
+import { PackageSearch, Archive, Users, BadgeDollarSign, ChartSpline } from "lucide-react"
 import { useProfileQuery } from "@/features/profile/hooks/useProfileQuery"
 import { BRAND } from "@/shared/config/brand"
-
-function canManageTeam(role?: string) {
-  return role === "Lider" || role === "Lider de Grupo"
-}
 
 export function AppSidebar() {
   const pathname = usePathname()
   const { data: profile } = useProfileQuery()
-  const canSeeTeam = canManageTeam(profile?.rol)
-  const { data: children = [] } = useDistributorChildrenQuery(Boolean(profile && canSeeTeam))
-  const shouldShowTeam = canSeeTeam && children.length > 0
 
   return (
     <Sidebar variant="inset">
@@ -42,7 +34,8 @@ export function AppSidebar() {
                   alt={`${BRAND.productName} logo`}
                   width={62}
                   height={62}
-                  className="rounded-full"
+                  loading="eager"
+                  className="h-auto w-auto rounded-full"
                 />
                 <div className="flex flex-col">
                   <span className="text-md font-bold ">{BRAND.productName}</span>
@@ -97,16 +90,6 @@ export function AppSidebar() {
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
-            {shouldShowTeam ? (
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild size="lg" isActive={pathname === AllUrls['system:team']}>
-                  <Link href={AllUrls['system:team']}>
-                    <Network size={244} />
-                    <span className="font-bold pl-1">Equipo</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ) : null}
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
@@ -123,7 +106,7 @@ export function AppSidebar() {
                 />
                 <div className="flex flex-col pl-1">
                   <p className="font-bold text-md ">{profile?.nombre || "Mi perfil"}</p>
-                  <p className="font-semibold text-xs ">{profile?.rol || "Distribuidor"}</p>
+                  <p className="font-semibold text-xs ">Mi negocio</p>
                 </div>
               </Link>
             </SidebarMenuButton>

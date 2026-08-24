@@ -50,10 +50,7 @@ async function validateUniqueDocument(cedula, distributorId, currentClientId = n
 export const ClientService = {
   getClients: async (userId) => {
     const distributorId = await resolveDistributorIdByUserId(userId);
-    return await ClientRepository.findAll({
-      estado: 'Activo',
-      id_distribuidor: distributorId
-    });
+    return await ClientRepository.findActiveByDistributor(distributorId);
   },
 
   getClientById: async (id, userId) => {

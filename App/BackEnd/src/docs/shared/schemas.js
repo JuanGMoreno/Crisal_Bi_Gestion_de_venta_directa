@@ -42,10 +42,7 @@ export const schemas = {
       id_distribuidor: { type: 'string', format: 'uuid' },
       id_usuario: { type: 'string', format: 'uuid' },
       nombre: { type: 'string' },
-      rol: { type: 'string', enum: ['Consultora', 'Lider de Grupo', 'Lider'] },
       foto_avatar: { type: 'string', nullable: true },
-      codigo_referido: { type: 'string', nullable: true },
-      fecha_vencimiento_codigo: { type: 'string', format: 'date-time', nullable: true },
       estado: { type: 'string', enum: ['Activo', 'Inactivo'] }
     }
   },
@@ -55,57 +52,6 @@ export const schemas = {
       id_distribuidor: { type: 'string', format: 'uuid' },
       id_usuario: { type: 'string', format: 'uuid' },
       nombre: { type: 'string' },
-      rol: { type: 'string', enum: ['Consultora', 'Lider de Grupo', 'Lider'] },
-      foto_avatar: { type: 'string', nullable: true },
-      codigo_referido: { type: 'string', nullable: true },
-      fecha_vencimiento_codigo: { type: 'string', format: 'date-time', nullable: true },
-      estado: { type: 'string', enum: ['Activo', 'Inactivo'] },
-      createdAt: { type: 'string', format: 'date-time' },
-      updatedAt: { type: 'string', format: 'date-time' },
-      usuario: {
-        type: 'object',
-        properties: {
-          id_usuario: { type: 'string', format: 'uuid' },
-          correo: { type: 'string', format: 'email' },
-          estado: { type: 'string', enum: ['Activo', 'Inactivo'] },
-          createdAt: { type: 'string', format: 'date-time' },
-          updatedAt: { type: 'string', format: 'date-time' }
-        }
-      },
-      padre: {
-        allOf: [{ $ref: '#/components/schemas/Distributor' }],
-        nullable: true
-      }
-    }
-  },
-  RenewReferralCodeResponse: {
-    type: 'object',
-    properties: {
-      message: { type: 'string' },
-      profile: { $ref: '#/components/schemas/DistributorProfile' }
-    }
-  },
-  LinkReferralCodeRequest: {
-    type: 'object',
-    required: ['codigo_referido'],
-    properties: {
-      codigo_referido: { type: 'string' }
-    }
-  },
-  LinkReferralCodeResponse: {
-    type: 'object',
-    properties: {
-      message: { type: 'string' },
-      profile: { $ref: '#/components/schemas/DistributorProfile' }
-    }
-  },
-  DistributorChild: {
-    type: 'object',
-    properties: {
-      id_distribuidor: { type: 'string', format: 'uuid' },
-      id_usuario: { type: 'string', format: 'uuid' },
-      nombre: { type: 'string' },
-      rol: { type: 'string', enum: ['Consultora', 'Lider de Grupo', 'Lider'] },
       foto_avatar: { type: 'string', nullable: true },
       estado: { type: 'string', enum: ['Activo', 'Inactivo'] },
       createdAt: { type: 'string', format: 'date-time' },
@@ -130,20 +76,6 @@ export const schemas = {
       foto_avatar: { type: 'string', nullable: true }
     }
   },
-  CreateDistributorRequest: {
-    type: 'object',
-    required: ['id_usuario', 'nombre'],
-    properties: {
-      id_usuario: { type: 'string', format: 'uuid' },
-      id_distribuidor_padre: { type: 'string', format: 'uuid', nullable: true },
-      nombre: { type: 'string' },
-      rol: { type: 'string', enum: ['Consultora', 'Lider de Grupo', 'Lider'] },
-      foto_avatar: { type: 'string', nullable: true },
-      codigo_referido: { type: 'string', nullable: true },
-      fecha_vencimiento_codigo: { type: 'string', format: 'date-time', nullable: true },
-      estado: { type: 'string', enum: ['Activo', 'Inactivo'] }
-    }
-  },
   Product: {
     type: 'object',
     properties: {
@@ -155,15 +87,7 @@ export const schemas = {
       precio_base_venta: { type: 'number' },
       foto_avatar: { type: 'string', nullable: true },
       estado: { type: 'string', enum: ['Activo', 'Inactivo'] },
-      categoria: {
-        type: 'string',
-        enum: [
-          'Aromaterapia',
-          'Bienestar emocional y mental',
-          'Bienestar físico',
-          'Bienestar dermo-cosmético'
-        ]
-      }
+      categoria: { type: 'string', maxLength: 80, nullable: true }
     }
   },
   Client: {
@@ -214,7 +138,7 @@ export const schemas = {
       id_producto: { type: 'string', format: 'uuid' },
       nombre: { type: 'string' },
       codigo: { type: 'string' },
-      categoria: { type: 'string' },
+      categoria: { type: 'string', nullable: true },
       stock_total: { type: 'integer' },
       lotes_activos: { type: 'integer' },
       costo_promedio_compra: { type: 'number' },
@@ -294,7 +218,7 @@ export const schemas = {
   CreateClientRequest: {
     type: 'object',
     required: ['nombre', 'cedula'],
-    description: 'El distribuidor se toma del usuario autenticado; no se debe enviar id_distribuidor.',
+    description: 'El negocio se toma del usuario autenticado; no se debe enviar id_distribuidor.',
     properties: {
       nombre: { type: 'string' },
       cedula: { type: 'string' },

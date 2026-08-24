@@ -37,9 +37,14 @@ async function main() {
         const pendingMigrations = await migrator.pending();
 
         if (pendingMigrations.length > 0) {
-            console.warn(
-                `Hay ${pendingMigrations.length} migracion(es) pendiente(s). Ejecuta npm run db:migrate antes de iniciar en un entorno real.`
-            );
+            const message =
+                `Hay ${pendingMigrations.length} migracion(es) pendiente(s). Ejecuta npm run db:migrate.`;
+
+            if (process.env.NODE_ENV === 'production') {
+                throw new Error(message);
+            }
+
+            console.warn(message);
         }
         console.log('✓ Database connected');
         

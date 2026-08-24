@@ -1,62 +1,29 @@
 export const distributorsDocs = {
-  tags: [{ name: 'Distributors', description: 'Gestion de distribuidores; las rutas globales quedan reservadas para futura autorizacion admin-only' }],
+  tags: [{
+    name: 'Distributors',
+    description: 'Perfil operativo del negocio asociado a la cuenta autenticada'
+  }],
   paths: {
-    '/distributors': {
-      get: {
-        tags: ['Distributors'],
-        summary: 'Listar distribuidores activos',
-        security: [{ bearerAuth: [] }, { cookieAuth: [] }],
-        responses: {
-          200: {
-            description: 'Listado de distribuidores',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'array',
-                  items: { $ref: '#/components/schemas/Distributor' }
-                }
-              }
-            }
-          }
-        }
-      },
-      post: {
-        tags: ['Distributors'],
-        summary: 'Crear distribuidor',
-        security: [{ bearerAuth: [] }, { cookieAuth: [] }],
-        requestBody: {
-          required: true,
-          content: {
-            'application/json': {
-              schema: { $ref: '#/components/schemas/CreateDistributorRequest' }
-            }
-          }
-        },
-        responses: {
-          201: { description: 'Distribuidor creado' }
-        }
-      }
-    },
     '/distributors/me': {
       get: {
         tags: ['Distributors'],
-        summary: 'Obtener el perfil del distribuidor autenticado',
+        summary: 'Obtener el perfil del negocio autenticado',
         security: [{ bearerAuth: [] }, { cookieAuth: [] }],
         responses: {
           200: {
-            description: 'Perfil del distribuidor autenticado',
+            description: 'Perfil del negocio autenticado',
             content: {
               'application/json': {
                 schema: { $ref: '#/components/schemas/DistributorProfile' }
               }
             }
           },
-          404: { description: 'Distribuidor no encontrado' }
+          404: { description: 'Negocio no encontrado' }
         }
       },
       put: {
         tags: ['Distributors'],
-        summary: 'Actualizar el perfil del distribuidor autenticado',
+        summary: 'Actualizar el perfil del negocio autenticado',
         security: [{ bearerAuth: [] }, { cookieAuth: [] }],
         requestBody: {
           required: true,
@@ -75,118 +42,7 @@ export const distributorsDocs = {
               }
             }
           },
-          404: { description: 'Distribuidor no encontrado' }
-        }
-      }
-    },
-    '/distributors/me/referral-code': {
-      post: {
-        tags: ['Distributors'],
-        summary: 'Solicitar un nuevo codigo de referido cuando el actual haya vencido',
-        security: [{ bearerAuth: [] }, { cookieAuth: [] }],
-        responses: {
-          200: {
-            description: 'Codigo de referido renovado',
-            content: {
-              'application/json': {
-                schema: { $ref: '#/components/schemas/RenewReferralCodeResponse' }
-              }
-            }
-          },
-          400: { description: 'El codigo actual aun se encuentra vigente' },
-          404: { description: 'Distribuidor no encontrado' }
-        }
-      }
-    },
-    '/distributors/me/link-referral': {
-      post: {
-        tags: ['Distributors'],
-        summary: 'Vincular el distribuidor autenticado a una jerarquia mediante codigo de referido',
-        security: [{ bearerAuth: [] }, { cookieAuth: [] }],
-        requestBody: {
-          required: true,
-          content: {
-            'application/json': {
-              schema: { $ref: '#/components/schemas/LinkReferralCodeRequest' }
-            }
-          }
-        },
-        responses: {
-          200: {
-            description: 'Distribuidor vinculado correctamente',
-            content: {
-              'application/json': {
-                schema: { $ref: '#/components/schemas/LinkReferralCodeResponse' }
-              }
-            }
-          },
-          400: { description: 'Codigo invalido, vencido o jerarquia no permitida' },
-          404: { description: 'Distribuidor no encontrado' }
-        }
-      }
-    },
-    '/distributors/me/children': {
-      get: {
-        tags: ['Distributors'],
-        summary: 'Listar hijos directos activos del distribuidor autenticado',
-        security: [{ bearerAuth: [] }, { cookieAuth: [] }],
-        responses: {
-          200: {
-            description: 'Listado de hijos directos',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'array',
-                  items: { $ref: '#/components/schemas/DistributorChild' }
-                }
-              }
-            }
-          },
-          404: { description: 'Distribuidor no encontrado' }
-        }
-      }
-    },
-    '/distributors/{id}': {
-      get: {
-        tags: ['Distributors'],
-        summary: 'Obtener distribuidor por id',
-        security: [{ bearerAuth: [] }, { cookieAuth: [] }],
-        parameters: [
-          { in: 'path', name: 'id', required: true, schema: { type: 'string', format: 'uuid' } }
-        ],
-        responses: {
-          200: { description: 'Distribuidor encontrado' },
-          404: { description: 'Distribuidor no encontrado' }
-        }
-      },
-      put: {
-        tags: ['Distributors'],
-        summary: 'Actualizar distribuidor',
-        security: [{ bearerAuth: [] }, { cookieAuth: [] }],
-        parameters: [
-          { in: 'path', name: 'id', required: true, schema: { type: 'string', format: 'uuid' } }
-        ],
-        requestBody: {
-          required: true,
-          content: {
-            'application/json': {
-              schema: { $ref: '#/components/schemas/CreateDistributorRequest' }
-            }
-          }
-        },
-        responses: {
-          200: { description: 'Distribuidor actualizado' }
-        }
-      },
-      delete: {
-        tags: ['Distributors'],
-        summary: 'Eliminar distribuidor de forma logica',
-        security: [{ bearerAuth: [] }, { cookieAuth: [] }],
-        parameters: [
-          { in: 'path', name: 'id', required: true, schema: { type: 'string', format: 'uuid' } }
-        ],
-        responses: {
-          200: { description: 'Distribuidor eliminado' }
+          404: { description: 'Negocio no encontrado' }
         }
       }
     }
