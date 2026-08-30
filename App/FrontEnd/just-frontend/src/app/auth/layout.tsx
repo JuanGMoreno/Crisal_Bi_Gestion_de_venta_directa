@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { SessionLoadingScreen } from "@/features/auth/components/sessionLoadingScreen/SessionLoadingScreen";
 import { useAuthSession } from "@/features/auth/hooks/useAuthSession";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
@@ -15,7 +16,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
   }, [isError, isLoading, router, user]);
 
   if (isLoading) {
-    return null;
+    return <SessionLoadingScreen />;
   }
 
   if (!isError && user) {

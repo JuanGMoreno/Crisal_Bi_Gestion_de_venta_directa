@@ -9,6 +9,7 @@ import { EditProfileDialog } from "@/features/profile/components/EditProfileDial
 import { ProfileSkeleton } from "@/features/profile/components/ProfileSkeleton/ProfileSkeleton";
 import { useProfileQuery } from "@/features/profile/hooks/useProfileQuery";
 import useAuthServices from "@/features/auth/services/authServices";
+import { useAuthSession } from "@/features/auth/hooks/useAuthSession";
 import { EmptyGlobal } from "@/shared/components/empty-global";
 import { Avatar, AvatarFallback, AvatarImage } from "@/shared/components/ui/avatar";
 import { Badge } from "@/shared/components/ui/badge";
@@ -38,6 +39,7 @@ export default function PageProfile() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const { data: profile, isLoading, isError, error, refetch, isFetching } = useProfileQuery();
   const { Signout } = useAuthServices();
+  const { clearSession } = useAuthSession();
   const queryClient = useQueryClient();
   const router = useRouter();
 
@@ -79,6 +81,7 @@ export default function PageProfile() {
           signoutError instanceof Error ? signoutError.message : "No se pudo cerrar sesión",
         position: "top-right",
       });
+      clearSession();
       queryClient.clear();
       router.replace("/auth/signin");
     } catch {

@@ -2,8 +2,6 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from "react-hook-form";
-import { useRouter } from "next/navigation";
-import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
@@ -17,19 +15,11 @@ import {
 import { authSigninSchema } from "@/features/auth/validations/authSigninSchema";
 import { AuthSignin } from "@/features/auth/validations/authSigninSchema";
 import useAuthServices from "@/features/auth/services/authServices";
-
-type SigninResponse = {
-    message: string;
-    user?: {
-        id: string;
-        email: string;
-    };
-};
+import { useAuthSession } from "@/features/auth/hooks/useAuthSession";
 
 export default function SigninForm() {
     const authSrv = useAuthServices();
-    const router = useRouter();
-    const queryClient = useQueryClient();
+    const { setSession } = useAuthSession();
 
     const form = useForm({
         resolver: zodResolver(
@@ -43,23 +33,20 @@ export default function SigninForm() {
 
     const onSubmit = async (data: AuthSignin) => {
         try {
-            const response = (await toast.promise(authSrv.Signin(data), {
+            const signinRequest = authSrv.Signin(data);
+
+            toast.promise(signinRequest, {
                 loading: "Validando credenciales...",
                 success: "Inicio de sesión correcto",
                 error: (error) => (error instanceof Error ? error.message : "Error al iniciar sesión"),
                 position: "top-right",
-            })) as unknown as SigninResponse;
+            });
+
+            const response = await signinRequest;
 
             if (response?.user) {
-                queryClient.setQueryData(["auth", "me"], {
-                    message: "Sesión iniciada",
-                    user: response.user,
-                });
+                setSession(response);
             }
-
-            // Fuerza refresco de sesión para que el layout protegido lea el estado más reciente.
-            await queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
-            router.replace("/system");
         } catch {
             // El toast.promise ya muestra el error.
         }

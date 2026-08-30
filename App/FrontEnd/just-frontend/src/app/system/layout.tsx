@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/shared/components/ui/sidebar";
 import { AppSidebar } from "@/shared/components/ui/app-sidebar";
+import { SessionLoadingScreen } from "@/features/auth/components/sessionLoadingScreen/SessionLoadingScreen";
 import { useAuthSession } from "@/features/auth/hooks/useAuthSession";
 
 export default function DashboardLayout({
@@ -12,23 +13,24 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const { user, isLoading, isError } = useAuthSession();
+  const { user, isLoading } = useAuthSession();
 
   useEffect(() => {
-    if (!isLoading && (isError || !user)) {
+    if (!isLoading && !user) {
       router.replace("/auth/signin");
     }
-  }, [isError, isLoading, router, user]);
+  }, [isLoading, router, user]);
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center text-sm text-muted-foreground">
-        Validando sesión...
-      </div>
+      <SessionLoadingScreen
+        title="Preparando tu espacio de trabajo"
+        description="Estamos cargando tu sesión y dejando lista tu información comercial."
+      />
     );
   }
 
-  if (isError || !user) {
+  if (!user) {
     return (
       <div className="flex min-h-screen items-center justify-center text-sm text-muted-foreground">
         Redirigiendo al inicio de sesión...
