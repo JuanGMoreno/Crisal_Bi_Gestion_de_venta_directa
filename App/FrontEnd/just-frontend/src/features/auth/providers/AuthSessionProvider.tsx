@@ -54,7 +54,9 @@ export function AuthSessionProvider({ children }: { children: ReactNode }) {
   );
 
   const clearSession = useCallback(() => {
-    queryClient.removeQueries({ queryKey: AUTH_SESSION_QUERY_KEY, exact: true });
+    queryClient.setQueryData<AuthMeResponse>(AUTH_SESSION_QUERY_KEY, {
+      message: "Sesión cerrada.",
+    });
   }, [queryClient]);
 
   const value = useMemo<AuthSessionContextValue>(() => {
