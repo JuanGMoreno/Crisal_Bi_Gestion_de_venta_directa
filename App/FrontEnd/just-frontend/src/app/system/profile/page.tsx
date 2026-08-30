@@ -37,6 +37,7 @@ function getProfileInitials(name?: string) {
 
 export default function PageProfile() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isSigningOut, setIsSigningOut] = useState(false);
   const { data: profile, isLoading, isError, error, refetch, isFetching } = useProfileQuery();
   const { Signout } = useAuthServices();
   const { clearSession } = useAuthSession();
@@ -73,19 +74,38 @@ export default function PageProfile() {
   const accountIsActive = profile.estado === "Activo" && profile.usuario.estado === "Activo";
 
   const handleSignout = async () => {
+    if (isSigningOut) return;
+
+    setIsSigningOut(true);
+
     try {
-      await toast.promise(Signout(), {
+      const signoutRequest = Signout();
+
+      toast.promise(signoutRequest, {
         loading: "Cerrando sesión...",
         success: "Sesión cerrada correctamente",
         error: (signoutError) =>
           signoutError instanceof Error ? signoutError.message : "No se pudo cerrar sesión",
         position: "top-right",
       });
+
+      await signoutRequest;
+
       clearSession();
-      queryClient.clear();
+
+      // La sesión es la fuente de verdad y debe conservarse como cerrada.
+      // El resto de consultas puede contener información privada del usuario anterior.
+      await queryClient.cancelQueries({
+        predicate: (query) => query.queryKey[0] !== "auth",
+      });
+      queryClient.removeQueries({
+        predicate: (query) => query.queryKey[0] !== "auth",
+      });
+
       router.replace("/auth/signin");
     } catch {
       // El toast.promise ya muestra el error.
+      setIsSigningOut(false);
     }
   };
 
@@ -123,8 +143,10 @@ export default function PageProfile() {
               <PencilLine className="mr-2 h-4 w-4" />Editar perfil
             </Button>
             <Button type="button" variant="outline" onClick={() => void handleSignout()}
+              disabled={isSigningOut}
               className={`${getIndicatorClass("bad")} hover:text-rose-600`}>
-              <LogOut className="mr-2 h-4 w-4" />Cerrar sesión
+              <LogOut className="mr-2 h-4 w-4" />
+              {isSigningOut ? "Cerrando sesión..." : "Cerrar sesión"}
             </Button>
           </div>
         </div>
