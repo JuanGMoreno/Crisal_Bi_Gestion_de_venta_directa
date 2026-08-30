@@ -1,4 +1,8 @@
-import { signinParams, signupParams } from "@/features/auth/types/authTypes";
+import {
+  type AuthMeResponse,
+  type signinParams,
+  type signupParams,
+} from "@/features/auth/types/authTypes";
 import { useCallback } from "react";
 import { http } from "@/shared/api/http";
 import { getApiErrorMessage } from "@/shared/api/error";
@@ -6,7 +10,7 @@ import { getApiErrorMessage } from "@/shared/api/error";
 export default function useAuthServices() {
 
 
-  const Signin = useCallback( async ({ correo, contraseña }: signinParams) => {
+  const Signin = useCallback(async ({ correo, contraseña }: signinParams): Promise<AuthMeResponse> => {
     try {
         const response = await http.post("/auth/signin", { correo : correo, contraseña: contraseña });
         return response.data;
