@@ -9,3 +9,13 @@ export interface signupParams {
   correo: string;
   contraseña: string;
 }
+
+export interface AuthMeUser {
+  id: string;
+  email: string;
+}
+
+export interface AuthMeResponse {
+  message: string;
+  user?: AuthMeUser;
+}
