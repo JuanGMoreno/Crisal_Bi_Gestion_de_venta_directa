@@ -4,7 +4,6 @@ interface AvatarSidebarProps {
     src: string,
     alt: string,
     fallback: string
-    size: string
     className?: string
 }
 
