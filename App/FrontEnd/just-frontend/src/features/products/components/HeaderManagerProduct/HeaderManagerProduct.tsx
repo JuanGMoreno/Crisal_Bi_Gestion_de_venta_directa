@@ -16,7 +16,7 @@ export default function HeaderManagerProduct() {
       <div className="mb-4 m-4 flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-bold pb-2">Gestión de Productos</h2>
-          <p className="text-gray-400">Gestiona tu catálogo de productos, manteniendo disponibilidad y precios actualizados.</p>
+          <p className="text-muted-foreground">Gestiona tu catálogo de productos, manteniendo disponibilidad y precios actualizados.</p>
         </div>
         <Button size="lg" onClick={() => onOpenDialog("createProduct")}>
           Agregar Producto

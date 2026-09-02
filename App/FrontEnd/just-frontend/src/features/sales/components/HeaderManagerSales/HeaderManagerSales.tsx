@@ -8,7 +8,7 @@ export default function HeaderManagerSales() {
     <div className="mb-4 m-4 flex items-center justify-between gap-4">
       <div>
         <h2 className="pb-2 text-3xl font-bold">Gestion de Ventas</h2>
-        <p className="text-gray-400">
+        <p className="text-muted-foreground">
           Registra ventas, consulta su estado y controla el impacto sobre el inventario.
         </p>
       </div>

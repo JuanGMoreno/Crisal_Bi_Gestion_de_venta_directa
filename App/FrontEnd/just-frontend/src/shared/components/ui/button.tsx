@@ -1,8 +1,6 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
-import { getIndicatorClass } from "@/shared/lib/status-indicators"
-
 import { cn } from "@/shared/lib/utils"
 
 const buttonVariants = cva(
@@ -11,15 +9,15 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground shadow hover:bg-primary/90",
+          "bg-primary text-primary-foreground shadow hover:bg-primary-hover",
         destructive:
-          getIndicatorClass("bad") , 
+          "bg-destructive text-destructive-foreground shadow hover:bg-destructive/90",
         outline:
           "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
         secondary:
           "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
+        link: "text-link underline-offset-4 hover:text-link-hover hover:underline",
       },
       size: {
         default: "h-9 px-4 py-2",

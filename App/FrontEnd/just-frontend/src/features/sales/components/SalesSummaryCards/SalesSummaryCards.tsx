@@ -63,7 +63,7 @@ export function SalesSummaryCards({ sales }: SalesSummaryCardsProps) {
                 <p className="text-sm font-medium text-muted-foreground">{card.title}</p>
                 <h3 className="mt-2 text-2xl font-semibold tracking-tight">{card.value}</h3>
               </div>
-              <div className="rounded-xl border bg-background p-2 text-primary">
+              <div className="rounded-xl border bg-background p-2 text-link">
                 <Icon className="h-5 w-5" />
               </div>
             </div>
