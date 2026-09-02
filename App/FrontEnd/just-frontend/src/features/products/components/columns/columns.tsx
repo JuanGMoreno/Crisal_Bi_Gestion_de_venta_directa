@@ -111,7 +111,7 @@ export const columns: ColumnDef<Product>[] = [
           <span
             className={cn(
               "rounded-md border px-2 py-1 text-xs font-medium",
-              getCategoryIndicatorClass(categoria)
+              getCategoryIndicatorClass()
             )}
           >
             {categoria || "Sin categoría"}
