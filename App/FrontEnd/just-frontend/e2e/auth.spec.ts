@@ -174,7 +174,9 @@ test("@public conserva y trunca nombres largos en la barra lateral", async ({ pa
   const profileLink = page.getByRole("link", {
     name: `Abrir perfil de ${longProfileName}`,
   });
+  const sidebar = page.locator('[data-sidebar="sidebar"]').filter({ visible: true });
   const profileName = profileLink.locator("p").first();
+  await expect(sidebar).toBeInViewport();
   await expect(profileLink).toBeVisible();
   await expect(profileName).toHaveText(longProfileName);
   await expect(profileName).toHaveAttribute("title", longProfileName);
@@ -203,7 +205,7 @@ test("@public conserva y trunca nombres largos en la barra lateral", async ({ pa
   expect(logoSize).toEqual({ width: 32, height: 32 });
 
   await page.getByRole("button", { name: "Toggle Sidebar" }).click();
-  await expect(profileName).toBeHidden();
+  await expect(sidebar).not.toBeInViewport();
 });
 
 test("@public mantiene el perfil dentro de la barra lateral movil", async ({ page }) => {

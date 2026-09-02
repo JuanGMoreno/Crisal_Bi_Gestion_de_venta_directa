@@ -24,7 +24,7 @@ export function AppSidebar() {
   const profileName = profile?.nombre?.trim() || "Mi perfil"
 
   return (
-    <Sidebar variant="inset" collapsible="icon">
+    <Sidebar variant="inset" collapsible="offcanvas">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -41,7 +41,7 @@ export function AppSidebar() {
                   loading="eager"
                   className="size-8 shrink-0 rounded-full object-contain"
                 />
-                <div className="min-w-0 flex-1 leading-tight group-data-[collapsible=icon]:hidden">
+                <div className="min-w-0 flex-1 leading-tight">
                   <span className="block truncate text-sm font-bold">{BRAND.productName}</span>
                   <span className="block truncate text-xs font-light">Gestión comercial</span>
                 </div>
@@ -116,7 +116,7 @@ export function AppSidebar() {
                   fallback={profileName.slice(0, 2).toUpperCase()}
                   className="size-8"
                 />
-                <div className="min-w-0 flex-1 pl-1 leading-tight group-data-[collapsible=icon]:hidden">
+                <div className="min-w-0 flex-1 pl-1 leading-tight">
                   <p className="truncate text-sm font-bold" title={profileName}>{profileName}</p>
                   <p className="truncate text-xs font-semibold">Mi negocio</p>
                 </div>
