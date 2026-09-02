@@ -107,7 +107,7 @@ export function createSalesColumns({
       accessorKey: "total",
       header: () => <div className="text-center">Total</div>,
       cell: ({ row }) => (
-        <div className="text-center font-semibold text-primary">
+        <div className="text-center font-semibold text-link">
           {formatCurrency(Number(row.original.total))}
         </div>
       ),

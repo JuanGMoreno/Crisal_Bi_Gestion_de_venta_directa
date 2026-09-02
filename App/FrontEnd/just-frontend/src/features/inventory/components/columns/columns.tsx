@@ -136,7 +136,7 @@ export function createInventoryColumns({
         const averageCost = totalUnits === 0 ? 0 : weightedCost / totalUnits;
 
         return (
-          <div className="text-center font-semibold text-primary">
+          <div className="text-center font-semibold text-link">
             {formatCurrency(averageCost)}
           </div>
         );

@@ -115,7 +115,7 @@ export function InventorySummaryCards({ items }: InventorySummaryCardsProps) {
                   </div>
                 ) : null}
               </div>
-              <div className="rounded-xl border bg-background p-2 text-primary">
+              <div className="rounded-xl border bg-background p-2 text-link">
                 <Icon className="h-5 w-5" />
               </div>
             </div>

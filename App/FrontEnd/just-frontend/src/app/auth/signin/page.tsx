@@ -13,15 +13,15 @@ export default function LoginPage() {
           Iniciar sesión en {BRAND.productName}
         </h2>
         <SigninForm />
-        <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+        <div className="mt-6 border-t border-border pt-6">
           <p className="text-center text-foreground">
             No tienes una cuenta?{" "}
-            <Link href="/auth/signup" className="font-semibold text-primary hover:underline">
+            <Link href="/auth/signup" className="font-semibold text-link hover:text-link-hover hover:underline">
               Registrate
             </Link>
           </p>
         </div>
-        <p className="text-center text-gray-400 dark:text-gray-500 text-xs mt-6">
+        <p className="mt-6 text-center text-xs text-muted-foreground">
           {BRAND.tagline}
         </p>
       </div>

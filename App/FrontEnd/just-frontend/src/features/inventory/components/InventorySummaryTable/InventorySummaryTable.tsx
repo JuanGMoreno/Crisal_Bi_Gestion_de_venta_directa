@@ -173,7 +173,7 @@ const columns: ColumnDef<InventorySummaryItem>[] = [
     accessorFn: (row) => row.stock_total * Number(row.costo_promedio_compra),
     header: () => <div className="text-center">Valor Total</div>,
     cell: ({ row }) => (
-      <div className="text-center font-semibold text-primary">
+      <div className="text-center font-semibold text-link">
         {formatCurrency(row.original.stock_total * Number(row.original.costo_promedio_compra))}
       </div>
     ),

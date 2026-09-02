@@ -58,7 +58,7 @@ export function SessionLoadingScreen({
           />
         </div>
 
-        <p className="mb-2 text-xs font-semibold tracking-[0.22em] text-primary uppercase">
+        <p className="mb-2 text-xs font-semibold tracking-[0.22em] text-link uppercase">
           {BRAND.productName}
         </p>
         <h1 className="text-balance text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
@@ -69,7 +69,7 @@ export function SessionLoadingScreen({
         </p>
 
         <div className="mx-auto mt-7 flex w-full max-w-xs items-center gap-3 rounded-2xl border bg-muted/50 px-4 py-3 text-left">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-link/10 text-link">
             <ShieldCheck aria-hidden="true" className="h-5 w-5" />
           </div>
           <p className="text-xs leading-5 text-muted-foreground sm:text-sm">
