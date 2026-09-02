@@ -110,9 +110,11 @@ function AlertBadges({ item }: { item: InventorySummaryItem }) {
 
   if (badges.length === 0) {
     return (
-      <Badge variant="outline" className={cn("border font-medium", getIndicatorClass("good"))}>
-        Sin alertas
-      </Badge>
+      <div className="flex justify-center">
+        <Badge variant="outline" className={cn("border font-medium", getIndicatorClass("good"))}>
+          Sin alertas
+        </Badge>
+      </div>
     );
   }
 
@@ -137,7 +139,7 @@ const columns: ColumnDef<InventorySummaryItem>[] = [
       <div className="flex justify-center">
         <Badge
           variant="outline"
-          className={cn("border font-medium", getCategoryIndicatorClass(row.original.categoria))}
+          className={cn("border font-medium", getCategoryIndicatorClass())}
         >
           {row.original.categoria || "Sin categoría"}
         </Badge>

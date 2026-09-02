@@ -106,19 +106,19 @@ function MetricCard({
   const variationMeta = variation === undefined ? null : getVariationMeta(variation);
 
   return (
-    <div className="rounded-lg border bg-card p-4 shadow-sm">
+    <div className="min-w-0 rounded-lg border bg-card p-3 shadow-sm sm:p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-sm font-medium text-muted-foreground">{title}</p>
-          <h3 className="mt-2 truncate text-2xl font-semibold tracking-tight">
+          <h3 className="mt-2 break-words text-xl font-semibold tracking-tight sm:text-2xl">
             {value}
           </h3>
         </div>
-        <div className="rounded-lg border bg-background p-2 text-link">
+        <div className="shrink-0 rounded-lg border bg-background p-2 text-link">
           <Icon className="h-5 w-5" />
         </div>
       </div>
-      <div className="mt-4 flex items-center justify-between gap-3">
+      <div className="mt-4 flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
         <p className="text-sm text-muted-foreground">{helper}</p>
         {variationMeta ? (
           <Badge
@@ -136,17 +136,17 @@ function MetricCard({
 
 function DashboardSkeleton() {
   return (
-    <div className="space-y-4">
-      <div className="m-4 space-y-2">
+    <div className="min-w-0 space-y-4">
+      <div className="space-y-2">
         <Skeleton className="h-9 w-72" />
         <Skeleton className="h-5 w-96 max-w-full" />
       </div>
-      <div className="m-4 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {Array.from({ length: 4 }).map((_, index) => (
           <Skeleton key={index} className="h-36 rounded-lg" />
         ))}
       </div>
-      <div className="m-4 grid gap-4 xl:grid-cols-[minmax(0,1.5fr)_minmax(340px,0.8fr)]">
+      <div className="grid min-w-0 gap-4 xl:grid-cols-[minmax(0,1.5fr)_minmax(340px,0.8fr)]">
         <Skeleton className="h-96 rounded-lg" />
         <Skeleton className="h-96 rounded-lg" />
       </div>
@@ -163,7 +163,7 @@ export default function DashboardPage() {
 
   if (isError || !dashboard) {
     return (
-      <div className="m-4 rounded-lg border border-destructive/30 bg-destructive/5 p-5 text-sm text-destructive">
+      <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-5 text-sm text-destructive">
         {error?.message || "No se pudo cargar el panel de control."}
       </div>
     );
@@ -177,21 +177,21 @@ export default function DashboardPage() {
   const topProductsData = dashboard.topProducts.map((product) => ({
     ...product,
     shortName:
-      product.nombre.length > 18
-        ? `${product.nombre.slice(0, 18)}...`
+      product.nombre.length > 14
+        ? `${product.nombre.slice(0, 14)}...`
         : product.nombre,
   }));
 
   return (
-    <section className="space-y-4">
-      <div className="m-4 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Panel de Control</h1>
+    <section className="min-w-0 space-y-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div className="min-w-0">
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Panel de Control</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Corte actualizado el {formatFullDate(dashboard.generatedAt)}
           </p>
         </div>
-        <div className="grid grid-cols-3 gap-2 text-center text-sm">
+        <div className="grid w-full grid-cols-3 gap-2 text-center text-sm sm:w-auto">
           <div className="rounded-lg border bg-card px-3 py-2">
             <p className="font-semibold">{dashboard.salesStatus.Abierta}</p>
             <p className="text-xs text-muted-foreground">Abiertas</p>
@@ -207,7 +207,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="m-4 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <MetricCard
           title="Ingresos del mes"
           value={formatCurrency(dashboard.currentMonth.revenue)}
@@ -237,14 +237,14 @@ export default function DashboardPage() {
         />
       </div>
 
-      <div className="m-4 grid gap-4 xl:grid-cols-[minmax(0,1.45fr)_minmax(340px,0.85fr)]">
-        <div className="rounded-lg border bg-card p-4 shadow-sm">
+      <div className="grid min-w-0 gap-4 xl:grid-cols-[minmax(0,1.45fr)_minmax(340px,0.85fr)]">
+        <div className="min-w-0 overflow-hidden rounded-lg border bg-card p-3 shadow-sm sm:p-4">
           <div className="mb-3 flex flex-col gap-1">
             <h2 className="text-lg font-semibold">Ingresos y ganancias</h2>
             <p className="text-sm text-muted-foreground">Ultimos 30 dias</p>
           </div>
-          <ChartContainer config={salesTrendConfig} className="h-80 w-full">
-            <AreaChart data={trendData} margin={{ left: 12, right: 12 }}>
+          <ChartContainer config={salesTrendConfig} className="h-64 min-w-0 w-full sm:h-80">
+            <AreaChart data={trendData} margin={{ left: 0, right: 8 }}>
               <CartesianGrid vertical={false} />
               <XAxis
                 dataKey="label"
@@ -257,6 +257,7 @@ export default function DashboardPage() {
                 tickLine={false}
                 axisLine={false}
                 tickMargin={8}
+                width={52}
                 tickFormatter={(value) => `$${Number(value) / 1000}k`}
               />
               <ChartTooltip
@@ -283,7 +284,7 @@ export default function DashboardPage() {
           </ChartContainer>
         </div>
 
-        <div className="rounded-lg border bg-card p-4 shadow-sm">
+        <div className="min-w-0 overflow-hidden rounded-lg border bg-card p-3 shadow-sm sm:p-4">
           <div className="mb-3 flex items-start justify-between gap-3">
             <div>
               <h2 className="text-lg font-semibold">Productos mas vendidos</h2>
@@ -292,8 +293,8 @@ export default function DashboardPage() {
             <PackageCheck className="h-5 w-5 text-link" />
           </div>
           {topProductsData.length > 0 ? (
-            <ChartContainer config={topProductsConfig} className="h-80 w-full">
-              <BarChart data={topProductsData} layout="vertical" margin={{ left: 8, right: 16 }}>
+            <ChartContainer config={topProductsConfig} className="h-64 min-w-0 w-full sm:h-80">
+              <BarChart data={topProductsData} layout="vertical" margin={{ left: 0, right: 8 }}>
                 <CartesianGrid horizontal={false} />
                 <XAxis type="number" hide />
                 <YAxis
@@ -302,7 +303,7 @@ export default function DashboardPage() {
                   tickLine={false}
                   axisLine={false}
                   tickMargin={8}
-                  width={118}
+                  width={92}
                 />
                 <ChartTooltip
                   cursor={false}
@@ -317,15 +318,15 @@ export default function DashboardPage() {
               </BarChart>
             </ChartContainer>
           ) : (
-            <div className="flex h-80 items-center justify-center rounded-lg border border-dashed text-sm text-muted-foreground">
+            <div className="flex h-64 items-center justify-center rounded-lg border border-dashed text-center text-sm text-muted-foreground sm:h-80">
               Sin ventas cerradas este mes.
             </div>
           )}
         </div>
       </div>
 
-      <div className="m-4 grid gap-4 xl:grid-cols-2">
-        <div className="rounded-lg border bg-card p-4 shadow-sm">
+      <div className="grid min-w-0 gap-4 xl:grid-cols-2">
+        <div className="min-w-0 rounded-lg border bg-card p-3 shadow-sm sm:p-4">
           <div className="mb-4 flex items-center justify-between gap-3">
             <div>
               <h2 className="text-lg font-semibold">Detalle comercial</h2>
@@ -367,7 +368,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="rounded-lg border bg-card p-4 shadow-sm">
+        <div className="min-w-0 rounded-lg border bg-card p-3 shadow-sm sm:p-4">
           <div className="mb-4 flex items-center justify-between gap-3">
             <div>
               <h2 className="text-lg font-semibold">Alertas de inventario</h2>
@@ -388,7 +389,7 @@ export default function DashboardPage() {
               dashboard.inventory.lowStock.map((item) => (
                 <div
                   key={item.id_producto}
-                  className="flex items-center justify-between gap-3 rounded-lg border p-3"
+                  className="flex flex-col items-stretch gap-3 rounded-lg border p-3 sm:flex-row sm:items-center sm:justify-between"
                 >
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
@@ -399,7 +400,7 @@ export default function DashboardPage() {
                       {item.lotes_activos} lotes activos
                     </p>
                   </div>
-                  <Badge className="shrink-0 bg-amber-600 text-white hover:bg-amber-600">
+                  <Badge className="w-fit max-w-full shrink-0 whitespace-normal bg-amber-600 text-left text-white hover:bg-amber-600">
                     {formatNumber(item.stock_total)} uds
                   </Badge>
                 </div>
@@ -428,7 +429,7 @@ export default function DashboardPage() {
                 return (
                   <div
                     key={item.id_producto}
-                    className="flex items-center justify-between gap-3 rounded-lg border p-3"
+                    className="flex flex-col items-stretch gap-3 rounded-lg border p-3 sm:flex-row sm:items-center sm:justify-between"
                   >
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
@@ -440,7 +441,7 @@ export default function DashboardPage() {
                       </p>
                     </div>
                     <Badge
-                      className={`shrink-0 text-white ${
+                      className={`w-fit max-w-full shrink-0 whitespace-normal text-left text-white ${
                         isExpired
                           ? "bg-rose-600 hover:bg-rose-600"
                           : "bg-amber-600 hover:bg-amber-600"
@@ -460,7 +461,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="m-4 rounded-lg border bg-card p-4 shadow-sm">
+      <div className="min-w-0 rounded-lg border bg-card p-3 shadow-sm sm:p-4">
         <div className="mb-4">
           <h2 className="text-lg font-semibold">Ventas recientes</h2>
           <p className="text-sm text-muted-foreground">
@@ -470,7 +471,7 @@ export default function DashboardPage() {
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
           {dashboard.recentSales.length > 0 ? (
             dashboard.recentSales.map((sale) => (
-              <div key={sale.id_venta} className="rounded-lg border p-3">
+              <div key={sale.id_venta} className="min-w-0 rounded-lg border p-3">
                 <div className="mb-3 flex items-center justify-between gap-2">
                   <Badge
                     variant={sale.estado === "Cerrada" ? "default" : "secondary"}

@@ -93,7 +93,6 @@ export function SaleForm({
   const { data: clients = [] } = useSaleClientsQuery();
   const { data: inventorySummary = [] } = useInventorySummaryQuery();
 
-  const activeProducts = products.filter((product) => product.estado === "Activo");
   const availableClients = initialSale?.cliente
     ? clients.some((client) => client.id_cliente === initialSale.cliente?.id_cliente)
       ? clients
@@ -101,6 +100,10 @@ export function SaleForm({
     : clients;
   const stockByProduct = new Map(
     inventorySummary.map((item) => [item.id_producto, Number(item.stock_total)])
+  );
+  const activeProducts = products.filter((product) => product.estado === "Activo");
+  const productsWithStock = activeProducts.filter(
+    (product) => (stockByProduct.get(product.id_producto) || 0) > 0
   );
 
   const form = useForm<SaleFormInput, unknown, SaleFormData>({
@@ -327,6 +330,11 @@ export function SaleForm({
                 const selectedProduct = activeProducts.find(
                   (product) => product.id_producto === details[index]?.id_producto
                 );
+                const selectableProducts = selectedProduct && !productsWithStock.some(
+                  (product) => product.id_producto === selectedProduct.id_producto
+                )
+                  ? [selectedProduct, ...productsWithStock]
+                  : productsWithStock;
                 const stock = selectedProduct
                   ? stockByProduct.get(selectedProduct.id_producto) || 0
                   : 0;
@@ -361,8 +369,9 @@ export function SaleForm({
                           <Field data-invalid={fieldState.invalid}>
                             <FieldLabel>Producto</FieldLabel>
                             <ProductCombobox
-                              products={activeProducts}
+                              products={selectableProducts}
                               value={field.value}
+                              emptyMessage="No hay productos activos con stock disponible"
                               invalid={fieldState.invalid}
                               onChange={(value) => updateDetailProduct(index, value)}
                             />
