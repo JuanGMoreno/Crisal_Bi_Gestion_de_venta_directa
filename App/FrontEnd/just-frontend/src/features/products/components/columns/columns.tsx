@@ -143,7 +143,7 @@ export const columns: ColumnDef<Product>[] = [
         style: "currency",
         currency: "COP",
       }).format(precio)
-      return <div className="flex justify-center"><span className="font-semibold text-primary">{formatted}</span></div>;
+      return <div className="flex justify-center"><span className="font-semibold text-link">{formatted}</span></div>;
     },
   },
   {

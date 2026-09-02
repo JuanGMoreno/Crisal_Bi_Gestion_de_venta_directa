@@ -64,7 +64,7 @@ export function DialogDetailsProduct() {
                             )}
                         </div>
                         <div className="space-y-4">
-                            <h3 className="text-2xl font-semibold leading-tight text-primary">
+                            <h3 className="text-2xl font-semibold leading-tight text-link">
                                 {productData?.nombre || "Producto sin nombre"}
                             </h3>
 
@@ -90,7 +90,7 @@ export function DialogDetailsProduct() {
                             <div className="grid gap-3 pt-1 sm:grid-cols-1">
                                 <div className="rounded-lg border bg-muted/30 p-3">
                                     <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Precio Base de Venta</p>
-                                    <p className="text-lg font-semibold text-primary">{formatCurrency(productData?.precio_base_venta)}</p>
+                                    <p className="text-lg font-semibold text-link">{formatCurrency(productData?.precio_base_venta)}</p>
                                 </div>
                             </div>
                         </div>

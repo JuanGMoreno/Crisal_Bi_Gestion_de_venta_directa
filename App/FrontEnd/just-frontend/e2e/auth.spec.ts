@@ -1,5 +1,70 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Locator, type Page } from "@playwright/test";
 import { hasE2ECredentials, mockLoggedOutSession, signIn } from "./helpers/auth";
+
+function parseRgb(color: string) {
+  const channels = color.match(/[\d.]+/g)?.slice(0, 3).map(Number);
+
+  if (!channels || channels.length !== 3) {
+    throw new Error(`No se pudo interpretar el color CSS: ${color}`);
+  }
+
+  return channels;
+}
+
+function relativeLuminance(color: string) {
+  const [red, green, blue] = parseRgb(color).map((channel) => {
+    const normalized = channel / 255;
+    return normalized <= 0.04045
+      ? normalized / 12.92
+      : ((normalized + 0.055) / 1.055) ** 2.4;
+  });
+
+  return 0.2126 * red + 0.7152 * green + 0.0722 * blue;
+}
+
+function contrastRatio(foreground: string, background: string) {
+  const lighter = Math.max(
+    relativeLuminance(foreground),
+    relativeLuminance(background),
+  );
+  const darker = Math.min(
+    relativeLuminance(foreground),
+    relativeLuminance(background),
+  );
+
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
+async function getComputedColors(element: Locator, backgroundSelector?: string) {
+  return element.evaluate((node, selector) => {
+    const toRgb = (color: string) => {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1;
+      canvas.height = 1;
+      const context = canvas.getContext("2d", { willReadFrequently: true });
+
+      if (!context) {
+        throw new Error("No se pudo crear el contexto para normalizar colores.");
+      }
+
+      context.fillStyle = color;
+      context.fillRect(0, 0, 1, 1);
+      const [red, green, blue] = context.getImageData(0, 0, 1, 1).data;
+      return `rgb(${red}, ${green}, ${blue})`;
+    };
+
+    const backgroundNode = selector ? node.closest(selector) : node;
+
+    if (!backgroundNode) {
+      throw new Error(`No se encontro el fondo ${selector}.`);
+    }
+
+    return {
+      foreground: toRgb(window.getComputedStyle(node).color),
+      background: toRgb(window.getComputedStyle(backgroundNode).backgroundColor),
+    };
+  }, backgroundSelector);
+}
 
 async function mockAuthenticatedSession(page: Page) {
   await page.route("**/api/auth/me", async (route) => {
@@ -48,6 +113,33 @@ test("@public renderiza el formulario de inicio de sesion", async ({ page }) => 
   await expect(page.getByLabel(/Contrase/i)).toBeVisible();
   await expect(page.getByRole("button", { name: /Iniciar Sesi/i })).toBeVisible();
 });
+
+for (const colorScheme of ["light", "dark"] as const) {
+  test(`@public mantiene contraste accesible en el login con tema ${colorScheme}`, async ({ page }) => {
+    await page.emulateMedia({ colorScheme });
+    await mockLoggedOutSession(page);
+    await page.goto("/auth/signin");
+
+    const submitButton = page.getByRole("button", { name: /Iniciar Sesi/i });
+    await expect(submitButton).toBeVisible();
+    await expect.poll(() => page.locator("html").getAttribute("class")).toContain(colorScheme);
+
+    const buttonColors = await getComputedColors(submitButton);
+
+    expect(
+      contrastRatio(buttonColors.foreground, buttonColors.background),
+      `El boton principal no alcanza contraste AA en tema ${colorScheme}`,
+    ).toBeGreaterThanOrEqual(4.5);
+
+    const registerLink = page.getByRole("link", { name: "Registrate" });
+    const linkColors = await getComputedColors(registerLink, "div.bg-background");
+
+    expect(
+      contrastRatio(linkColors.foreground, linkColors.background),
+      `El enlace secundario no alcanza contraste AA en tema ${colorScheme}`,
+    ).toBeGreaterThanOrEqual(4.5);
+  });
+}
 
 test("@public comunica el arranque del servicio mientras comprueba la sesion", async ({ page }) => {
   await page.route("**/api/auth/me", async (route) => {
@@ -174,7 +266,9 @@ test("@public conserva y trunca nombres largos en la barra lateral", async ({ pa
   const profileLink = page.getByRole("link", {
     name: `Abrir perfil de ${longProfileName}`,
   });
+  const sidebar = page.locator('[data-sidebar="sidebar"]').filter({ visible: true });
   const profileName = profileLink.locator("p").first();
+  await expect(sidebar).toBeInViewport();
   await expect(profileLink).toBeVisible();
   await expect(profileName).toHaveText(longProfileName);
   await expect(profileName).toHaveAttribute("title", longProfileName);
@@ -203,7 +297,7 @@ test("@public conserva y trunca nombres largos en la barra lateral", async ({ pa
   expect(logoSize).toEqual({ width: 32, height: 32 });
 
   await page.getByRole("button", { name: "Toggle Sidebar" }).click();
-  await expect(profileName).toBeHidden();
+  await expect(sidebar).not.toBeInViewport();
 });
 
 test("@public mantiene el perfil dentro de la barra lateral movil", async ({ page }) => {

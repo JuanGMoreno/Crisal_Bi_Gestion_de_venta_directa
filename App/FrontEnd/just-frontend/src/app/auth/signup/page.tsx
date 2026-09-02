@@ -13,10 +13,10 @@ export default function RegisterPage() {
           Crear cuenta en {BRAND.productName}
         </h2>
         <SignupForm />
-        <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+        <div className="mt-6 border-t border-border pt-6">
           <p className="text-center text-foreground">
             Ya tienes una cuenta?{" "}
-            <Link href="/auth/signin" className="font-semibold text-primary hover:underline">
+            <Link href="/auth/signin" className="font-semibold text-link hover:text-link-hover hover:underline">
               Inicia sesión
             </Link>
           </p>

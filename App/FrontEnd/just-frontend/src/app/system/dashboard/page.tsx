@@ -84,8 +84,8 @@ function getVariationMeta(value: number) {
   return {
     Icon,
     className: isPositive
-      ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-      : "border-rose-200 bg-rose-50 text-rose-700",
+      ? "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-700 dark:bg-emerald-900/35 dark:text-emerald-200"
+      : "border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-700 dark:bg-rose-900/35 dark:text-rose-200",
     label: `${isPositive ? "+" : ""}${value}%`,
   };
 }
@@ -114,7 +114,7 @@ function MetricCard({
             {value}
           </h3>
         </div>
-        <div className="rounded-lg border bg-background p-2 text-primary">
+        <div className="rounded-lg border bg-background p-2 text-link">
           <Icon className="h-5 w-5" />
         </div>
       </div>
@@ -289,7 +289,7 @@ export default function DashboardPage() {
               <h2 className="text-lg font-semibold">Productos mas vendidos</h2>
               <p className="text-sm text-muted-foreground">Mes actual</p>
             </div>
-            <PackageCheck className="h-5 w-5 text-primary" />
+            <PackageCheck className="h-5 w-5 text-link" />
           </div>
           {topProductsData.length > 0 ? (
             <ChartContainer config={topProductsConfig} className="h-80 w-full">
@@ -333,7 +333,7 @@ export default function DashboardPage() {
                 Ticket promedio: {formatCurrency(dashboard.currentMonth.averageTicket)}
               </p>
             </div>
-            <BadgeDollarSign className="h-5 w-5 text-primary" />
+            <BadgeDollarSign className="h-5 w-5 text-link" />
           </div>
           <div className="space-y-3">
             {dashboard.topProducts.length > 0 ? (
@@ -353,7 +353,7 @@ export default function DashboardPage() {
                   </div>
                   <div className="text-left sm:text-right">
                     <p className="font-semibold">{formatCurrency(product.revenue)}</p>
-                    <p className="text-sm text-emerald-700">
+                    <p className="text-sm text-emerald-700 dark:text-emerald-300">
                       {formatCurrency(product.profit)} ganancia
                     </p>
                   </div>
@@ -377,10 +377,10 @@ export default function DashboardPage() {
                 )} alertas activas
               </p>
             </div>
-            <AlertTriangle className="h-5 w-5 text-amber-600" />
+            <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-300" />
           </div>
           <div className="mb-3 flex items-center gap-2 text-sm font-medium">
-            <Boxes className="h-4 w-4 text-rose-600" />
+            <Boxes className="h-4 w-4 text-rose-600 dark:text-rose-300" />
             Stock bajo
           </div>
           <div className="space-y-3">
@@ -411,7 +411,7 @@ export default function DashboardPage() {
             )}
           </div>
           <div className="mb-3 mt-5 flex items-center gap-2 text-sm font-medium">
-            <CalendarClock className="h-4 w-4 text-amber-600" />
+            <CalendarClock className="h-4 w-4 text-amber-600 dark:text-amber-300" />
             Vencimientos
           </div>
           <div className="space-y-3">

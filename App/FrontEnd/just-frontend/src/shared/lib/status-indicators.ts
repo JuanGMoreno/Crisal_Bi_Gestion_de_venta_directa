@@ -22,7 +22,7 @@ export const indicatorStyles: Record<IndicatorTone, string> = {
 };
 
 export const destructiveMenuItemClass =
-  "text-red-500 hover:bg-red-200 focus:bg-red-100 data-[state=open]:bg-red-100 hover:text-red-700 focus:text-red-700";
+  "text-red-600 hover:bg-red-100 focus:bg-red-100 data-[state=open]:bg-red-100 hover:text-red-800 focus:text-red-800 dark:text-red-300 dark:hover:bg-red-950/60 dark:focus:bg-red-950/60 dark:data-[state=open]:bg-red-950/60 dark:hover:text-red-200 dark:focus:text-red-200";
 
 const stateToToneMap: Record<string, IndicatorTone> = {
   Activo: "good",
